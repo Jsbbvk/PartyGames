@@ -1,0 +1,287 @@
+* {
+  font-family: "Raleway", sans-serif;
+}
+
+#game-title {
+  font-family: "Raleway", sans-serif;
+}
+
+#menu {
+  position: fixed;
+  width: 80%;
+  height: 60vh;
+  border: 1px solid black;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  z-index:1;
+  display:block;
+  background-color:white;
+}
+#menuDisplay {
+    display:none;
+    height:90%;
+}
+
+#menu.mSlideDown {
+  animation: mslideDown 500ms forwards linear;
+}
+
+#menu.mSlideDown > #menuDisplay {
+    display:block;
+}
+#menu.mSlideUp > #menuDisplay {
+    display:none;
+}
+
+#menu.mSlideUp {
+  animation: mslideUp 500ms forwards linear;
+}
+
+@keyframes mslideUp {
+  0% {
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  100% {
+    top: 0%;
+    transform: translate(-50%, -100%);
+  }
+}
+@keyframes mslideDown {
+  0% {
+    top: 0%;
+      transform: translate(-50%, -100%);
+  }
+  100% {
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+#scoreboard {
+  height: 70%;
+  overflow-x:hidden;
+  overflow-y: auto;
+}
+#toggleMenuButton {
+  position: absolute;
+  font-size: 3rem;
+  left: 50%;
+  top: 100%;
+  transform: translate(-50%, -30%);
+}
+#toggleMenuButton:hover {
+  cursor: pointer;
+}
+
+
+#playing {
+  display:none;
+}
+
+#meme_image, .upper-canvas {
+    border:dotted 3px red;
+    animation: border-color-change 3s ease-in-out infinite;
+}
+
+@keyframes border-color-change {
+    0% { border:dotted 3px red; }
+    33% { border:dotted 3px blue; }
+    66% { border:dotted 3px green; }
+}
+
+
+
+.button-1 {
+    background-color: white;
+    border: 2px solid #e5cbb7;
+    padding: 5px 7px;
+}
+
+.button-1:hover {
+    border: 2px solid gray !important;
+    cursor: pointer;
+}
+.button-1:focus{outline:none;}
+
+.memeButton {
+    padding: 8px 17px;
+    border-radius: 4px;
+    margin: 10px 10px;
+}
+
+#addTextButton {
+    margin-top: 2rem;
+    margin-bottom: 1.3rem;
+}
+
+
+
+
+#votingForMeme {
+  position: relative;
+}
+
+.memeImage, .memeImageResult {
+  height: 300px;
+  width: 300px;
+  border: 1px solid black;
+}
+
+.memeImage {
+    filter: brightness(0.5);
+}
+
+.memeImageResult:hover {
+    cursor: pointer;
+}
+
+.memeWinner {
+    border: 5px ridge #e8d700 !important;
+}
+
+.chooseableMeme:not(#playerFinishedMeme).selectedMeme {
+  border: 2px solid #7abf6e;
+    filter:brightness(1);
+}
+.chooseableMeme:not(#playerFinishedMeme):hover {
+  cursor: pointer;
+}
+
+#playerFinishedMeme {
+    filter:brightness(1) !important;
+    border:dashed 2px #cb8f14;
+    border-style: dashed solid solid solid;
+    animation: player-meme-border 4s ease-in-out infinite;
+}
+
+@keyframes player-meme-border {
+    0% {
+        border-style: dashed solid solid solid;
+    }
+    25% {
+        border-style: solid dashed solid solid;
+    }
+    50% {
+        border-style: solid solid dashed solid;
+    }
+    75% {
+        border-style: solid solid solid dashed;
+    }
+}
+
+.canvas-container {
+    display:inline-block;
+}
+
+
+#chooseMemeButton, #nextRoundButton{
+  width: 50%;
+  max-width: 250px;
+  background-color:white;
+  color:black;
+  position: fixed;
+  bottom: 0;
+  z-index: 1;
+  margin-bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid black;
+  padding: 5px 10px;
+  user-select: none;
+  text-align:center;
+  display:none;
+}
+
+#chooseMemeButton:hover, #nextRoundButton:hover {
+  cursor: pointer;
+}
+
+#votingMemeTitle {
+    font-size: 1.5rem;
+}
+
+
+.flip-container, .front, .back {
+    width: 300px;
+    height: 300px;
+}
+
+.flip-container {
+    perspective: 1000px;
+    margin: 0 auto;
+}
+.flip-container.flip .flipper {
+    transform: rotateY(180deg);
+}
+.flipper {
+    transition: 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+}
+.front, .back {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.back > h1 {
+    line-height:200px;
+}
+.front {
+    z-index: 2;
+    transform: rotateY(0deg);
+}
+.back {
+    transform: rotateY(180deg);
+    border: 1px solid black;
+    user-select:none;
+}
+
+
+@media only screen and (min-width: 600px) {
+    #toggleMenuButton {
+      font-size: 4rem;
+    }
+
+    #menu {
+      max-width: 500px;
+        height: 80vh;
+    }
+
+    #votingMemeTitle {
+        font-size: 2rem;
+    }
+    .memeImage, .memeImageResult, .flip-container, .front, .back {
+      height: 500px;
+      width: 500px;
+    }
+
+    #addTextButton {
+        margin-top: 5rem;
+        margin-bottom:5rem;
+    }
+
+    .memeButton {
+        font-size: 1.3em;
+    }
+
+
+    ::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+}
