@@ -35,7 +35,7 @@ var memeImages = [
     'Spongebob-Ol-Reliable.jpg',
     'Jim-Office-Blinds.jpg',
     'Monkey-Looking-Away.jpg',
-    'Noah\'s-Ark.jpg"
+    'Noah\'s-Ark.jpg'
 ];
 
 /*
