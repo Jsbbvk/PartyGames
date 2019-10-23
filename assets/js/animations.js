@@ -13,11 +13,13 @@ $(window).on("blur focus", function(e) {
                 clearInterval(bubbleInterval);
                 break;
             case "focus":
-                $('#bubbleAnimation').fadeOut(400, function() {
-                    document.getElementById("bubbleAnimation").innerHTML = "";
-                    bubbleInterval = setInterval(makeBubbles, 2000);
-                    $('#bubbleAnimation').fadeIn(400);
-                });
+                if ($('#bubbleAnimation').css('display')=='block') {
+                  $('#bubbleAnimation').fadeOut(400, function() {
+                      document.getElementById("bubbleAnimation").innerHTML = "";
+                      bubbleInterval = setInterval(makeBubbles, 2000);
+                      $('#bubbleAnimation').fadeIn(400);
+                  });
+                }
                 break;
         }
     }
@@ -48,4 +50,3 @@ function makeBubbles() {
         document.getElementById("bubbleAnimation").appendChild(bubble);
     }
 }
-

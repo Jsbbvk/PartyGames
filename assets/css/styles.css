@@ -69,6 +69,8 @@
   left: 50%;
   top: 100%;
   transform: translate(-50%, -30%);
+  text-shadow: -2px 0 white, 0 2px white, 2px 0 white, 0 -2px white;
+
 }
 #toggleMenuButton:hover {
   cursor: pointer;
