@@ -70,15 +70,17 @@ canvas.on('object:selected', function(o){
 });
 
 function addText() {
-    canvas.add(new fabric.IText('Tap and Type', {
+    if ($('#captioninput').val() =="") return;
+    canvas.add(new fabric.IText($('#captioninput').val(), {
         fontFamily: 'Arial',
         stroke: '#d8d8d8',
-        strokeWidth: (isMobile)?0.5:1,
+        strokeWidth: (isMobile)?1:1.25,
         fontWeight: 'bold',
         left: (isMobile)?50:100,
         top: (isMobile)?50:100 ,
         fontSize: (isMobile)?20:40
     }));
+    $('#captioninput').val("");
 }
 
 
@@ -104,10 +106,11 @@ function loadSelectedMemeImage() {
   fabric.Image.fromURL('../assets/img/memes/' + memeImages[selectedMemeImage], function(oImg) {
 
       oImg.set({
-          left: (isMobile)?0: 0,
-          top: (isMobile)? 0: 0,
+          left: (isMobile)?5: 10,
+          top: (isMobile)? 5: 10,
           scaleY: canvas.height / (oImg.height+20),
-          scaleX: canvas.width / (oImg.width+20)
+          scaleX: canvas.width / (oImg.width+20),
+          selectable: false
       });
       oImg.setCoords();
       canvas.clear();
