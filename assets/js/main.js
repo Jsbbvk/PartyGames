@@ -44,6 +44,28 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
 
 var canvas = new fabric.Canvas("meme_image");
 
+/*
+var hammerManager = new Hammer.Manager(document.getElementsByClassName("upper-canvas")[0]);
+hammerManager.add([new Hammer.Pinch()]);
+
+//TODO
+hammerManager.on('pinch', function(ev) {
+
+  console.log(ev.scale);
+  document.getElementById("category").innerText = ev.scale;
+  var txt = canvas.getActiveObject();
+  if (txt && ev.scale < 1) {
+      txt.scaleX -= 0.1;
+      txt.scaleY -= 0.1;
+  } else {
+      txt.scaleX += 0.1;
+      txt.scaleY += 0.1;
+  }
+  canvas.renderAll();
+});
+ */
+
+
 $(document).on('mousedown touchstart', function(e) {
   if (!$(e.target).hasClass("upper-canvas") && !$(e.target).hasClass("lower-canvas") && !$(e.target).hasClass("canvas-container")) {
     canvas.discardActiveObject().renderAll();
@@ -78,7 +100,7 @@ function addText() {
         fontWeight: 'bold',
         left: (isMobile)?50:100,
         top: (isMobile)?50:100 ,
-        fontSize: (isMobile)?20:40
+        fontSize: (isMobile)?30:40
     }));
     $('#captioninput').val("");
 }
@@ -106,8 +128,8 @@ function loadSelectedMemeImage() {
   fabric.Image.fromURL('../assets/img/memes/' + memeImages[selectedMemeImage], function(oImg) {
 
       oImg.set({
-          left: (isMobile)?5: 10,
-          top: (isMobile)? 5: 10,
+          left: (isMobile)?2: 5,
+          top: (isMobile)? 2: 5,
           scaleY: canvas.height / (oImg.height+20),
           scaleX: canvas.width / (oImg.width+20),
           selectable: false
