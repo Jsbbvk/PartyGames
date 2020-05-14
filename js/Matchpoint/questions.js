@@ -1,6 +1,5 @@
 var questionFile = require("./questions.json");
 var questionList = questionFile.questions;
-
 var queuedQuestions = [];
 
 function resetQueuedQuestions() {
