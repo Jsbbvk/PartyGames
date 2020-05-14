@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Spyfall</title>
+    <link rel="shortcut icon" type="image/png" href="../assets/Spyfall/img/spy.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../assets/Spyfall/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="../assets/Spyfall/css/start.css">
+    <link rel="stylesheet" type="text/css" href="../assets/Spyfall/css/wait.css">
+</head>
+<body>
+<div id="screen">
+    <h6 id="screen-title">Spyfall <i class="fas fa-user-secret"></i>
+        <br>By Jacob Zhang</h6>
+    <div class="row rowWide mt-5" id="spy-info">
+        <!--
+          displays role & location
+        -->
+        <div class="text-center" id="info-container">
+            <p id="info-help">Double click to hide</p>
+            <p id="info-help-pc">Space to hide</p>
+            <h5><span id="spy-roleS">Your role: </span>
+                <b><span id="spy-role"></span></b>
+            </h5>
+            <h6 id="spy-location"></h6>
+            <h6 id="spy-M-ref"></h6>
+            <h6 id="spy-leader"></h6>
+        </div>
+
+    </div>
+    <div class="row rowWide" id="spy-HUD">
+        <!--
+          displays time
+          displays players
+        -->
+        <div id="hud-time">
+            <h3 id="hud-time-text" class="mb-3">8:00</h3>
+		<br>Players
+            <div id="hud-players" class="row mx-0">
+
+            </div>
+        </div>
+    </div>
+    <div class="row rowWide" id="spy-locations">
+        <div id="locations-display">
+            Locations
+            <div class="row mx-0" id="locations-display-row">
+
+            </div>
+        </div>
+    </div>
+    <div class="row rowWide my-5" id="spy-options">
+        <div style="margin: 0 auto;">
+            <button id="end-game-button" class="spy-option-button">End Game</button>
+            <button id="leave-game-button" class="spy-option-button">Leave Game</button>
+        </div>
+    </div>
+</div>
+
+<div id="start">
+    <div id="rules">
+        <i class="fas fa-question-circle"></i>
+    </div>
+    <div id="rule-display">
+        <div id="close-rule-display">
+            <i class="fas fa-times"></i>
+        </div>
+        <h2 class="text-center mt-4">Rules</h2>
+        <div class="input-group mt-4">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="rule-mode">Mode</label>
+            </div>
+            <select class="custom-select" id="rule-mode">
+                <option selected value="traditional">Traditional</option>
+                <option  value="leader">Save the Leader</option>
+            </select>
+        </div>
+        <div id="rule-traditional" class="mt-3">
+            <h6 class="text-center">
+                <a href="https://www.cryptozoic.com/sites/default/files/icme/u30695/spy_rules_eng_0.pdf" target="_blank">
+                    Original Rules
+                </a>
+            </h6>
+        </div>
+        <div id="rule-leader" class="mt-3">
+            <h6 class="text-center">
+                <a href="https://www.cryptozoic.com/sites/default/files/icme/u30695/spy_rules_eng_0.pdf" target="_blank">
+                    Original Rules
+                </a>
+            </h6>
+            <h6 style="line-height: 1.5rem;" id="rule-leader-R">
+                <br>There is one Leader.<br>
+                The Leader does not know the location.
+                <br>
+                The non-spies know who the Leader is. They are trying
+                to tell the Leader where the place is without telling the Spy.
+                <br><br>
+                If the non-spies do not correctly guess who the spy is, the Spy wins.
+                <br><br>
+                If the non-spies guess who the spy is, the spy must:
+                <br>
+                First guess who the leader is. If the leader is correctly guessed,
+                the Leader must then guess the location.
+                <br>If the Leader correctly guesses the location, the non-spies win.
+                <br>If the Leader does not correctly guess the location, the spy wins.
+                <br><br>
+                If the spy does not correctly guess who the leader is,
+                the spy must guess the location.
+                <br>If the spy guesses the location correctly, the spy wins.
+                <br>If the spy does not guess the location correctly, the non-spies win.
+                </span>
+            </h6>
+        </div>
+    </div>
+    <h3 id="start-title" class="mt-5">Spyfall <i class="fas fa-user-secret"></i>
+        <br>By Jacob Zhang</h3>
+    <div id="start-buttons" class="mt-5 row">
+        <div class="col-md-6 col-sm-12">
+            <button id="start-create" class="start-button">New Game</button>
+        </div>
+        <div class="col-md-6 col-sm-12">
+            <button id="start-join" class="start-button">Join Game</button>
+        </div>
+    </div>
+    <div id="start-join-display" class="" style="margin-top: 4rem;">
+        <div class="input-group input-group-lg">
+            <input type="text" class="form-control" aria-label="Large" id="start-join-roomid"
+                   aria-describedby="inputGroup-sizing-sm" placeholder="Room ID" maxlength="4">
+        </div>
+        <div class="input-group mt-4">
+            <input type="text" class="form-control"  aria-describedby="inputGroup-sizing-default"
+                   placeholder="Name" maxlength="15" id="start-join-name">
+        </div>
+        <h5 id="start-join-error" class="mt-3">
+
+        </h5>
+        <div id="start-join-button" class="row mt-5">
+            <div class="col-6">
+                <button class="button-1" id="start-join-game-button">
+                    Join
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="button-1 start-back-button">
+                    Back
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="start-create-display" class="" style="margin-top: 4rem;">
+        <div class="input-group input-group-lg">
+            <input type="text" class="form-control" aria-label="Large" id="start-create-roomid"
+                   aria-describedby="inputGroup-sizing-sm" placeholder="Create Room ID" maxlength="4">
+        </div>
+        <div class="input-group mt-4">
+            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                   placeholder="Name" maxlength="15" id="start-create-name">
+        </div>
+        <h5 id="start-create-error" class="mt-3">
+
+        </h5>
+        <div id="start-create-button" class="row mt-5">
+            <div class="col-6">
+                <button class="button-1" id="start-create-game-button">
+                    Create
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="button-1 start-back-button">
+                    Back
+                </button>
+            </div>
+        </div>
+    </div>
+    <h6 id="link-to-repo">
+        <a href="https://github.com/spyfall/spyfall.github.io" target="_blank">
+            Link to Github</a>
+    </h6>
+    <p id="disclaimer"><a href="http://international.hobbyworld.ru/spyfall" target="_blank">Spyfall</a>
+        is a party game designed by Alexandr Ushan<br> and published
+        by <a href="http://international.hobbyworld.ru/" target="_blank">Hobby World</a>.<br>
+        This is an unofficial fan project designed to complement
+        the physical game, <br>and is not endorsed in any way by the
+        designer or publisher.
+    </p>
+</div>
+
+<div id="waiting-room" class="my-5">
+    <div id="waiting-rules">
+        <i class="fas fa-question-circle"></i>
+    </div>
+    <div id="waiting-rule-display">
+        <div id="waiting-close-rule-display">
+            <i class="fas fa-times"></i>
+        </div>
+        <h2 class="text-center mt-4">Rules</h2>
+        <div class="input-group mt-4">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="rule-mode">Mode</label>
+            </div>
+            <select class="custom-select" id="waiting-rule-mode">
+                <option selected value="traditional">Traditional</option>
+                <option  value="leader">Save the Leader</option>
+            </select>
+        </div>
+        <div id="waiting-rule-traditional" class="mt-3">
+            <h6 class="text-center">
+                <a href="https://www.cryptozoic.com/sites/default/files/icme/u30695/spy_rules_eng_0.pdf" target="_blank">
+                    Original Rules
+                </a>
+            </h6>
+        </div>
+        <div id="waiting-rule-leader" class="mt-3">
+            <h6 class="text-center">
+                <a href="https://www.cryptozoic.com/sites/default/files/icme/u30695/spy_rules_eng_0.pdf" target="_blank">
+                    Original Rules
+                </a>
+            </h6>
+            <h6 style="line-height: 1.5rem;" id="waiting-rule-leader-R">
+                <br>There is one Leader.<br>
+                The Leader does not know the location,
+                but they know whether the location is on land, air, or water.
+                <br>
+                The non-spies know who the Leader is. They are trying
+                to tell the Leader where the place is without telling the Spy.
+                <br><br>
+                If the non-spies do not correctly guess who the spy is, the Spy wins.
+                <br><br>
+                If the non-spies guess who the spy is, the spy must:
+                <br>
+                First guess who the leader is. If the leader is correctly guessed,
+                the Leader must then guess the location.
+                <br>If the Leader correctly guesses the location, the non-spies win.
+                <br>If the Leader does not correctly guess the locatoin, the spy wins.
+                <br><br>
+                If the spy does not correctly guess who the leader is,
+                the spy must guess the location.
+                <br>If the spy guesses the location correctly, the spy wins.
+                <br>If the spy does not guess the location correctly, the non-spies win.
+                </span>
+            </h6>
+        </div>
+    </div>
+    <div id="waiting-options">
+        <div id="waiting-options-close">
+            <i class="fas fa-times"></i>
+        </div>
+        <h2 class="text-center mt-3">Game Options</h2>
+        <div class="input-group mt-4">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="rule-mode">Mode</label>
+            </div>
+            <select class="custom-select" id="option-mode">
+                <option selected value="traditional">Traditional</option>
+                <option  value="leader">Save the Leader</option>
+            </select>
+        </div>
+        <div class="input-group mt-4">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="rule-mode">Theme</label>
+            </div>
+            <select class="custom-select" id="option-theme">
+                <option selected value="general">General</option>
+                <option  value="movie">Movies</option>
+            </select>
+        </div>
+        <div class="input-group mt-4">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="rule-mode">Time</label>
+            </div>
+            <select class="custom-select" id="option-time">
+                <option  value="3">3:00</option>
+                <option selected value="8">8:00</option>
+                <option  value="10">10:00</option>
+                <option  value="20">20:00</option>
+            </select>
+        </div>
+        <button class="button-1" id="option-save-button">Save</button>
+        <br>
+        <button class="button-1" id="option-cancel-button">Cancel</button>
+    </div>
+    <div id="change-name">
+        <h2 class="text-center mt-3">Change Name</h2>
+        <div id="change-name-close">
+            <i class="fas fa-times"></i>
+        </div>
+        <div class="input-group mt-4">
+            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                   placeholder="Name" maxlength="15" id="change-name-name">
+        </div>
+        <button class="button-1" id="change-name-save-button">Save</button>
+        <br>
+        <button class="button-1" id="change-name-cancel-button">Cancel</button>
+    </div>
+    <div id="waiting-display">
+        <h1>Players</h1>
+        <h5>Room ID:
+            <b><span id="wait-roomCode"></span></b>
+        </h5>
+        <h5 class="text-center" id="waiting-setting"><i class="fas fa-cog"></i></h5>
+        <ol class="row mt-3" id="waiting-player-list">
+        </ol>
+        <div id="waiting-buttons" class="row mt-5">
+            <div class="col-6">
+                <button class="button-1" id="startButton">
+                    Start
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="button-1" id="leaveButton">
+                    Leave
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script src="../socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+    socket.emit('init game', 'spyfall');
+
+    function resetRooms(pass) {
+        socket.emit('reset rooms', pass);
+    }
+</script>
+<script src="../assets/Spyfall/js/main.js"></script>
+<script src="../assets/Spyfall/js/hudHandler.js"></script>
+<script src="../assets/Spyfall/js/infoHandler.js"></script>
+<script src="../assets/Spyfall/js/start.js"></script>
+<script src="../assets/Spyfall/js/locations.js"></script>
+
+</body>
+</html>

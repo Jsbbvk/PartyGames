@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    overflow-x:hidden;
+    background: #fff5d7;
+}
+
+#github {
+    color: black;
+}
+
+.card-holder {
+    padding: 10px 13px;
+    background: #fff5d7;
+    border: none;
+    margin: 5px 0;
+}
+
+.card {
+    padding: 10px 15px;
+    background: white;
+    text-align: center;
+    border-radius: 0;
+    transition: transform 100ms ease-in-out;
+}
+
+.card:hover {
+    cursor: pointer;
+    box-shadow: 4px 7px #ddd4ba;
+    transform: translate(-4px, -7px);
+}
+
+.card-title {
+    font-size: 1.2rem;
+}
+
+.card-image {
+    margin: 0 auto;
+    text-align: center;
+    font-size: 3rem;
+}
+
+
+.card-description {
+    text-align: left;
+    font-size: 0.7em;
+}
+
+
+@media only screen and (min-width: 600px) {
+
+    .card > .card-image {
+        font-size: 5rem;
+    }
+
+    .card > .card-description {
+        font-size: 0.9em;
+    }
+
+    .card > .card-title {
+        font-size: 1.7em;
+    }
+
+    ::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+}
