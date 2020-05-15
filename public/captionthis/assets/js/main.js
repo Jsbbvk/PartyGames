@@ -59,27 +59,6 @@ if (
 
 var canvas = new fabric.Canvas("meme_image");
 
-/*
-var hammerManager = new Hammer.Manager(document.getElementsByClassName("upper-canvas")[0]);
-hammerManager.add([new Hammer.Pinch()]);
-
-//TODO
-hammerManager.on('pinch', function(ev) {
-
-  console.log(ev.scale);
-  document.getElementById("category").innerText = ev.scale;
-  var txt = canvas.getActiveObject();
-  if (txt && ev.scale < 1) {
-      txt.scaleX -= 0.1;
-      txt.scaleY -= 0.1;
-  } else {
-      txt.scaleX += 0.1;
-      txt.scaleY += 0.1;
-  }
-  canvas.renderAll();
-});
- */
-
 $(document).on("mousedown touchstart", function (e) {
   if (
     !$(e.target).hasClass("upper-canvas") &&
@@ -108,15 +87,33 @@ canvas.on("object:selected", function (o) {
 
 function addText() {
   if ($("#captioninput").val() == "") return;
+
+  let caption = $("#captioninput").val();
+  let trim = true;
+  let co = 10;
+  let i = co;
+  while (trim) {
+    let c = caption.charAt(i);
+    if (c == "") {
+      trim = false;
+      break;
+    }
+    let x = 0;
+    if (caption.charAt(i) == " ") x = 1;
+    caption = caption.slice(0, i) + "\n" + caption.slice(i + x);
+    i += co + 1;
+  }
+
   canvas.add(
-    new fabric.IText($("#captioninput").val(), {
+    new fabric.IText(caption, {
       fontFamily: "Arial",
       stroke: "#d8d8d8",
       strokeWidth: isMobile ? 1 : 1.25,
       fontWeight: "bold",
       left: isMobile ? 50 : 100,
       top: isMobile ? 50 : 100,
-      fontSize: isMobile ? 30 : 40,
+      fontSize: isMobile ? 25 : 40,
+      width: 100,
     })
   );
   $("#captioninput").val("");
@@ -127,6 +124,8 @@ function resetCanvas() {
   canvas.clear();
   loadSelectedMemeImage();
 }
+
+//TODO upload the files to a server and server them from there
 
 var selectedMemeImage;
 var memeImageOptions = [];

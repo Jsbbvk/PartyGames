@@ -130,7 +130,7 @@
 }
 
 .memeImage, .memeImageOption {
-    filter: brightness(0.5);
+    filter: brightness(0.7);
 }
 
 .memeImageResult:hover {
