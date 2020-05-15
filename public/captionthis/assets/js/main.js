@@ -208,7 +208,7 @@ function setSelectableMemeOptions() {
 function loadSelectedMemeImage() {
   turnOffBubbles();
   fabric.Image.fromURL(
-    "../assets/assets/img/memes/" + selectedMemeImage + ".jpg",
+    "/assets/img/memes/" + selectedMemeImage + ".jpg",
     function (oImg) {
       oImg.set({
         left: isMobile ? 2 : 5,
