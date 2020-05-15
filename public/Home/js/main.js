@@ -1,6 +1,6 @@
 var cards = [
   {
-    title: "assets",
+    title: "Spyfall",
     img: "fa-user-secret",
     description: "Players must work together to find a spy amongst them.",
     players: "3",
@@ -8,7 +8,7 @@ var cards = [
     link: "https://spyfall.cf",
   },
   {
-    title: "assets",
+    title: "Outcast",
     img: "fa-hiking",
     description:
       "Players must find a player who is an outcast. Similar to assets.",
@@ -17,7 +17,7 @@ var cards = [
     link: "https://outcasted.cf",
   },
   {
-    title: "assets",
+    title: "Cardsforus",
     img: "fa-clone",
     description:
       "An unofficial fan project of the popular card game, <b>Cards Against Humanity</b>.",
@@ -35,7 +35,7 @@ var cards = [
     link: "https://captionthis.cf",
   },
   {
-    title: "assets",
+    title: "Fakeout",
     img: "fa-theater-masks",
     description:
       "An unofficial fan project of the popular Jackbox Party Game, <b>Fibbage</b>.",
@@ -44,7 +44,7 @@ var cards = [
     link: "https://fakeout.cf",
   },
   {
-    title: "assets",
+    title: "Matchpoint",
     img: "fa-user-friends",
     description:
       "An unofficial fan project of the popular Jackbox Party Game, <b>Quiplash</b>.",
