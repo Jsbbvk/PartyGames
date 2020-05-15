@@ -50,7 +50,7 @@ var cards = [
       "An unofficial fan project of the popular Jackbox Party Game, <b>Quiplash</b>.",
     players: "3",
     time: "endless",
-    link: "matchpoint.html",
+    link: "https://matchpoint.cf",
   },
 ];
 
