@@ -5,7 +5,7 @@ var cards = [
     description: "Players must work together to find a spy amongst them.",
     players: "3",
     time: "5 mins",
-    link: "spyfall.html",
+    link: "https://spyfall.cf",
   },
   {
     title: "Outcast",
@@ -14,7 +14,7 @@ var cards = [
       "Players must find a player who is an outcast. Similar to Spyfall.",
     players: "3",
     time: "5 mins",
-    link: "outcast.html",
+    link: "https://outcasted.cf",
   },
   {
     title: "Cardsforus",
@@ -23,7 +23,7 @@ var cards = [
       "An unofficial fan project of the popular card game, <b>Cards Against Humanity</b>.",
     players: "3",
     time: "endless",
-    link: "cardsforus.html",
+    link: "https://cardsforus.cf",
   },
   {
     title: "Caption This",
@@ -32,7 +32,7 @@ var cards = [
       "Players compete with each other to create the funniest caption to a meme.",
     players: "3",
     time: "endless",
-    link: "captionthis.html",
+    link: "https://captionthis.cf",
   },
   {
     title: "Fakeout",
@@ -41,7 +41,7 @@ var cards = [
       "An unofficial fan project of the popular Jackbox Party Game, <b>Fibbage</b>.",
     players: "3",
     time: "endless",
-    link: "fakeout.html",
+    link: "https://fakeout.cf",
   },
   {
     title: "Matchpoint",
