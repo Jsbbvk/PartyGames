@@ -157,7 +157,7 @@ function loadMemeImageOptions() {
     img.classList.add("img-fluid");
     img.classList.add("memeImageOption");
     img.classList.add("chooseableMemeOption");
-    img.src = "../assets/assets/img/memes/" + imgId + ".jpg";
+    img.src = "/assets/img/memes/" + imgId + ".jpg";
 
     d1.appendChild(img);
     document.getElementById("memeImageOptions").appendChild(d1);
