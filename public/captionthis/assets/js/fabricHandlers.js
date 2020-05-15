@@ -1,5 +1,5 @@
-var deleteIcon = "../assets/CaptionThis/img/delete.png";
-var editIcon = "../assets/CaptionThis/img/edit.png";
+var deleteIcon = "../assets/assets/img/delete.png";
+var editIcon = "../assets/assets/img/edit.png";
 
 var deleteImg = document.createElement("img");
 deleteImg.src = deleteIcon;

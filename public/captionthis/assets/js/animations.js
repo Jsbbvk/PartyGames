@@ -36,7 +36,7 @@ function makeBubbles() {
   for (var i = 0; i < parseInt(Math.random() * 3 + 1); i++) {
     var bubble = document.createElement("IMG");
     bubble.src =
-      "../assets/CaptionThis/img/memes/" +
+      "../assets/assets/img/memes/" +
       parseInt(Math.random() * numMemes + 1) +
       ".jpg";
     var ss = parseInt(

@@ -30,7 +30,7 @@ var memeCategories = [
 var numMemes = 1;
 
 const fs = require("fs");
-fs.readdir(__dirname + "/../../assets/CaptionThis/img/memes", (err, files) => {
+fs.readdir(__dirname + "/../../assets/assets/img/memes", (err, files) => {
   if (!err) numMemes = files.length;
 });
 

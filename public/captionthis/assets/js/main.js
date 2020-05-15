@@ -157,7 +157,7 @@ function loadMemeImageOptions() {
     img.classList.add("img-fluid");
     img.classList.add("memeImageOption");
     img.classList.add("chooseableMemeOption");
-    img.src = "../assets/CaptionThis/img/memes/" + imgId + ".jpg";
+    img.src = "../assets/assets/img/memes/" + imgId + ".jpg";
 
     d1.appendChild(img);
     document.getElementById("memeImageOptions").appendChild(d1);
@@ -208,7 +208,7 @@ function setSelectableMemeOptions() {
 function loadSelectedMemeImage() {
   turnOffBubbles();
   fabric.Image.fromURL(
-    "../assets/CaptionThis/img/memes/" + selectedMemeImage + ".jpg",
+    "../assets/assets/img/memes/" + selectedMemeImage + ".jpg",
     function (oImg) {
       oImg.set({
         left: isMobile ? 2 : 5,

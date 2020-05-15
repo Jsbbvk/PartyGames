@@ -11,7 +11,6 @@ var captionthis = require("./js/CaptionThis/index");
 var matchpoint = require("./js/Matchpoint/index");
 var fakeout = require("./js/Fakeout/index");
 
-app.use("/assets", express.static("assets"));
 app.use(express.static(path.join(__dirname, "/public")));
 
 io.on("connection", function (socket) {

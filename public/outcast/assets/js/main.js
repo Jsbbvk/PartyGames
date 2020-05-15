@@ -285,7 +285,7 @@ function displayPQA() {
     for (var p of pl) {
       if (p.answer == "Waiting...") allFinish = false;
       if (p.id == nameID) {
-        $("#playerRole").text(p.isOutcast ? "the Outcast" : "Not the Outcast");
+        $("#playerRole").text(p.isOutcast ? "the assets" : "Not the assets");
         sFirst +=
           '<div class="playerQA text-left">' +
           '<p class="pQ" style="background:#e5c690" id=\'pQ' +
@@ -438,7 +438,7 @@ function displayResults() {
               '<div class="playerQA text-left">' +
               '<p class="pQ" style="background:#e5c690" id=\'pQ' +
               p.id +
-              "'><span style='font-size:0.8em; color:red;'>Outcast</span><br>" +
+              "'><span style='font-size:0.8em; color:red;'>assets</span><br>" +
               p.name +
               (p.id == nameID ? " (You)" : "") +
               ": " +
@@ -465,7 +465,7 @@ function displayResults() {
               "</p>" +
               '<p class="pA" style="background:#e5c690" id=\'pA' +
               p.answerPartner.id +
-              "'><span style='font-size:0.8em; color:red;'>Outcast</span><br>" +
+              "'><span style='font-size:0.8em; color:red;'>assets</span><br>" +
               p.answerPartner.name +
               (p.answerPartner.id == nameID ? " (You)" : "") +
               ": " +
