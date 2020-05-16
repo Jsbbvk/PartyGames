@@ -85,27 +85,48 @@ canvas.on("object:selected", function (o) {
   console.log(canvas.getObjects().indexOf(activeObj));
 });
 
+function trimWords(str) {
+  let trimmedCaption = "";
+  let words = str.split(" ");
+  let sentenceLength = 0;
+
+  let wWords = [...words];
+  let longestLength = Math.max(...wWords.map((el) => el.length));
+
+  const maxTrimLength = Math.max(isMobile ? 15 : 20, longestLength);
+
+  for (let i in words) {
+    let word = words[i];
+    let nextWord = i == words.length - 1 ? "" : words[parseInt(i) + 1];
+    sentenceLength += word.length;
+
+    if (i != words.length - 1 && sentenceLength >= maxTrimLength) {
+      sentenceLength = 0;
+      trimmedCaption += word + "\n";
+      continue;
+    }
+    if (sentenceLength < maxTrimLength) {
+      if (nextWord.length + sentenceLength >= maxTrimLength) {
+        trimmedCaption += word + "\n";
+        sentenceLength = 0;
+        continue;
+      }
+      trimmedCaption += word;
+      trimmedCaption += " ";
+      sentenceLength++;
+      continue;
+    }
+    trimmedCaption += word;
+  }
+  return trimmedCaption;
+}
+
 function addText() {
   if ($("#captioninput").val() == "") return;
 
   let caption = $("#captioninput").val();
-  let trim = true;
-  let co = 10;
-  let i = co;
-  while (trim) {
-    let c = caption.charAt(i);
-    if (c == "") {
-      trim = false;
-      break;
-    }
-    let x = 0;
-    if (caption.charAt(i) == " ") x = 1;
-    caption = caption.slice(0, i) + "\n" + caption.slice(i + x);
-    i += co + 1;
-  }
-
   canvas.add(
-    new fabric.IText(caption, {
+    new fabric.IText(trimWords(caption), {
       fontFamily: "Arial",
       stroke: "#d8d8d8",
       strokeWidth: isMobile ? 1 : 1.25,
@@ -156,7 +177,7 @@ function loadMemeImageOptions() {
     img.classList.add("img-fluid");
     img.classList.add("memeImageOption");
     img.classList.add("chooseableMemeOption");
-    img.src = "/assets/img/memes/" + imgId + ".jpg";
+    img.src = "/memes/" + imgId + ".jpg";
 
     d1.appendChild(img);
     document.getElementById("memeImageOptions").appendChild(d1);
@@ -206,21 +227,18 @@ function setSelectableMemeOptions() {
 
 function loadSelectedMemeImage() {
   turnOffBubbles();
-  fabric.Image.fromURL(
-    "/assets/img/memes/" + selectedMemeImage + ".jpg",
-    function (oImg) {
-      oImg.set({
-        left: isMobile ? 2 : 5,
-        top: isMobile ? 2 : 5,
-        scaleY: canvas.height / (oImg.height + 20),
-        scaleX: canvas.width / (oImg.width + 20),
-        selectable: false,
-      });
-      oImg.setCoords();
-      canvas.clear();
-      canvas.add(oImg);
-    }
-  );
+  fabric.Image.fromURL("/memes/" + selectedMemeImage + ".jpg", function (oImg) {
+    oImg.set({
+      left: isMobile ? 2 : 5,
+      top: isMobile ? 2 : 5,
+      scaleY: canvas.height / (oImg.height + 20),
+      scaleX: canvas.width / (oImg.width + 20),
+      selectable: false,
+    });
+    oImg.setCoords();
+    canvas.clear();
+    canvas.add(oImg);
+  });
 }
 
 function displayMakingMeme() {

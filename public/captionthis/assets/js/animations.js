@@ -35,8 +35,7 @@ $(window).on("blur focus", function (e) {
 function makeBubbles() {
   for (var i = 0; i < parseInt(Math.random() * 3 + 1); i++) {
     var bubble = document.createElement("IMG");
-    bubble.src =
-      "/assets/img/memes/" + parseInt(Math.random() * numMemes + 1) + ".jpg";
+    bubble.src = "/memes/" + parseInt(Math.random() * numMemes + 1) + ".jpg";
     var ss = parseInt(
       Math.random() * (bubbleMaxSize - bubbleMinSize) + bubbleMinSize
     );

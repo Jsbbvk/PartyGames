@@ -12,6 +12,10 @@ var matchpoint = require("./js/Matchpoint/index");
 var fakeout = require("./js/Fakeout/index");
 
 app.use(express.static(path.join(__dirname, "/public")));
+app.use(
+  "/memes",
+  express.static(path.join(__dirname, "./js/CaptionThis/memes"))
+);
 
 io.on("connection", function (socket) {
   //console.log("a user connected");
