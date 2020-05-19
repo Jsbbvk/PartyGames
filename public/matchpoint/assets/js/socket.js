@@ -16,8 +16,11 @@ window.onpagehide = function () {
   if (!isLeaving) socket.emit("delete player", roomID, nameID);
 };
 
-socket.on("get room id", function (cb) {
-  cb && cb(roomID);
+socket.on("get room info", function (cb) {
+  cb &&
+    cb(roomID, nameID, "matchpoint", function (res) {
+      if (res) location.reload();
+    });
 });
 
 function leave(e) {

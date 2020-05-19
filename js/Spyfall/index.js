@@ -35,6 +35,22 @@ class Player {
   }
 }
 
+const reconnectUser = (roomid, id, io, socket, res) => {
+  if (
+    roomid == "" ||
+    id == null ||
+    roomDB[roomid] == null ||
+    roomDB[roomid].player[id] == null
+  ) {
+    res && res(true);
+    return;
+  }
+
+  socket.join(roomid);
+  socket.emit("display current view", roomDB[roomid].gamestart);
+  init(io, socket);
+};
+
 const init = (io, socket) => {
   function startG(roomid, mode, theme, timestamp, prevLocations) {
     if (roomDB[roomid] == null) return;
@@ -74,15 +90,6 @@ const init = (io, socket) => {
       io.to(roomid).emit("start game");
     });
   }
-
-  socket.emit("get room id", function (id) {
-    if (id != "") {
-      if (roomDB[id] != null) {
-        socket.join(id);
-        socket.emit("display current view", roomDB[id].gamestart);
-      }
-    }
-  });
 
   // socket.on("disconnect", function () {
   //   console.log("SPYFALL: user disconnected");
@@ -230,6 +237,7 @@ const init = (io, socket) => {
 
 module.exports = {
   init,
+  reconnectUser,
   roomDB,
   reset: function () {
     roomDB = {};

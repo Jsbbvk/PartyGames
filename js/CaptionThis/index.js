@@ -23,8 +23,9 @@ var memeCategories = [
   "Festive Holidays",
   "Cringe.",
   "Madlad",
-  "#Goals",
+  "#goals",
   "Flexin.",
+  "#relatable",
 ];
 
 var numMemes = 1;
@@ -80,20 +81,27 @@ class Player {
 
 var rooms = {};
 
-const init = (io, socket) => {
-  socket.emit("get room id", function (id) {
-    if (id != "") {
-      if (rooms[id] != null) {
-        socket.join(id);
-        socket.emit(
-          "display current view",
-          rooms[id].gamestart,
-          rooms[id].gamestate
-        );
-      }
-    }
-  });
+const reconnectUser = (roomid, id, io, socket, res) => {
+  if (
+    roomid == "" ||
+    id == null ||
+    rooms[roomid] == null ||
+    rooms[roomid].player[id] == null
+  ) {
+    res && res(true);
+    return;
+  }
 
+  socket.join(roomid);
+  socket.emit(
+    "display current view",
+    rooms[roomid].gamestart,
+    rooms[roomid].gamestate
+  );
+  init(io, socket);
+};
+
+const init = (io, socket) => {
   socket.on("get total number of memes", function (cb) {
     cb && cb(numMemes);
   });
@@ -419,6 +427,7 @@ const init = (io, socket) => {
 
 module.exports = {
   init,
+  reconnectUser,
   rooms,
   reset: function () {
     rooms = {};

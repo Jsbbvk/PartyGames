@@ -62,8 +62,11 @@ socket.on("display current view", function (gamestart) {
   }
 });
 
-socket.on("get room id", function (cb) {
-  cb && cb(roomID);
+socket.on("get room info", function (cb) {
+  cb &&
+    cb(roomID, nameID, "cardsforus", function (res) {
+      if (res) location.reload();
+    });
 });
 
 // window.onbeforeunload = function() {

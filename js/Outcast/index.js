@@ -68,16 +68,23 @@ class Player {
 
 var rooms = {};
 
-const init = (io, socket) => {
-  socket.emit("get room id", function (id) {
-    if (id != "") {
-      if (rooms[id] != null) {
-        socket.join(id);
-        socket.emit("display current view", rooms[id].gamestart);
-      }
-    }
-  });
+const reconnectUser = (roomid, id, io, socket, res) => {
+  if (
+    roomid == "" ||
+    id == null ||
+    rooms[roomid] == null ||
+    rooms[roomid].player[id] == null
+  ) {
+    res && res(true);
+    return;
+  }
 
+  socket.join(roomid);
+  socket.emit("display current view", rooms[roomid].gamestart);
+  init(io, socket);
+};
+
+const init = (io, socket) => {
   socket.on("join room", function (roomid, name, callback) {
     if (rooms[roomid] == null) {
       callback && callback("null", 0);
@@ -316,6 +323,7 @@ const init = (io, socket) => {
 
 module.exports = {
   init,
+  reconnectUser,
   rooms,
   reset: function () {
     rooms = {};

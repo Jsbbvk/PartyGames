@@ -17,6 +17,10 @@ app.get("/", function (req, res) {
 });
 
 io.on("connection", function (socket) {
+  socket.emit("get room info", function (roomid, id, gameName, res) {
+    captionthis.reconnectUser(roomid, id, io, socket, res);
+  });
+
   socket.on("init game", function (game) {
     if (game === "captionthis") {
       captionthis.init(io, socket);
@@ -24,6 +28,6 @@ io.on("connection", function (socket) {
   });
 });
 
-http.listen(8080, function () {
-  console.log("listening on *:8080");
+http.listen(8000, function () {
+  console.log("listening on *:8000");
 });

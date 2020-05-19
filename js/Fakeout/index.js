@@ -45,20 +45,27 @@ const BEST_LIE_RESULTS = 4;
 
 var rooms = {};
 
-const init = (io, socket) => {
-  socket.emit("get room id", function (id) {
-    if (id != "") {
-      if (rooms[id] != null) {
-        socket.join(id);
-        socket.emit(
-          "display current view",
-          rooms[id].gamestart,
-          rooms[id].gamestate
-        );
-      }
-    }
-  });
+const reconnectUser = (roomid, id, io, socket, res) => {
+  if (
+    roomid == "" ||
+    id == null ||
+    rooms[roomid] == null ||
+    rooms[roomid].player[id] == null
+  ) {
+    res && res(true);
+    return;
+  }
 
+  socket.join(roomid);
+  socket.emit(
+    "display current view",
+    rooms[roomid].gamestart,
+    rooms[roomid].gamestate
+  );
+  init(io, socket);
+};
+
+const init = (io, socket) => {
   function setupRoom(roomid) {
     var qq = questionManager.getRandomQuestion();
     rooms[roomid].question = qq.question;
@@ -319,6 +326,7 @@ const init = (io, socket) => {
 
 module.exports = {
   init,
+  reconnectUser,
   rooms,
   reset: function () {
     rooms = {};

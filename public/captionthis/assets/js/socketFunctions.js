@@ -3,8 +3,11 @@ const VOTING_MEME = 1;
 const RESULTS = 2;
 var isLeaving = false;
 
-socket.on("get room id", function (cb) {
-  cb && cb(roomID);
+socket.on("get room info", function (cb) {
+  cb &&
+    cb(roomID, nameID, "captionthis", function (res) {
+      if (res) location.reload();
+    });
 });
 
 window.onpagehide = function () {

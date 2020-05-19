@@ -17,8 +17,33 @@ app.use(
   express.static(path.join(__dirname, "./js/CaptionThis/memes"))
 );
 
+function getCorrespondingGame(gameName) {
+  switch (gameType) {
+    case "spyfall":
+      return spyfall;
+    case "cardsforus":
+      return cardsforus;
+    case "outcast":
+      return outcast;
+    case "captionthis":
+      return captionthis;
+    case "matchpoint":
+      return matchpoint;
+    case "fakeout":
+      return fakeout;
+    default:
+      return null;
+  }
+}
+
 io.on("connection", function (socket) {
   //console.log("a user connected");
+
+  socket.emit("get room info", function (roomid, id, gameName, res) {
+    let game = getCorrespondingGame(gameName);
+    if (game == null) res && res(true);
+    game.reconnectUser(roomid, id, io, socket, res);
+  });
 
   socket.on("reset rooms", function (pass) {
     if (pass !== "admin_reset") return;
@@ -30,27 +55,9 @@ io.on("connection", function (socket) {
     fakeout.reset();
   });
 
-  socket.on("init game", function (game) {
-    switch (game) {
-      case "spyfall":
-        spyfall.init(io, socket);
-        break;
-      case "cardsforus":
-        cardsforus.init(io, socket);
-        break;
-      case "outcast":
-        outcast.init(io, socket);
-        break;
-      case "captionthis":
-        captionthis.init(io, socket);
-        break;
-      case "matchpoint":
-        matchpoint.init(io, socket);
-        break;
-      case "fakeout":
-        fakeout.init(io, socket);
-        break;
-    }
+  socket.on("init game", function (gameName) {
+    let game = getCorrespondingGame(gameName);
+    game.init(io, socket);
   });
 });
 
