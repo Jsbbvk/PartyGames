@@ -1,6 +1,6 @@
 var roomID = "",
   nameID,
-  name;
+  name = "";
 var playWithTopic = true;
 
 $("#start-join-roomid").on({

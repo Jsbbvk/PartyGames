@@ -17,9 +17,10 @@ window.onpagehide = function () {
 };
 
 socket.on("get room info", function (cb) {
+  if (nameID == null) return;
   cb &&
     cb(roomID, nameID, "matchpoint", function (res) {
-      if (res && nameID == null) location.reload();
+      if (res && nameID) location.reload();
     });
 });
 

@@ -1,9 +1,11 @@
 var isLeaving = false;
 
 socket.on("get room info", function (cb) {
+  if (nameID == null) return;
+
   cb &&
     cb(roomID, nameID, "outcast", function (res) {
-      if (res && nameID == null) location.reload();
+      if (res) location.reload();
     });
 });
 

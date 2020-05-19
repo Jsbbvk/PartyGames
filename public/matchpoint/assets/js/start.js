@@ -1,6 +1,6 @@
 var roomID = "",
   nameID,
-  name;
+  name = "";
 
 $("#start-join-roomid").on({
   keydown: function (e) {

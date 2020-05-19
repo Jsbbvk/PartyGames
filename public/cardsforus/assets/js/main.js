@@ -1,7 +1,7 @@
 var selectedCID = -1;
 var cardczarCID = -1;
 var cardczarID = 0;
-var nameID = 1;
+var nameID;
 var playerName = "";
 var roomID = "";
 

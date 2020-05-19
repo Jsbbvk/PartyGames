@@ -5,7 +5,7 @@ var spyLocation = "";
 var spyLeader = "";
 
 var roomID = "";
-var nameID = ""; // this will be the player's number (each player is numbered based on when they join the game)
+var nameID; // this will be the player's number (each player is numbered based on when they join the game)
 
 const WAITING = 1;
 const PLAYING = 2;

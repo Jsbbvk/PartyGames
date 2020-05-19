@@ -12,7 +12,7 @@ const DISPLAYP = 2;
 var state = QUESTION;
 
 var roomID = "";
-var nameID = "";
+var nameID;
 var playerName = "";
 
 socket.on("display current view", function (gamestart) {
