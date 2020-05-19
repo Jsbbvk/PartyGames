@@ -11,7 +11,7 @@ socket.on("display current view", function (gamestart) {
 socket.on("get room info", function (cb) {
   cb &&
     cb(roomID, nameID, "spyfall", function (res) {
-      if (res) location.reload();
+      if (res && nameID == null) location.reload();
     });
 });
 

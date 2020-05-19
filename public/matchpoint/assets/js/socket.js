@@ -19,7 +19,7 @@ window.onpagehide = function () {
 socket.on("get room info", function (cb) {
   cb &&
     cb(roomID, nameID, "matchpoint", function (res) {
-      if (res) location.reload();
+      if (res && nameID == null) location.reload();
     });
 });
 
