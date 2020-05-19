@@ -18,7 +18,7 @@ app.use(
 );
 
 function getCorrespondingGame(gameName) {
-  switch (gameType) {
+  switch (gameName) {
     case "spyfall":
       return spyfall;
     case "cardsforus":
