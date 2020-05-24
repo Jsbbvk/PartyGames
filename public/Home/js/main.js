@@ -11,7 +11,7 @@ var cards = [
     title: "Outcast",
     img: "fa-hiking",
     description:
-      "Players must find a player who is an outcast. Similar to assets.",
+      "Players must find a player who is an outcast. Similar to Spyfall.",
     players: "3",
     time: "5 mins",
     link: "https://outcasted.cf",
