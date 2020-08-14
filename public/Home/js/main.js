@@ -2,7 +2,7 @@ var cards = [
   {
     title: "Spyfall",
     img: "fa-user-secret",
-    description: "Players must work together to find a spy amongst them.",
+    description: "Players must work together to find a spy amongst themselves.",
     players: "3",
     time: "5 mins",
     link: "https://spyfall.cf",
