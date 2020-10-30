@@ -54,7 +54,7 @@ class Room {
 
     this.memeid = [];
     this.prevMemeid = [];
-    this.numMemeOptions = 5; //number of meme templates players can choose from
+    this.numMemeOptions = 8; //number of meme templates players can choose from
     this.category = "";
     this.playWithTopic = true;
     this.prevCategories = [];
