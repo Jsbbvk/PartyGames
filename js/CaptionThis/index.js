@@ -26,6 +26,7 @@ var memeCategories = [
   "#goals",
   "Flexin.",
   "#relatable",
+  "Cultural Diversity 👌"
 ];
 
 var numMemes = 1;
