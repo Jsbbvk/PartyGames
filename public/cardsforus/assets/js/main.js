@@ -365,6 +365,10 @@ function setSkippableCards() {
       if (numSkips == 0) return;
       numSkips--;
 
+      playerHand = playerHand.filter(
+        (cc) => cc != $(this).parent().find(".aCard").attr("data-cid")
+      );
+
       if ($(this).parent().find(".aCard").attr("data-cid") == selectedCID) {
         $("#confirmCard").css("background-color", "white");
         $("#confirmText").text("Select Card");
