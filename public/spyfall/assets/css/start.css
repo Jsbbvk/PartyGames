@@ -62,7 +62,7 @@
 #link-to-repo {
   text-align: center;
   font-size: 15px;
-  margin-top: 15vh;
+  margin-top: 10vh;
 }
 
 #start-create-error, #start-join-error {
@@ -169,7 +169,7 @@
     }
 
     #link-to-repo {
-      margin-top: 30vh;
+      margin-top: 20vh;
     }
 
     #rule-display, #waiting-rule-display {
