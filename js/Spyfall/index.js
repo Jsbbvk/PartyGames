@@ -88,8 +88,8 @@ const init = (io, socket) => {
         roomDB[roomid].player[id].role = role;
       }
 
-      //add a 5% chance for everyone to be the spy
-      if (Math.random() <= 0.05) {
+      //add a 3% chance for everyone to be the spy
+      if (Math.random() <= 0.03) {
         for (let id in roomDB[roomid].player) {
           roomDB[roomid].player[id].role = "Spy";
         }
