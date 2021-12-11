@@ -1,19 +1,10 @@
 import React, { Component } from 'react'
 import { fabric } from 'fabric'
 import { v4 } from 'uuid'
-import ResizeObserver from 'resize-observer-polyfill'
 import { isMobile } from 'react-device-detect'
 import Handler from './handlers/handler'
-
-const defaultCanvasOptions = {
-  preserveObjectStacking: true,
-  width: 500,
-  height: 500,
-  selection: true,
-  defaultCursor: 'default',
-  backgroundColor: 'rgb(247, 249, 251)',
-  isFullscreen: false,
-}
+import { defaultCanvasOptions } from './constants'
+import Memes from '../../constants/memes'
 
 class Canvas extends Component {
   constructor() {
@@ -25,36 +16,26 @@ class Canvas extends Component {
     this.container = React.createRef(null)
     this.state = {
       id: v4(),
-      loaded: false,
     }
   }
 
-  // static defaultProps = {
-  //   id: v4(),
-  //   editable: true,
-  //   zoomEnabled: true,
-  //   minZoom: 25,
-  //   maxZoom: 300,
-  //   responsive: true,
-  //   width: 0,
-  //   height: 0,
-  // }
-
   componentDidMount() {
-    const {
-      canvasOption,
-      workareaOption = {},
-      width,
-      height,
-      ...other
-    } = this.props
+    const { canvasOption, ...other } = this.props
+
+    const { width, height, maxWidth, maxHeight, ...options } =
+      defaultCanvasOptions
+    const { innerHeight, innerWidth } = window
+    const ratio = Math.min(
+      (innerWidth * 0.8) / width,
+      (innerHeight * 0.8) / height
+    )
 
     const { id } = this.state
     const mergedCanvasOption = {
-      ...defaultCanvasOptions,
+      ...options,
       ...canvasOption,
-      // width,
-      // height,
+      width: Math.min(maxWidth, ratio * width),
+      height: Math.min(maxHeight, ratio * height),
     }
 
     // initiating "theme"
@@ -66,10 +47,6 @@ class Canvas extends Component {
     fabric.Object.prototype.transparentCorners = false
     fabric.Object.prototype.hasControls = !isMobile
     fabric.Group.prototype.hasControls = !isMobile
-    fabric.Object.prototype.originX = 'center'
-    fabric.Object.prototype.originY = 'center'
-    fabric.Group.prototype.originX = 'center'
-    fabric.Group.prototype.originY = 'center'
 
     this.canvas = new fabric.Canvas(`canvas_${id}`, mergedCanvasOption)
 
@@ -86,106 +63,37 @@ class Canvas extends Component {
       canvas: this.canvas,
       container: this.container.current,
       canvasOption: mergedCanvasOption,
-      workareaOption,
       isMobile,
       ...other,
     })
     ;(async () => {
-      await this.handler.setBackgroundImage('/images/memes/joke.jpg')
+      await this.handler.setBackgroundImage(`/images/memes/${Memes[0].src}`)
+      // this.handler.addText('hi there')
+      this.handler.addText('bye')
 
-      const fontOptions = {
-        left: isMobile ? 50 : 100,
-        top: isMobile ? 50 : 100,
-        fontSize: isMobile ? 30 : 40,
-      }
-      const impactOptions = {
-        fontFamily: 'Impact',
-        fill: '#ffffff',
-        stroke: '#000000',
-        strokeWidth: 1,
-        fontWeight: 'bold',
-      }
-      const arialOptions = {
-        fontFamily: 'Arial',
-        stroke: '#d8d8d8',
-        strokeWidth: isMobile ? 1 : 1.25,
-        fontWeight: 'bold',
-      }
-
-      this.handler.canvas.add(
-        new fabric.IText('HELLO', {
-          ...fontOptions,
-          ...impactOptions,
-        })
-      )
-
-      console.log(this.handler.canvas.toDataURL('png'))
+      // console.log(this.handler.exportAsDataURL())
 
       this.handler.canvas.renderAll()
-
-      this.handleLoad()
     })()
   }
 
-  componentDidUpdate(prevProps) {
-    // if (
-    //     this.props.width !== prevProps.width ||
-    //     this.props.height !== prevProps.height
-    // ) {
-    //     this.handler.eventHandler.resize(
-    //         this.props.width,
-    //         this.props.height
-    //     );
-    // }
-    // if (this.props.responsive !== prevProps.responsive) {
-    //   if (!this.props.responsive) {
-    //     this.destroyObserver()
-    //   } else {
-    //     this.destroyObserver()
-    //     this.createObserver()
-    //   }
-    // }
-  }
-
   componentWillUnmount() {
-    this.destroyObserver()
-    // this.handler.destroy()
+    this.handler.destroy()
   }
 
-  handleLoad() {
-    this.setState(
-      {
-        loaded: true,
-      },
-      () => {
-        const { onLoad } = this.props
-        if (onLoad) {
-          onLoad(this.handler, this.canvas)
-        }
-      }
-    )
-  }
-
-  destroyObserver() {
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect()
-      this.resizeObserver = null
-    }
-  }
-
-  createObserver() {
-    const { loaded } = this.state
-    this.resizeObserver = new ResizeObserver((entries) => {
-      const { width = 0, height = 0 } =
-        (entries[0] && entries[0].contentRect) || {}
-      // this.handler.eventHandler.resize(width, height);
-
-      if (!loaded) {
-        this.handleLoad()
-      }
-    })
-    this.resizeObserver.observe(this.container.current)
-  }
+  // handleLoad() {
+  //   this.setState(
+  //     {
+  //       loaded: true,
+  //     },
+  //     () => {
+  //       const { onLoad } = this.props
+  //       if (onLoad) {
+  //         onLoad(this.handler, this.canvas)
+  //       }
+  //     }
+  //   )
+  // }
 
   render() {
     const { style, classes, fullscreen } = this.props
@@ -195,7 +103,7 @@ class Canvas extends Component {
         ref={this.container}
         id={id}
         className="user-interactable"
-        style={{ ...style }}
+        style={{ display: 'flex', justifyContent: 'center', ...style }}
       >
         <canvas id={`canvas_${id}`} style={{ border: '1px solid black' }} />
       </div>

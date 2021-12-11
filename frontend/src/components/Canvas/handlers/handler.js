@@ -1,10 +1,11 @@
 import { fabric } from 'fabric'
 import to from 'await-to-js'
-
-const objectOptions = {
-  width: '500px',
-  height: '500px',
-}
+import {
+  objectOptions,
+  fontOptions,
+  impactOptions,
+  arialOptions,
+} from '../constants'
 
 export default class Handler {
   constructor(options) {
@@ -24,7 +25,17 @@ export default class Handler {
     this.isMobile = options?.isMobile
   }
 
-  // TODO on text select, bringForward()
+  addText(str) {
+    const text = new fabric.IText(str)
+    text.set({
+      ...fontOptions,
+      ...arialOptions,
+      left: (this.canvas.width - text.width) / 2,
+      top: (this.canvas.height - text.height) / 2,
+    })
+    this.canvas.add(text)
+    this.canvas.requestRenderAll()
+  }
 
   setBackgroundImage(src) {
     return new Promise((resolve) => {
@@ -32,8 +43,6 @@ export default class Handler {
       img.src = src
       img.onload = () => {
         const fabricImage = new fabric.Image(img)
-
-        // const {width, height} = fabricImage
 
         const ratio = Math.min(
           this.canvas.width / fabricImage.width,
@@ -46,8 +55,6 @@ export default class Handler {
         fabricImage.set({
           scaleX: ratio,
           scaleY: ratio,
-          left: this.canvas.width / 2,
-          top: this.canvas.height / 2,
           selectable: false,
         })
 
@@ -59,5 +66,14 @@ export default class Handler {
         resolve()
       }
     })
+  }
+
+  exportAsDataURL() {
+    return this.canvas.toDataURL('png')
+  }
+
+  destroy() {
+    this.canvas.renderAll()
+    // unbind all handlers
   }
 }
