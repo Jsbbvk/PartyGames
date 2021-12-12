@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { SceneManager } from './components/Managers'
-import { Main, Demo } from './pages'
+import { Main, Demo, Memes } from './pages'
 
 function App() {
   return (
@@ -9,6 +9,7 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route path="demo" element={<Demo />} />
         <Route path="scenes" element={<SceneManager />} />
+        <Route path="memes" element={<Memes />} />
       </Routes>
     </BrowserRouter>
   )

@@ -15,7 +15,7 @@ const SceneManager = () => {
     <>
       <SwitchTransition mode="out-in">
         <Fade key={currScene} in unmountOnExit>
-          <Container>{scenes[currScene]}</Container>
+          <Container sx={{ py: 5 }}>{scenes[currScene]}</Container>
         </Fade>
       </SwitchTransition>
     </>

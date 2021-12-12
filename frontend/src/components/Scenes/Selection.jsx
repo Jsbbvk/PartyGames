@@ -1,11 +1,15 @@
 import { Grid, Typography, Box, Stack, Paper } from '@mui/material'
 import { styled } from '@mui/material/styles'
+import { isMobile } from 'react-device-detect'
 import Memes from '../../constants/memes'
 
 const Img = styled('img')({})
 
 const ImagePaper = styled(Paper)({
   padding: 17,
+  '& > img': {
+    userSelect: 'none',
+  },
   '&:hover': {
     cursor: 'pointer',
     'box-shadow':
@@ -25,9 +29,7 @@ const Selection = () => {
                 <Img
                   src={`/images/memes/${Memes[i].src}`}
                   alt={Memes[i].name}
-                  width="400px"
-                  // height="400px"
-                  selected={i === 0}
+                  width={isMobile ? '300px' : '400px'}
                 />
               </ImagePaper>
             </Stack>
