@@ -67,7 +67,7 @@ class Canvas extends Component {
       ...other,
     })
     ;(async () => {
-      await this.handler.setBackgroundImage(`/images/memes/${Memes[0].src}`)
+      await this.handler.setBackgroundImage(`/images/memes/${Memes[87].src}`)
       // this.handler.addText('hi there')
       this.handler.addText('bye')
 
