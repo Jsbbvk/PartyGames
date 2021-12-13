@@ -1,3 +1,5 @@
+import { partition } from 'lodash'
+
 class Meme {
   constructor(src, name) {
     this.src = src
@@ -252,4 +254,8 @@ export default [
   new Meme('229.jpg', 'Ew, I Stepped In Shit'),
   new Meme('230.jpg', 'Upgrade Button'),
   new Meme('231.jpg', 'Daily Struggle (Alternate)'),
+  new Meme('232.jpg', 'Facepalm'),
+  new Meme('233.jpg', 'Fake Xbox 360 Achievement'),
+  new Meme('234.jpg', 'Amateurs'),
+  new Meme('234.jpg', "That's the Neat Part, You Don't"),
 ]
