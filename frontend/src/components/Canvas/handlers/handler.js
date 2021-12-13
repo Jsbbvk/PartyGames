@@ -39,6 +39,7 @@ export default class Handler {
 
   setBackgroundImage(src) {
     return new Promise((resolve) => {
+      // TODO add a max Height
       const img = new Image()
       img.src = src
       img.onload = () => {
