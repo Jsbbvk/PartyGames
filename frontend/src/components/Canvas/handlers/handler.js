@@ -34,6 +34,7 @@ export default class Handler {
       top: (this.canvas.height - text.height) / 2,
     })
     this.canvas.add(text)
+    // text.enterEditing()
     this.canvas.requestRenderAll()
   }
 

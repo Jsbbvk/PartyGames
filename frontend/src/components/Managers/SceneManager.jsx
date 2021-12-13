@@ -1,23 +1,36 @@
 import { Fade, Box, Container } from '@mui/material'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, createContext, useContext } from 'react'
 import { SwitchTransition } from 'react-transition-group'
 import { Voting, Caption, Selection } from '../Scenes'
+import { SCENES } from '../../constants'
+
+const SceneContext = createContext()
+export const useSceneContext = () => useContext(SceneContext)
 
 const SceneManager = () => {
   const scenes = {
-    selection: <Selection />,
-    caption: <Caption />,
-    voting: <Voting />,
+    [SCENES.selection]: <Selection />,
+    [SCENES.caption]: <Caption />,
+    [SCENES.voting]: <Voting />,
   }
-  const [currScene, setCurrScene] = useState('selection')
+
+  const [currScene, setCurrScene] = useState(SCENES.selection)
+  const [sceneProps, setSceneProps] = useState({})
+
+  const switchToScene = (scene, props) => {
+    setCurrScene(scene)
+    setSceneProps(props)
+  }
 
   return (
     <>
-      <SwitchTransition mode="out-in">
-        <Fade key={currScene} in unmountOnExit>
-          <Container sx={{ py: 5 }}>{scenes[currScene]}</Container>
-        </Fade>
-      </SwitchTransition>
+      <SceneContext.Provider value={{ switchToScene, sceneProps }}>
+        <SwitchTransition mode="out-in">
+          <Fade key={currScene} in unmountOnExit>
+            <Container sx={{ py: 5 }}>{scenes[currScene]}</Container>
+          </Fade>
+        </SwitchTransition>
+      </SceneContext.Provider>
     </>
   )
 }

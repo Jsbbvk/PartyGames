@@ -66,34 +66,28 @@ class Canvas extends Component {
       isMobile,
       ...other,
     })
-    ;(async () => {
-      await this.handler.setBackgroundImage(`/images/memes/${Memes[87].src}`)
-      // this.handler.addText('hi there')
-      this.handler.addText('bye')
+    // ;(async () => {
+    //   await this.handler.setBackgroundImage(`/images/memes/${Memes[87].src}`)
+    //   this.handler.addText('hi there')
+    //   this.handler.addText('bye')
 
-      // console.log(this.handler.exportAsDataURL())
+    //   console.log(this.handler.exportAsDataURL())
 
-      this.handler.canvas.renderAll()
-    })()
+    //   this.handler.canvas.renderAll()
+    // })()
   }
 
   componentWillUnmount() {
     this.handler.destroy()
   }
 
-  // handleLoad() {
-  //   this.setState(
-  //     {
-  //       loaded: true,
-  //     },
-  //     () => {
-  //       const { onLoad } = this.props
-  //       if (onLoad) {
-  //         onLoad(this.handler, this.canvas)
-  //       }
-  //     }
-  //   )
-  // }
+  async setBackgroundImage(src, name) {
+    await this.handler.setBackgroundImage(`/images/memes/${src}`)
+  }
+
+  addText(text) {
+    this.handler.addText(text || '')
+  }
 
   render() {
     const { style, classes, fullscreen } = this.props
