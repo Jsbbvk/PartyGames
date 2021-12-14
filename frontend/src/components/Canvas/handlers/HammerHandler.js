@@ -89,7 +89,7 @@ class HammerHandler {
         lockMovementY: false,
         editable: true,
       })
-    }, 150)
+    }, 230)
 
     this.scale.adjustScaleX = this.scale.currentScaleX
     this.scale.adjustScaleY = this.scale.currentScaleY
