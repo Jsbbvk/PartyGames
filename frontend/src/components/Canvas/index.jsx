@@ -101,18 +101,17 @@ class Canvas extends Component {
     const { style } = this.props
     const { id } = this.state
     return (
-      <>
-        <div
-          ref={this.container}
-          id={id}
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
-          <canvas id={`canvas_${id}`} style={{ border: '1px solid black' }} />
-        </div>
-      </>
+      <div
+        ref={this.container}
+        id={id}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          touchAction: 'pan-y pan-x !important',
+        }}
+      >
+        <canvas id={`canvas_${id}`} style={{ border: '1px solid black' }} />
+      </div>
     )
   }
 }

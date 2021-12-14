@@ -14,9 +14,10 @@ export default class Handler {
 
   initialize(options) {
     this.initOptions(options)
-    // this.hammerHandler = new HammerHandler(this)
+    this.hammerHandler = new HammerHandler(this)
 
     this.canvas.on('text:editing:entered', this.handleScroll)
+    this.canvas.on('selection:cleared', this.handleTextExit)
   }
 
   initOptions(options) {
@@ -26,6 +27,12 @@ export default class Handler {
     this.width = options?.width
     this.height = options?.height
     this.isMobile = options?.isMobile
+  }
+
+  handleTextExit = (e) => {
+    if (e.deselected[0]?.text === '') {
+      this.canvas.remove(e.deselected[0])
+    }
   }
 
   handleScroll = (e) => {
@@ -53,7 +60,7 @@ export default class Handler {
 
     const y = e.target.hiddenTextarea.getBoundingClientRect().top
     const height = window.innerHeight
-    if (y > height / 2)
+    if (this.isMobile && y > height / 2)
       doScrolling(Math.max(0, y + window.scrollY - height / 4), 250)
   }
 
@@ -72,9 +79,12 @@ export default class Handler {
     this.canvas.add(text)
     text.enterEditing()
     text.selectAll()
-
     this.canvas.setActiveObject(text)
     this.canvas.requestRenderAll()
+
+    // text.hiddenTextarea.addEventListener('blur', () => {
+    //   text.text = 'out'
+    // })
   }
 
   setBackgroundImage(src) {
@@ -118,6 +128,7 @@ export default class Handler {
     this.canvas.renderAll()
     // unbind all handlers
     this.canvas.off('text:editing:entered', this.handleScroll)
+    this.canvas.off('text:editing:exited', this.handleTextExit)
   }
 
   setByPartial(obj, option) {

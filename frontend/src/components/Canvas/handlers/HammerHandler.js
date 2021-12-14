@@ -9,11 +9,14 @@ class HammerHandler {
       currentScaleX: 0,
       currentScaleY: 0,
     }
+    this.rotate = { adjustRotation: 0, currentRotation: 0 }
     if (this.handler.isMobile) this.initHammer()
   }
 
   initHammer() {
-    this.hammer = new Hammer(this.handler.container)
+    this.hammer = new Hammer(this.handler.container, {
+      touchAction: 'pan-y pan-x',
+    })
     this.hammer.get('pinch').set({ enable: true })
     this.hammer.get('rotate').set({ enable: true })
     const pinch = this.hammer.get('pinch')
@@ -25,15 +28,14 @@ class HammerHandler {
     this.hammer.on('pinchstart rotatestart', this.onPinchStart)
     this.hammer.on('pinchend rotateend', this.onPinchEnd)
     this.hammer.on('pinchmove rotatemove', this.onPinchMove)
-    this.hammer.on('panstart', () => console.log('pan'))
   }
 
   onPinchStart = (e) => {
-    console.log('pinch start')
     const object = this.handler.canvas.getActiveObject()
     if (!object || (object.type === 'i-text' && object.isEditing)) return
     this.scale.adjustScaleX = object.scaleX
     this.scale.adjustScaleY = object.scaleY
+    this.rotate.adjustRotation -= e.rotation
 
     this.handler.setByPartial(object, {
       lockMovementX: true,
@@ -45,6 +47,7 @@ class HammerHandler {
   onPinchMove = (e) => {
     this.scale.currentScaleX = this.scale.adjustScaleX * e.scale
     this.scale.currentScaleY = this.scale.adjustScaleY * e.scale
+    this.rotate.currentRotation = this.rotate.adjustRotation + e.rotation
 
     const object = this.handler.canvas.getActiveObject()
     if (!object || (object.type === 'i-text' && object.isEditing)) return
@@ -54,18 +57,26 @@ class HammerHandler {
       this.scale.currentScaleX = object.scaleX
     }
 
-    console.log(
-      this.scale.currentScaleX,
-      this.scale.currentScaleY,
-      this.scale?.adjustScaleX,
-      this.scale?.adjustScaleX,
-      e.scale
-    )
+    if (
+      Math.abs(this.rotate.currentRotation % 90) <= 3 ||
+      Math.abs(this.rotate.currentRotation % 90) >= 90 - 3
+    ) {
+      this.rotate.currentRotation =
+        Math.round(
+          (this.rotate.currentRotation +
+            Math.sign(this.rotate.currentRotation) * 3) /
+            90
+        ) * 90
+    }
 
-    this.handler.setByPartial(object, {
+    object.set({
       scaleX: this.scale.currentScaleX,
       scaleY: this.scale.currentScaleY,
     })
+    object.rotate(this.rotate.currentRotation)
+    object.setCoords()
+
+    this.handler.canvas.renderAll()
   }
 
   onPinchEnd = (e) => {
@@ -78,10 +89,11 @@ class HammerHandler {
         lockMovementY: false,
         editable: true,
       })
-    }, 250)
+    }, 150)
 
     this.scale.adjustScaleX = this.scale.currentScaleX
     this.scale.adjustScaleY = this.scale.currentScaleY
+    this.rotate.adjustRotation = this.rotate.currentRotation
   }
 }
 

@@ -15,12 +15,9 @@ export const impactOptions = {
 
 export const arialOptions = {
   fontFamily: 'Arial',
-  // stroke: '#d8d8d8',
   fill: '#ffffff',
   stroke: '#000000',
-  strokeWidth: 2.5,
-  // strokeWidth: isMobile ? 1 : 1.25,
-  // charSpacing: 0,
+  strokeWidth: 2,
   fontWeight: 'bold',
 }
 
