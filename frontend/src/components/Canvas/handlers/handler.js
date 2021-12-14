@@ -1,11 +1,11 @@
 import { fabric } from 'fabric'
-import to from 'await-to-js'
 import {
   objectOptions,
   fontOptions,
   impactOptions,
   arialOptions,
 } from '../constants'
+import HammerHandler from './HammerHandler'
 
 export default class Handler {
   constructor(options) {
@@ -14,6 +14,9 @@ export default class Handler {
 
   initialize(options) {
     this.initOptions(options)
+    // this.hammerHandler = new HammerHandler(this)
+
+    this.canvas.on('text:editing:entered', this.handleScroll)
   }
 
   initOptions(options) {
@@ -25,16 +28,52 @@ export default class Handler {
     this.isMobile = options?.isMobile
   }
 
+  handleScroll = (e) => {
+    function doScrolling(elementY, duration) {
+      const startingY = window.pageYOffset
+      const diff = elementY - startingY
+      let start
+
+      // Bootstrap our animation - it will get called right before next frame shall be rendered.
+      window.requestAnimationFrame(function step(timestamp) {
+        if (!start) start = timestamp
+        // Elapsed milliseconds since start of scrolling.
+        const time = timestamp - start
+        // Get percent of completion in range [0, 1].
+        const percent = Math.min(time / duration, 1)
+
+        window.scrollTo(0, startingY + diff * percent)
+
+        // Proceed with animation as long as we wanted it to.
+        if (time < duration) {
+          window.requestAnimationFrame(step)
+        }
+      })
+    }
+
+    const y = e.target.hiddenTextarea.getBoundingClientRect().top
+    const height = window.innerHeight
+    if (y > height / 2)
+      doScrolling(Math.max(0, y + window.scrollY - height / 4), 250)
+  }
+
   addText(str) {
     const text = new fabric.IText(str)
     text.set({
       ...fontOptions,
       ...arialOptions,
-      left: (this.canvas.width - text.width) / 2,
-      top: (this.canvas.height - text.height) / 2,
+      left: this.canvas.width / 2,
+      top: this.canvas.height / 6,
+      originX: 'center',
+      originY: 'center',
+      cursorColor: 'black',
     })
+
     this.canvas.add(text)
-    // text.enterEditing()
+    text.enterEditing()
+    text.selectAll()
+
+    this.canvas.setActiveObject(text)
     this.canvas.requestRenderAll()
   }
 
@@ -48,12 +87,13 @@ export default class Handler {
 
         const ratio = Math.min(
           this.canvas.width / fabricImage.width,
-          this.canvas.height / fabricImage.height
+          (window.innerHeight * 0.65) / fabricImage.height
         )
         this.canvas.setDimensions({
           width: fabricImage.width * ratio,
           height: fabricImage.height * ratio,
         })
+
         fabricImage.set({
           scaleX: ratio,
           scaleY: ratio,
@@ -77,5 +117,15 @@ export default class Handler {
   destroy() {
     this.canvas.renderAll()
     // unbind all handlers
+    this.canvas.off('text:editing:entered', this.handleScroll)
+  }
+
+  setByPartial(obj, option) {
+    if (!obj) {
+      return
+    }
+    obj.set(option)
+    obj.setCoords()
+    this.canvas.renderAll()
   }
 }

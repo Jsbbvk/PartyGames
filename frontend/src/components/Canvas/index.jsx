@@ -26,8 +26,8 @@ class Canvas extends Component {
       defaultCanvasOptions
     const { innerHeight, innerWidth } = window
     const ratio = Math.min(
-      (innerWidth * 0.8) / width,
-      (innerHeight * 0.8) / height
+      (innerWidth * 0.9) / width,
+      (innerHeight * 0.9) / height
     )
 
     const { id } = this.state
@@ -36,6 +36,7 @@ class Canvas extends Component {
       ...canvasOption,
       width: Math.min(maxWidth, ratio * width),
       height: Math.min(maxHeight, ratio * height),
+      allowTouchScrolling: true,
     }
 
     // initiating "theme"
@@ -47,6 +48,22 @@ class Canvas extends Component {
     fabric.Object.prototype.transparentCorners = false
     fabric.Object.prototype.hasControls = !isMobile
     fabric.Group.prototype.hasControls = !isMobile
+    /* eslint-disable */
+    ;(function () {
+      var defaultOnTouchStartHandler = fabric.Canvas.prototype._onTouchStart
+      fabric.util.object.extend(fabric.Canvas.prototype, {
+        _onTouchStart: function (e) {
+          var target = this.findTarget(e)
+
+          if (this.allowTouchScrolling && !target && !this.isDrawingMode) {
+            return
+          }
+
+          defaultOnTouchStartHandler.call(this, e)
+        },
+      })
+    })()
+    // /* eslint-enable */
 
     this.canvas = new fabric.Canvas(`canvas_${id}`, mergedCanvasOption)
 
@@ -66,15 +83,6 @@ class Canvas extends Component {
       isMobile,
       ...other,
     })
-    // ;(async () => {
-    //   await this.handler.setBackgroundImage(`/images/memes/${Memes[87].src}`)
-    //   this.handler.addText('hi there')
-    //   this.handler.addText('bye')
-
-    //   console.log(this.handler.exportAsDataURL())
-
-    //   this.handler.canvas.renderAll()
-    // })()
   }
 
   componentWillUnmount() {
@@ -90,17 +98,21 @@ class Canvas extends Component {
   }
 
   render() {
-    const { style, classes, fullscreen } = this.props
+    const { style } = this.props
     const { id } = this.state
     return (
-      <div
-        ref={this.container}
-        id={id}
-        className="user-interactable"
-        style={{ display: 'flex', justifyContent: 'center', ...style }}
-      >
-        <canvas id={`canvas_${id}`} style={{ border: '1px solid black' }} />
-      </div>
+      <>
+        <div
+          ref={this.container}
+          id={id}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <canvas id={`canvas_${id}`} style={{ border: '1px solid black' }} />
+        </div>
+      </>
     )
   }
 }

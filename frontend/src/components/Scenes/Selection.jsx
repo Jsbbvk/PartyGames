@@ -19,10 +19,12 @@ const StyledBox = styled(Box)(({ selected }) => ({
   flexDirection: 'column',
 
   '& img': {
+    willChange: 'opacity',
     userSelect: 'none',
     border: '2px solid #dbdbdb',
     transition:
       'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, opacity 300ms',
+
     boxShadow: selected
       ? 'rgb(0 0 0 / 20%) 0px 7px 8px -4px, rgb(0 0 0 / 14%) 0px 12px 17px 2px, rgb(0 0 0 / 12%) 0px 5px 22px 4px'
       : 'none',
@@ -77,7 +79,6 @@ const Selection = () => {
     let restMemes = shuffledMemesList.slice(NUMBER_OF_MEME_CHOICES)
 
     if (memes.length < NUMBER_OF_MEME_CHOICES) {
-      console.log(memes.length)
       // add more memes
       const memesList = shuffle(
         MemesList.flatMap(({ src }) => (memes.includes(src) ? [] : [src]))

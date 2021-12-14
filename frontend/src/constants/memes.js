@@ -51,7 +51,7 @@ export default [
   new Meme('41.jpg', 'Ralph In Danger'),
   new Meme('42.jpg', "Carefully He's a Hero"),
   new Meme('43.jpg', 'Flex Tape'),
-  new Meme('44.jpg', 'I Can See You Bitch'),
+  new Meme('44.jpg', 'I Can See You, Bitch'),
   new Meme('45.jpg', 'The Office Standoff'),
   new Meme('46.jpg', 'Squidward Looking Out the Window'),
   new Meme('47.jpg', 'Jazz Music Stops'),

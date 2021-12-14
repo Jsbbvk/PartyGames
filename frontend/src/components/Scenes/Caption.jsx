@@ -21,11 +21,11 @@ const Caption = () => {
   }, [])
 
   const onAddText = () => {
-    canvasRef.current.addText('Text')
+    canvasRef.current.addText('text')
   }
 
   return (
-    <Stack>
+    <Stack pb={20}>
       <Box>
         <button type="button" onClick={() => switchToScene('selection')}>
           Back to meme select
