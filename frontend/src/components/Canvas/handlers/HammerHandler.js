@@ -95,6 +95,11 @@ class HammerHandler {
     this.scale.adjustScaleY = this.scale.currentScaleY
     this.rotate.adjustRotation = this.rotate.currentRotation
   }
+
+  destroy = () => {
+    this.hammer.stop(true)
+    this.hammer.destroy()
+  }
 }
 
 export default HammerHandler

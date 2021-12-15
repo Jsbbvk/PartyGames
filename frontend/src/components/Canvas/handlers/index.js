@@ -1,1 +1,2 @@
-// export { default as Handler } from './handler'
+export { default as HammerHandler } from './HammerHandler'
+export { default as EventHandler } from './EventHandler'

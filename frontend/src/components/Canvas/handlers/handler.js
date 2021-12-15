@@ -5,22 +5,19 @@ import {
   impactOptions,
   arialOptions,
 } from '../constants'
-import HammerHandler from './HammerHandler'
+import { EventHandler, HammerHandler } from '.'
 
 export default class Handler {
   constructor(options) {
     this.initialize(options)
   }
 
-  initialize(options) {
+  initialize = (options) => {
     this.initOptions(options)
-    this.hammerHandler = new HammerHandler(this)
-
-    this.canvas.on('text:editing:entered', this.handleScroll)
-    this.canvas.on('selection:cleared', this.handleTextExit)
+    this.initHandlers()
   }
 
-  initOptions(options) {
+  initOptions = (options) => {
     this.id = options?.id
     this.canvas = options?.canvas
     this.container = options?.container
@@ -29,39 +26,29 @@ export default class Handler {
     this.isMobile = options?.isMobile
   }
 
-  handleTextExit = (e) => {
-    if (e.deselected[0]?.text === '') {
-      this.canvas.remove(e.deselected[0])
-    }
+  initHandlers = () => {
+    this.hammerHandler = new HammerHandler(this)
+    this.eventHandler = new EventHandler(this)
   }
 
-  handleScroll = (e) => {
-    function doScrolling(elementY, duration) {
-      const startingY = window.pageYOffset
-      const diff = elementY - startingY
-      let start
+  remove = (target) => {
+    const activeObject = target || this.canvas.getActiveObject()
+    if (
+      !activeObject ||
+      (activeObject.type === 'i-text' && activeObject.isEditing)
+    )
+      return
 
-      // Bootstrap our animation - it will get called right before next frame shall be rendered.
-      window.requestAnimationFrame(function step(timestamp) {
-        if (!start) start = timestamp
-        // Elapsed milliseconds since start of scrolling.
-        const time = timestamp - start
-        // Get percent of completion in range [0, 1].
-        const percent = Math.min(time / duration, 1)
-
-        window.scrollTo(0, startingY + diff * percent)
-
-        // Proceed with animation as long as we wanted it to.
-        if (time < duration) {
-          window.requestAnimationFrame(step)
-        }
+    if (activeObject.type !== 'activeSelection') {
+      this.canvas.discardActiveObject()
+      this.canvas.remove(activeObject)
+    } else {
+      const { _objects: activeObjects } = activeObject
+      this.canvas.discardActiveObject()
+      activeObjects.forEach((obj) => {
+        this.canvas.remove(obj)
       })
     }
-
-    const y = e.target.hiddenTextarea.getBoundingClientRect().top
-    const height = window.innerHeight
-    if (this.isMobile && y > height / 2)
-      doScrolling(Math.max(0, y + window.scrollY - height / 4), 250)
   }
 
   addText(str) {
@@ -124,13 +111,6 @@ export default class Handler {
     return this.canvas.toDataURL('png')
   }
 
-  destroy() {
-    this.canvas.renderAll()
-    // unbind all handlers
-    this.canvas.off('text:editing:entered', this.handleScroll)
-    this.canvas.off('text:editing:exited', this.handleTextExit)
-  }
-
   setByPartial(obj, option) {
     if (!obj) {
       return
@@ -138,5 +118,10 @@ export default class Handler {
     obj.set(option)
     obj.setCoords()
     this.canvas.renderAll()
+  }
+
+  destroy() {
+    this.hammerHandler.destroy()
+    this.eventHandler.destroy()
   }
 }

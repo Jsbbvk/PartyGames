@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { fabric } from 'fabric'
 import { v4 } from 'uuid'
 import { isMobile } from 'react-device-detect'
-import Handler from './handlers/handler'
+import Handler from './handlers/Handler'
 import { defaultCanvasOptions } from './constants'
 import Memes from '../../constants/memes'
 
@@ -36,7 +36,7 @@ class Canvas extends Component {
       ...canvasOption,
       width: Math.min(maxWidth, ratio * width),
       height: Math.min(maxHeight, ratio * height),
-      allowTouchScrolling: true,
+      allowTouchScrolling: isMobile,
     }
 
     // initiating "theme"
@@ -50,6 +50,7 @@ class Canvas extends Component {
     fabric.Group.prototype.hasControls = !isMobile
     /* eslint-disable */
     ;(function () {
+      if (!isMobile) return
       var defaultOnTouchStartHandler = fabric.Canvas.prototype._onTouchStart
       fabric.util.object.extend(fabric.Canvas.prototype, {
         _onTouchStart: function (e) {

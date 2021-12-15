@@ -1,10 +1,11 @@
-import { Typography, Box, Stack, Button } from '@mui/material'
+import { Typography, Box, Stack, Button, Fab } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { useContext, useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import shuffle from 'lodash/shuffle'
 import { useCookies } from 'react-cookie'
 import LZString from 'lz-string'
+import { grey, orange } from '@mui/material/colors'
 import MemesList from '../../constants/memes'
 import { NUMBER_OF_MEME_CHOICES, SCENES } from '../../constants'
 import { useSceneContext } from '../Managers'
@@ -39,23 +40,24 @@ const StyledBox = styled(Box)(({ selected }) => ({
   },
 
   '& .caption-button': {
-    transition: 'opacity 300ms, background-color 250ms',
+    transition: 'opacity 300ms, background-color 250ms, transform 100ms',
     opacity: selected ? 1 : 0,
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    backgroundColor: '#f3c957',
+    backgroundColor: '#363636',
+    boxShadow: 'none',
     textTransform: 'none',
-    padding: '8px 18px',
-    color: 'rgba(0, 0, 0, 0.87)',
-    // width: 85,
-    // height: 85,
-    // borderRadius: '50%',
-    boxShadow: '3px 3px 0 0 rgba(0, 0, 0, 0.14)',
-
+    // padding: 40,
+    color: '#ffffffDE',
     '&:hover': {
-      backgroundColor: '#fdd25b',
+      background: grey[900],
+      boxShadow: 'none',
+    },
+    '&:active': {
+      boxShadow: 'none',
+      transform: 'translate(-50%, -50%) scale(.96)',
     },
   },
 }))
@@ -137,14 +139,14 @@ const Selection = () => {
                   onClick={() => onMemeSelect({ src, name })}
                 />
               </Box>
-              <Button
-                variant="contained"
+              <Fab
+                variant="extended"
                 className="caption-button"
                 disableRipple
                 onClick={() => onMemeChoiceConfirm(src)}
               >
                 Caption This!
-              </Button>
+              </Fab>
             </StyledBox>
           ))}
         </Stack>

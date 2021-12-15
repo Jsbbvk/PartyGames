@@ -19,7 +19,7 @@ const SceneManager = () => {
 
   const switchToScene = (scene, props) => {
     setCurrScene(scene)
-    setSceneProps(props)
+    if (props) setSceneProps(props)
   }
 
   return (
