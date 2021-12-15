@@ -4,8 +4,10 @@ import {
   fontOptions,
   impactOptions,
   arialOptions,
+  defaultCanvasOptions,
+  TRANSACTION_TYPES,
 } from '../constants'
-import { EventHandler, HammerHandler } from '.'
+import { EventHandler, HammerHandler, TransactionHandler } from '.'
 
 export default class Handler {
   constructor(options) {
@@ -15,6 +17,7 @@ export default class Handler {
   initialize = (options) => {
     this.initOptions(options)
     this.initHandlers()
+    this.initCallback(options)
   }
 
   initOptions = (options) => {
@@ -29,9 +32,24 @@ export default class Handler {
   initHandlers = () => {
     this.hammerHandler = new HammerHandler(this)
     this.eventHandler = new EventHandler(this)
+    this.transactionHandler = new TransactionHandler(this)
   }
 
-  remove = (target) => {
+  initCallback = (options) => {
+    this.onTransaction = options.onTransaction
+    this.onSelect = options.onSelect
+  }
+
+  clear = () => {
+    this.canvas.discardActiveObject()
+    this.canvas.getObjects().forEach((obj) => {
+      if (obj.id === 'workarea') return
+      this.canvas.remove(obj)
+    })
+    this.canvas.renderAll()
+  }
+
+  remove = (target, save = true) => {
     const activeObject = target || this.canvas.getActiveObject()
     if (
       !activeObject ||
@@ -49,9 +67,16 @@ export default class Handler {
         this.canvas.remove(obj)
       })
     }
+
+    if (save && !this.transactionHandler.active)
+      this.transactionHandler.save(TRANSACTION_TYPES.remove)
   }
 
-  addText(str) {
+  undo = () => this.transactionHandler.undo()
+
+  redo = () => this.transactionHandler.redo()
+
+  addText = (str) => {
     const text = new fabric.IText(str)
     text.set({
       ...fontOptions,
@@ -61,6 +86,7 @@ export default class Handler {
       originX: 'center',
       originY: 'center',
       cursorColor: 'black',
+      initial: true,
     })
 
     this.canvas.add(text)
@@ -69,14 +95,11 @@ export default class Handler {
     this.canvas.setActiveObject(text)
     this.canvas.requestRenderAll()
 
-    // text.hiddenTextarea.addEventListener('blur', () => {
-    //   text.text = 'out'
-    // })
+    if (!this.transactionHandler.active) this.transactionHandler.save('add')
   }
 
   setBackgroundImage(src) {
     return new Promise((resolve) => {
-      // TODO add a max Height
       const img = new Image()
       img.src = src
       img.onload = () => {
@@ -84,8 +107,9 @@ export default class Handler {
 
         const ratio = Math.min(
           this.canvas.width / fabricImage.width,
-          (window.innerHeight * 0.65) / fabricImage.height
+          window.innerHeight / defaultCanvasOptions.height // set max height
         )
+
         this.canvas.setDimensions({
           width: fabricImage.width * ratio,
           height: fabricImage.height * ratio,

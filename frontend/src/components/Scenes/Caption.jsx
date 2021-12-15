@@ -14,9 +14,9 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { green, grey, orange, red } from '@mui/material/colors'
 import InfoIcon from '@mui/icons-material/Info'
-import Canvas from '../Canvas'
 import { SwitchFade } from '../Transitions'
 import { useSceneContext } from '../Managers'
+import CanvasWorkarea from '../Canvas'
 
 const DarkTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -72,12 +72,8 @@ const Caption = () => {
   const [openMemeExampleModal, setOpenMemeExampleModal] = useState(false)
 
   useEffect(() => {
-    canvasRef.current.setBackgroundImage(sceneProps?.src)
+    // canvasRef.current.setBackgroundImage()
   }, [])
-
-  const onAddText = () => {
-    canvasRef.current.addText('text')
-  }
 
   const handleOnSubmit = () => {
     setSubmittedMeme((p) => !p)
@@ -129,16 +125,10 @@ const Caption = () => {
         </Typography>
       </Box>
 
-      {/* TODO add in a toolbar with add text, delete text, undo/redo */}
-      <Stack alignItems="center">
-        <StyledFab variant="extended" disableRipple onClick={onAddText}>
-          Add Caption
-        </StyledFab>
-      </Stack>
-
-      <Box my={2}>
-        <Canvas ref={canvasRef} />
+      <Box mb={2}>
+        <CanvasWorkarea backgroundImage={sceneProps?.src} />
       </Box>
+
       <Stack alignItems="center" justifyContent="center">
         <SwitchFade
           firstChild={

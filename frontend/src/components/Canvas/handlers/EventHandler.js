@@ -5,8 +5,13 @@ class EventHandler {
   }
 
   initEvents = () => {
-    this.handler.canvas.on('selection:cleared', this.handleTextExit)
+    this.handler.canvas.on('selection:cleared', this.handleSelection)
+    this.handler.canvas.on('selection:created', this.handleSelection)
+    this.handler.canvas.on('selection:updated', this.handleSelection)
+    this.handler.canvas.on('object:modified', this.handleModified)
     this.handler.canvas.on('object:rotating', this.handleObjectRotating)
+    this.handler.canvas.on('text:editing:entered', this.handleSelection)
+
     window.addEventListener('keydown', this.keydown, false)
 
     if (this.handler.isMobile) {
@@ -15,12 +20,41 @@ class EventHandler {
   }
 
   destroy = () => {
-    this.handler.canvas.off('text:editing:exited', this.handleTextExit)
+    this.handler.canvas.off('selection:cleared', this.handleSelection)
+    this.handler.canvas.off('selection:created', this.handleSelection)
+    this.handler.canvas.off('selection:updated', this.handleSelection)
+    this.handler.canvas.off('object:modified', this.handleModified)
     this.handler.canvas.off('object:rotating', this.handleObjectRotating)
+    this.handler.canvas.off('text:editing:entered', this.handleSelection)
+
     window.removeEventListener('keydown', this.keydown, false)
 
     if (this.handler.isMobile) {
       this.handler.canvas.off('text:editing:entered', this.handleScroll)
+    }
+  }
+
+  handleModified = (e) => {
+    const { target } = e
+    if (!target) return
+
+    if (target.initial) {
+      if (target.text === '') {
+        this.handler.remove(target, false)
+        this.handler.transactionHandler.undos.pop()
+      }
+      this.handler.transactionHandler.resetState()
+      target.set({ initial: false })
+      return
+    }
+
+    if (target.text === '') {
+      this.handler.remove(target)
+      return
+    }
+
+    if (!this.handler.transactionHandler.active) {
+      this.handler.transactionHandler.save('modified')
     }
   }
 
@@ -45,13 +79,17 @@ class EventHandler {
 
   keydown = (e) => {
     if (e.code === 'Backspace' || e.code === 'Delete') this.handler.remove()
-    // TODO ctrl-z (ctrl-shift-z ctrl-y)
+    else if (
+      e.ctrlKey &&
+      (e.code === 'KeyY' || (e.code === 'KeyZ' && e.shiftKey))
+    )
+      this.handler.redo()
+    else if (e.ctrlKey && e.code === 'KeyZ') this.handler.undo()
   }
 
-  handleTextExit = (e) => {
-    if (e.deselected[0]?.text === '') {
-      this.handler.remove(e.deselected[0])
-    }
+  handleSelection = (e) => {
+    const { target } = e
+    if (this.handler.onSelect) this.handler.onSelect(target)
   }
 
   handleScroll = (e) => {

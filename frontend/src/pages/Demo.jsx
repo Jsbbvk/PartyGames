@@ -1,15 +1,12 @@
 import { Typography } from '@mui/material'
 import Container from '@mui/material/Container'
-import { useRef } from 'react'
-import Canvas from '../components/Canvas'
+import CanvasWorkarea from '../components/Canvas'
 
 const Demo = () => {
-  const canvasRef = useRef(null)
-
   return (
-    <Container>
+    <Container sx={{ textAlign: 'center', mt: 3 }}>
       <Typography variant="h6">Demo</Typography>
-      <Canvas ref={canvasRef} />
+      <CanvasWorkarea />
     </Container>
   )
 }

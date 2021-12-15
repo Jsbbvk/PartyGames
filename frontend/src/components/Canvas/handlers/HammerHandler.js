@@ -97,6 +97,7 @@ class HammerHandler {
   }
 
   destroy = () => {
+    if (!this.handler.isMobile) return
     this.hammer.stop(true)
     this.hammer.destroy()
   }

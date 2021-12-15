@@ -1,5 +1,11 @@
 import { isMobile } from 'react-device-detect'
 
+export const TRANSACTION_TYPES = {
+  add: 'add',
+  update: 'update',
+  remove: 'remove',
+}
+
 export const fontOptions = {
   left: isMobile ? 50 : 100,
   top: isMobile ? 50 : 30,

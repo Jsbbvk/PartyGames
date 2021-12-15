@@ -257,5 +257,6 @@ export default [
   new Meme('232.jpg', 'Facepalm'),
   new Meme('233.jpg', 'Fake Xbox 360 Achievement'),
   new Meme('234.jpg', 'Amateurs'),
-  new Meme('234.jpg', "That's the Neat Part, You Don't"),
+  new Meme('235.jpg', "That's the Neat Part, You Don't"),
+  new Meme('236.jpg', 'Crying Guy Drowning in Shallow Water'),
 ]
