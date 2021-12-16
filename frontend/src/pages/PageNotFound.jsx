@@ -11,12 +11,13 @@ const PageNotFound = () => {
         textAlign: 'center',
       }}
     >
-      <Typography variant="h6">404 Page Not Found</Typography>
+      <Typography variant="h1">404</Typography>
+      <Typography variant="h6">Page Not Found</Typography>
       <Stack justifyContent="center" mt={3}>
         <img
           src={`/images/lost${Math.random() > 0.5 ? '1' : '2'}.gif`}
           alt="lost"
-          width="400px"
+          style={{ width: '90vw', maxWidth: '400px' }}
         />
       </Stack>
     </Box>

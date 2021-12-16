@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material'
 import Container from '@mui/material/Container'
-import CanvasWorkarea from '../components/Canvas'
+import CanvasWorkarea from '../../components/Canvas'
 
 const Demo = () => {
   return (
