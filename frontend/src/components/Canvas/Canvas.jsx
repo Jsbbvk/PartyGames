@@ -2,9 +2,8 @@ import React, { Component } from 'react'
 import { fabric } from 'fabric'
 import { v4 } from 'uuid'
 import { isMobile } from 'react-device-detect'
-import Handler from './handlers/Handler'
+import Handler from './handlers'
 import { defaultCanvasOptions } from './constants'
-import Memes from '../../constants/memes'
 
 class Canvas extends Component {
   constructor() {
