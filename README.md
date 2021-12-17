@@ -1,3 +1,3 @@
-# CaptionThis
+# PartyGames
 
-Multiplayer game where the best caption of a meme wins
+Collection of party games
