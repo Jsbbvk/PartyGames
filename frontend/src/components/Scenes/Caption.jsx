@@ -1,10 +1,8 @@
 import {
   Box,
-  Button,
   Fab,
   Fade,
   IconButton,
-  LinearProgress,
   Modal,
   Stack,
   styled,
@@ -12,11 +10,11 @@ import {
 } from '@mui/material'
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { green, grey, orange, red } from '@mui/material/colors'
+import { grey } from '@mui/material/colors'
 import InfoIcon from '@mui/icons-material/Info'
-import { SwitchFade } from '../Transitions'
 import { useSceneContext } from '../Managers'
 import CanvasWorkarea from '../Canvas'
+import WaitingForPlayers from '../WaitingForPlayers'
 
 const DarkTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -65,19 +63,12 @@ const StyledModalBox = styled(Box)({
 
 const Caption = () => {
   const { switchToScene, sceneProps } = useSceneContext()
-  const canvasRef = useRef(null)
 
   const [submittedMeme, setSubmittedMeme] = useState(false)
-  const [playersReadyPercent, setPlayersReadyPercent] = useState(0)
   const [openMemeExampleModal, setOpenMemeExampleModal] = useState(false)
-
-  useEffect(() => {
-    // canvasRef.current.setBackgroundImage()
-  }, [])
 
   const handleOnSubmit = () => {
     setSubmittedMeme((p) => !p)
-    setTimeout(() => setPlayersReadyPercent(0.7), 300)
   }
 
   const ExampleMemeModal = useMemo(
@@ -130,34 +121,21 @@ const Caption = () => {
       </Box>
 
       <Stack alignItems="center" justifyContent="center">
-        <SwitchFade
-          firstChild={
-            <StyledFab
-              variant="extended"
-              onClick={handleOnSubmit}
-              disableRipple
-            >
-              Submit Meme
-            </StyledFab>
-          }
-          secondChild={
-            <Box>
-              <Box p={1}>
-                <Typography variant="h6">Waiting for Players 4/6</Typography>
-              </Box>
-              <LinearProgress
-                variant="determinate"
-                value={playersReadyPercent * 100}
-              />
-              <button onClick={handleOnSubmit} type="button">
-                back
-              </button>
-            </Box>
-          }
-          switched={submittedMeme}
-          keys={submittedMeme ? 'waiting' : 'submit-button'}
-        />
+        <Fade in={!submittedMeme}>
+          <StyledFab variant="extended" onClick={handleOnSubmit} disableRipple>
+            Submit Meme
+          </StyledFab>
+        </Fade>
+        <button onClick={handleOnSubmit} type="button">
+          back
+        </button>
       </Stack>
+
+      <WaitingForPlayers
+        transitionIn={submittedMeme}
+        numReady={5}
+        numTotal={5}
+      />
     </Stack>
   )
 }

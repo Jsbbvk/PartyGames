@@ -12,8 +12,7 @@ import {
 import { useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import CloseIcon from '@mui/icons-material/Close'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import ScrollToTop from 'react-scroll-to-top'
+import ScrollToTop from '../../components/ScrollToTop'
 import MemesList from '../../constants/memes'
 
 const StyledBox = styled(Box)({
@@ -28,11 +27,11 @@ const StyledBox = styled(Box)({
     userSelect: 'none',
     border: '2px solid #dbdbdb',
     transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-    '&:hover': {
-      cursor: 'pointer',
-      boxShadow:
-        '0px 4px 5px -2px rgb(0 0 0 / 20%), 0px 7px 10px 1px rgb(0 0 0 / 14%), 0px 2px 16px 1px rgb(0 0 0 / 12%)',
-    },
+    // '&:hover': {
+    //   cursor: 'pointer',
+    //   boxShadow:
+    //     '0px 4px 5px -2px rgb(0 0 0 / 20%), 0px 7px 10px 1px rgb(0 0 0 / 14%), 0px 2px 16px 1px rgb(0 0 0 / 12%)',
+    // },
   },
 })
 
@@ -43,20 +42,8 @@ const Memes = () => {
 
   return (
     <Stack py={6} alignItems="center">
-      <ScrollToTop
-        smooth
-        component={<KeyboardArrowUpIcon />}
-        title="Scroll to top"
-        top={100}
-        style={{
-          width: '50px',
-          height: '50px',
-          borderRadius: '50%',
-          boxShadow: 'none',
-          backgroundColor: '#363636',
-          color: '#ffffffDE',
-        }}
-      />
+      <ScrollToTop top={100} duration={250} />
+
       <Typography variant="h4">{MemesList.length} Memes</Typography>
       <Box my={3}>
         <FormControl

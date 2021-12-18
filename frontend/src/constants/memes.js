@@ -279,4 +279,7 @@ export default [
   new Meme('251.jpg', 'Mr Krabs Calm Then Angry'),
   new Meme('252.jpg', 'Mike Wazowski Explaining Things'),
   new Meme('253.jpg', 'Mike Wazowski-Sulley Face Swap'),
+  new Meme('254.jpg', "You Guys Always Act Like You're Better Than Me"),
+  new Meme('255.jpg', 'You Fucking Donkey'),
+  new Meme('256.jpg', 'Wow! This Is Garbage'),
 ]
