@@ -3,10 +3,12 @@ import { styled } from '@mui/material/styles'
 import { useContext, useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { grey, orange } from '@mui/material/colors'
+import { LazyLoadImage } from 'react-lazy-load-image-component'
 import MemesList from '../../constants/memes'
 import { SCENES } from '../../constants'
 import { useSceneContext } from '../Managers'
 import WaitingForPlayers from '../WaitingForPlayers'
+import 'react-lazy-load-image-component/src/effects/blur.css'
 
 const StyledBox = styled(Box)(({ selected, voted }) => ({
   position: 'relative',
@@ -94,7 +96,8 @@ const Voting = () => {
           Your meme
         </Typography>
         <Box mt={1}>
-          <img
+          <LazyLoadImage
+            effect="blur"
             src="/images/memes/1.jpg"
             alt="1.jpg"
             width={isMobile ? window.innerWidth * 0.8 : '400px'}
@@ -118,7 +121,8 @@ const Voting = () => {
             voted={votedMeme}
           >
             <Box mt={1}>
-              <img
+              <LazyLoadImage
+                effect="blur"
                 src={`/images/memes/${src}`}
                 alt={src}
                 width={isMobile ? window.innerWidth * 0.8 : '400px'}

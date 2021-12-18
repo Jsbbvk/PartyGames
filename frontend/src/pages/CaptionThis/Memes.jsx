@@ -12,8 +12,10 @@ import {
 import { useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import CloseIcon from '@mui/icons-material/Close'
+import { LazyLoadImage } from 'react-lazy-load-image-component'
 import ScrollToTop from '../../components/ScrollToTop'
 import MemesList from '../../constants/memes'
+import 'react-lazy-load-image-component/src/effects/blur.css'
 
 const StyledBox = styled(Box)({
   maxWidth: '90vw',
@@ -77,10 +79,11 @@ const Memes = () => {
           <StyledBox key={`${src} ${name}`}>
             <Typography variant="p">{name}</Typography>
             <Box mt={1}>
-              <img
+              <LazyLoadImage
                 src={`/images/memes/${src}`}
                 alt={name}
                 width={isMobile ? window.innerWidth * 0.8 : '400px'}
+                effect="blur"
               />
             </Box>
           </StyledBox>
