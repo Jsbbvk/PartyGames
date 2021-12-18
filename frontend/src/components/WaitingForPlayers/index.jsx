@@ -1,8 +1,9 @@
 import { Box, LinearProgress, Slide, Typography } from '@mui/material'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 const WaitingForPlayers = ({ transitionIn, numReady, numTotal }) => {
   const wrapperRef = useRef(null)
+  const [slideOut, setSlideOut] = useState(true)
 
   return (
     <Box
@@ -12,10 +13,17 @@ const WaitingForPlayers = ({ transitionIn, numReady, numTotal }) => {
         zIndex: 1,
         bottom: '20px',
         left: '50%',
+        visibility: !transitionIn && slideOut ? 'hidden' : 'visible',
         transform: 'translateX(-50%)',
       }}
     >
-      <Slide in={transitionIn} direction="up" container={wrapperRef.current}>
+      <Slide
+        in={transitionIn}
+        direction="up"
+        container={wrapperRef.current}
+        onEnter={() => setSlideOut(false)}
+        onExited={() => setSlideOut(!transitionIn)}
+      >
         <Box
           sx={{
             padding: '15px 40px 25px 40px',

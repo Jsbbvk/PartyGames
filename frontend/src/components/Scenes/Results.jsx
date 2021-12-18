@@ -28,7 +28,24 @@ const StyledBox = styled(Box)(() => ({
   },
 }))
 
+const StyledFab = styled(Fab)({
+  textTransform: 'none',
+  boxShadow: 'none',
+  color: '#ffffffDE',
+  backgroundColor: '#363636',
+  transition: 'transform 100ms',
+
+  '&:hover': {
+    background: grey[900],
+  },
+  '&:active': {
+    boxShadow: 'none',
+    transform: 'scale(.96)',
+  },
+})
+
 const Results = () => {
+  const [ready, setReady] = useState(false)
   const { switchToScene } = useSceneContext()
 
   return (
@@ -87,7 +104,25 @@ const Results = () => {
         ))}
       </Stack>
 
-      <WaitingForPlayers transitionIn={false} numReady={5} numTotal={5} />
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 1,
+        }}
+      >
+        <StyledFab
+          variant="extended"
+          disableRipple
+          onClick={() => setReady(true)}
+        >
+          Continue
+        </StyledFab>
+      </Box>
+
+      <WaitingForPlayers transitionIn={ready} numReady={5} numTotal={5} />
     </Stack>
   )
 }
