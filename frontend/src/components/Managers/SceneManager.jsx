@@ -1,7 +1,7 @@
 import { Fade, Container } from '@mui/material'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { SwitchTransition } from 'react-transition-group'
-import { Voting, Caption, Selection } from '../Scenes'
+import { Voting, Caption, Selection, Results } from '../Scenes'
 import { SCENES } from '../../constants'
 
 const SceneContext = createContext()
@@ -12,9 +12,10 @@ const SceneManager = () => {
     [SCENES.selection]: <Selection />,
     [SCENES.caption]: <Caption />,
     [SCENES.voting]: <Voting />,
+    [SCENES.results]: <Results />,
   }
 
-  const [currScene, setCurrScene] = useState(SCENES.voting)
+  const [currScene, setCurrScene] = useState(SCENES.selection)
   const [sceneProps, setSceneProps] = useState({})
 
   const switchToScene = (scene, props) => {

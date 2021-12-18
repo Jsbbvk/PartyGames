@@ -282,4 +282,5 @@ export default [
   new Meme('254.jpg', "You Guys Always Act Like You're Better Than Me"),
   new Meme('255.jpg', 'You Fucking Donkey'),
   new Meme('256.jpg', 'Wow! This Is Garbage'),
+  new Meme('257.jpg', 'White Guy Blinking'),
 ]

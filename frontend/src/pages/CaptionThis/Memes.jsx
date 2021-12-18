@@ -25,13 +25,8 @@ const StyledBox = styled(Box)({
 
   '& img': {
     userSelect: 'none',
-    border: '2px solid #dbdbdb',
-    transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-    // '&:hover': {
-    //   cursor: 'pointer',
-    //   boxShadow:
-    //     '0px 4px 5px -2px rgb(0 0 0 / 20%), 0px 7px 10px 1px rgb(0 0 0 / 14%), 0px 2px 16px 1px rgb(0 0 0 / 12%)',
-    // },
+    boxShadow:
+      'rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px',
   },
 })
 

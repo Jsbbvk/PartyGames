@@ -5,4 +5,5 @@ export const SCENES = {
   selection: 'selection',
   caption: 'caption',
   voting: 'voting',
+  results: 'results',
 }
