@@ -4,10 +4,12 @@ import { useContext, useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { grey, orange } from '@mui/material/colors'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
+import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import MemesList from '../../constants/memes'
 import { SCENES } from '../../constants'
 import { useSceneContext } from '../Managers'
 import WaitingForPlayers from '../WaitingForPlayers'
+
 import 'react-lazy-load-image-component/src/effects/blur.css'
 
 const StyledBox = styled(Box)(({ selected, voted }) => ({
@@ -22,14 +24,14 @@ const StyledBox = styled(Box)(({ selected, voted }) => ({
   '& img': {
     willChange: 'opacity',
     userSelect: 'none',
-    border: '2px solid #dbdbdb',
     transition:
-      'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, opacity 300ms',
+      'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, opacity 300ms !important',
 
     boxShadow: selected
       ? 'rgb(0 0 0 / 20%) 0px 7px 8px -4px, rgb(0 0 0 / 14%) 0px 12px 17px 2px, rgb(0 0 0 / 12%) 0px 5px 22px 4px'
-      : 'none',
-    opacity: (!voted && selected) || (voted && !selected) ? '0.6' : '1',
+      : 'rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px',
+    opacity:
+      (!voted && selected) || (voted && !selected) ? '0.6 !important' : '1',
 
     '@media(hover: hover) and (pointer: fine)': {
       '&:hover': {
@@ -50,13 +52,13 @@ const StyledBox = styled(Box)(({ selected, voted }) => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    backgroundColor: '#363636',
+    backgroundColor: '#0288d1',
     boxShadow: 'none',
     textTransform: 'none',
     color: '#ffffffDE',
 
     '&:hover': {
-      background: grey[900],
+      backgroundColor: '#0277bd',
       boxShadow: 'none',
     },
     '&:active': {
@@ -130,12 +132,13 @@ const Voting = () => {
               />
             </Box>
             <Fab
-              variant="extended"
+              // variant="extended"
               className="caption-button"
               disableRipple
               onClick={() => onMemeChoiceConfirm(src)}
+              title="Vote?"
             >
-              Confirm Vote!
+              <ThumbUpIcon />
             </Fab>
           </StyledBox>
         ))}

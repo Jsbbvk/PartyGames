@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import { useMemo, useState, forwardRef } from 'react'
+import { useMemo, useState, forwardRef, useRef } from 'react'
 
 const StyledFab = styled(Fab)({
   position: 'fixed',

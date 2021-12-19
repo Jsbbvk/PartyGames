@@ -283,4 +283,8 @@ export default [
   new Meme('255.jpg', 'You Fucking Donkey'),
   new Meme('256.jpg', 'Wow! This Is Garbage'),
   new Meme('257.jpg', 'White Guy Blinking'),
+  new Meme('258.jpg', "Tell Me The Truth I'm Ready To Hear It"),
+  new Meme('259.jpg', "Peter Parker's Glasses"),
+  new Meme('260.jpg', 'Learning to be Spider-Man'),
+  new Meme('261.jpg', 'Spider-Man With a Wrench'),
 ]

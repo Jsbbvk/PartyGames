@@ -86,6 +86,8 @@ const Caption = () => {
     const url = workareaRef.current.getDataUrl()
     const blob = dataURLtoBlob(url)
     try {
+      // doesn't work on ios
+      // https://dev.to/viclafouch/the-new-way-to-copy-an-image-or-a-text-to-clipboard-in-javascript-2n1g
       await navigator.clipboard.write([
         // eslint-disable-next-line no-undef
         new ClipboardItem({

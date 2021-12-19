@@ -13,6 +13,8 @@ const WaitingForPlayers = ({ transitionIn, numReady, numTotal }) => {
         zIndex: 1,
         bottom: '20px',
         left: '50%',
+        maxWidth: '300px',
+        width: '90vw',
         visibility: !transitionIn && slideOut ? 'hidden' : 'visible',
         transform: 'translateX(-50%)',
       }}
@@ -38,7 +40,7 @@ const WaitingForPlayers = ({ transitionIn, numReady, numTotal }) => {
           }}
         >
           <Box p={1}>
-            <Typography variant="h6" sx={{ color: '#ffffffde' }}>
+            <Typography variant="p" sx={{ color: '#ffffffde' }}>
               Waiting for players... {numReady}/{numTotal}
             </Typography>
           </Box>
