@@ -12,6 +12,7 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { grey } from '@mui/material/colors'
 import InfoIcon from '@mui/icons-material/Info'
+import { isMobile } from 'react-device-detect'
 import { useSceneContext } from '../Managers'
 import CanvasWorkarea from '../Canvas'
 import WaitingForPlayers from '../WaitingForPlayers'
@@ -63,11 +64,38 @@ const StyledModalBox = styled(Box)({
 
 const Caption = () => {
   const { switchToScene, sceneProps } = useSceneContext()
+  const workareaRef = useRef(null)
 
   const [submittedMeme, setSubmittedMeme] = useState(false)
   const [openMemeExampleModal, setOpenMemeExampleModal] = useState(false)
+  const [memeDataUrl, setMemeDataUrl] = useState('')
 
-  const handleOnSubmit = () => {
+  const handleOnSubmit = async () => {
+    function dataURLtoBlob(dataurl) {
+      const byteString = atob(dataurl.split(',')[1])
+      const mimeString = dataurl.split(',')[0].split(':')[1].split(';')[0]
+      const ab = new ArrayBuffer(byteString.length)
+      const ia = new Uint8Array(ab)
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i)
+      }
+      return new Blob([ab], { type: mimeString })
+    }
+
+    const url = workareaRef.current.getDataUrl()
+    const blob = dataURLtoBlob(url)
+    try {
+      await navigator.clipboard.write([
+        // eslint-disable-next-line no-undef
+        new ClipboardItem({
+          [blob.type]: blob,
+        }),
+      ])
+    } catch (e) {
+      console.log(e)
+    }
+    setMemeDataUrl(url)
     setSubmittedMeme((p) => !p)
   }
 
@@ -117,7 +145,7 @@ const Caption = () => {
       </Box>
 
       <Box mb={2}>
-        <CanvasWorkarea backgroundImage={sceneProps?.src} />
+        <CanvasWorkarea backgroundImage={sceneProps?.src} ref={workareaRef} />
       </Box>
 
       <Stack alignItems="center" justifyContent="center">
@@ -130,6 +158,17 @@ const Caption = () => {
           back
         </button>
       </Stack>
+
+      {submittedMeme && (
+        <Stack alignItems="center" mt={4}>
+          <Typography variant="h6">Copied Meme!</Typography>
+          <img
+            alt="captioned meme"
+            src={memeDataUrl}
+            width={isMobile ? window.innerWidth * 0.8 : '400px'}
+          />
+        </Stack>
+      )}
 
       <WaitingForPlayers
         transitionIn={submittedMeme}

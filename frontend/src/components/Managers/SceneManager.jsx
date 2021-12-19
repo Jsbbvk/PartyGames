@@ -3,6 +3,7 @@ import { useState, useEffect, createContext, useContext } from 'react'
 import { SwitchTransition } from 'react-transition-group'
 import { Voting, Caption, Selection, Results } from '../Scenes'
 import { SCENES } from '../../constants'
+import Menu from '../Menu'
 
 const SceneContext = createContext()
 export const useSceneContext = () => useContext(SceneContext)
@@ -28,7 +29,10 @@ const SceneManager = () => {
       <SceneContext.Provider value={{ switchToScene, sceneProps }}>
         <SwitchTransition mode="out-in">
           <Fade key={currScene} in unmountOnExit>
-            <Container sx={{ py: 5 }}>{scenes[currScene]}</Container>
+            <Container sx={{ py: 10 }}>
+              <Menu />
+              {scenes[currScene]}
+            </Container>
           </Fade>
         </SwitchTransition>
       </SceneContext.Provider>

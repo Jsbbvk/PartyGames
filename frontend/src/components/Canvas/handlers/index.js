@@ -1,4 +1,5 @@
 import { fabric } from 'fabric'
+import FontFaceObserver from 'fontfaceobserver'
 import {
   objectOptions,
   fontOptions,
@@ -20,6 +21,12 @@ export default class Handler {
     this.initOptions(options)
     this.initHandlers()
     this.initCallback(options)
+
+    // const impactFont = new FontFaceObserver('Quicksand')
+    // impactFont
+    //   .load()
+    //   .then(() => console.log('loaded'))
+    //   .catch((e) => console.log(e))
   }
 
   initOptions = (options) => {
@@ -74,6 +81,13 @@ export default class Handler {
       this.transactionHandler.save(TRANSACTION_TYPES.remove)
   }
 
+  alignText = (align) => {
+    const text = this.canvas.getActiveObject()
+
+    if (!text || text?.type !== 'i-text') return
+    this.setByPartial(text, { textAlign: align })
+  }
+
   undo = () => this.transactionHandler.undo()
 
   redo = () => this.transactionHandler.redo()
@@ -82,7 +96,7 @@ export default class Handler {
     const text = new fabric.IText(str)
     text.set({
       ...fontOptions,
-      ...arialOptions,
+      ...impactOptions,
       left: this.canvas.width / 2,
       top: this.canvas.height / 6,
       originX: 'center',

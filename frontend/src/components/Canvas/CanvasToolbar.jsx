@@ -3,6 +3,8 @@ import TextFieldsIcon from '@mui/icons-material/TextFields'
 import DeleteIcon from '@mui/icons-material/Delete'
 import UndoIcon from '@mui/icons-material/Undo'
 import RedoIcon from '@mui/icons-material/Redo'
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft'
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter'
 import React from 'react'
 
 const StyledButton = styled(Button)({
@@ -27,7 +29,14 @@ const StyledButton = styled(Button)({
 
 const iconFontSize = 16
 
-const CanvasToolbar = ({ textProps, deleteProps, undoProps, redoProps }) => {
+const CanvasToolbar = ({
+  alignLeftProps,
+  alignCenterProps,
+  textProps,
+  deleteProps,
+  undoProps,
+  redoProps,
+}) => {
   const buttonGroupStyles = {
     padding: '7px 7px 0 7px',
     boxShadow: 'none',
@@ -42,6 +51,12 @@ const CanvasToolbar = ({ textProps, deleteProps, undoProps, redoProps }) => {
   return (
     <Box>
       <ButtonGroup variant="contained" size="small" sx={buttonGroupStyles}>
+        <ToolbarButton title="Align text left" {...alignLeftProps}>
+          <FormatAlignLeftIcon sx={{ fontSize: iconFontSize }} />
+        </ToolbarButton>
+        <ToolbarButton title="Align text center" {...alignCenterProps}>
+          <FormatAlignCenterIcon sx={{ fontSize: iconFontSize }} />
+        </ToolbarButton>
         <ToolbarButton title="Add text" {...textProps}>
           <TextFieldsIcon sx={{ fontSize: iconFontSize }} />
         </ToolbarButton>

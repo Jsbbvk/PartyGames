@@ -25,12 +25,12 @@ const StyledBox = styled(Box)(({ selected }) => ({
     willChange: 'opacity',
     userSelect: 'none',
     transition:
-      'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, opacity 300ms',
+      'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, opacity 300ms !important',
 
     boxShadow: selected
       ? 'rgb(0 0 0 / 20%) 0px 7px 8px -4px, rgb(0 0 0 / 14%) 0px 12px 17px 2px, rgb(0 0 0 / 12%) 0px 5px 22px 4px'
       : 'rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px',
-    opacity: selected ? '0.6' : '1',
+    opacity: selected ? '0.6 !important' : '1',
     '@media(hover: hover) and (pointer: fine)': {
       '&:hover': {
         cursor: 'pointer',

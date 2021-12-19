@@ -35,7 +35,7 @@ export const objectOptions = {
 export const defaultCanvasOptions = {
   width: 500,
   height: 500,
-  maxWidth: 600,
+  maxWidth: 500,
   maxHeight: 600,
   selection: true,
   defaultCursor: 'default',

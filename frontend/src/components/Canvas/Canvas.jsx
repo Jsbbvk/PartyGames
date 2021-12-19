@@ -94,9 +94,11 @@ class Canvas extends Component {
   }
 
   addText = (text) => this.handler.addText(text || '')
+  alignText = (align) => this.handler.alignText(align)
   remove = (target) => this.handler.remove(target)
   redo = () => this.handler.redo()
   undo = () => this.handler.undo()
+  exportCanvas = () => this.handler.exportAsDataURL()
 
   render() {
     const { id } = this.state

@@ -1,10 +1,16 @@
 import { Stack, Box } from '@mui/material'
-import { useEffect, useRef, useState } from 'react'
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import Canvas from './Canvas'
 import CanvasToolbar from './CanvasToolbar'
 
-const CanvasWorkarea = ({ backgroundImage }) => {
+const CanvasWorkarea = ({ backgroundImage }, ref) => {
   const canvasRef = useRef(null)
   const [transactions, setTransactions] = useState()
   const [activeObject, setActiveObject] = useState(null)
@@ -13,6 +19,8 @@ const CanvasWorkarea = ({ backgroundImage }) => {
   useEffect(() => {
     canvasRef.current.setBackgroundImage(backgroundImage)
   }, [backgroundImage])
+
+  const getDataUrl = () => canvasRef.current?.exportCanvas()
 
   const onTextAdd = () => {
     canvasRef.current?.addText('text')
@@ -34,17 +42,33 @@ const CanvasWorkarea = ({ backgroundImage }) => {
 
   const onObjectSelect = (object) => {
     setIsEditing(object?.isEditing)
-    setActiveObject(object && !object?.isEditing)
+    setActiveObject(object)
   }
+
+  const alignText = (align) => {
+    canvasRef.current?.alignText(align)
+  }
+
+  useImperativeHandle(ref, () => ({
+    getDataUrl,
+  }))
 
   return (
     <Box>
       <Stack alignItems="center" mb={1.5}>
         <CanvasToolbar
+          alignCenterProps={{
+            onClick: () => alignText('center'),
+            disabled: !activeObject || isEditing,
+          }}
+          alignLeftProps={{
+            onClick: () => alignText('left'),
+            disabled: !activeObject || isEditing,
+          }}
           textProps={{ onClick: onTextAdd }}
           deleteProps={{
             onClick: onDelete,
-            disabled: !activeObject,
+            disabled: !activeObject || isEditing,
           }}
           undoProps={{
             onClick: onUndo,
@@ -65,4 +89,4 @@ const CanvasWorkarea = ({ backgroundImage }) => {
   )
 }
 
-export default CanvasWorkarea
+export default forwardRef(CanvasWorkarea)
