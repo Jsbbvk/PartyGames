@@ -36,7 +36,7 @@ const StyledFab = styled(Fab)({
   transition: 'transform 100ms',
 
   '&:hover': {
-    background: grey[900],
+    background: '#474747',
   },
   '&:active': {
     boxShadow: 'none',

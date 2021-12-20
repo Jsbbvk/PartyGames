@@ -132,7 +132,6 @@ const Voting = () => {
               />
             </Box>
             <Fab
-              // variant="extended"
               className="caption-button"
               disableRipple
               onClick={() => onMemeChoiceConfirm(src)}

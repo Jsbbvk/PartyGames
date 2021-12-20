@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 import {
   Box,
   Dialog,
@@ -8,11 +9,14 @@ import {
   Fade,
   Modal,
   Slide,
+  Stack,
   styled,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import { useMemo, useState, forwardRef, useRef } from 'react'
+import { useMemo, useState, forwardRef } from 'react'
+import { grey } from '@mui/material/colors'
 
 const StyledFab = styled(Fab)({
   position: 'fixed',
@@ -34,18 +38,49 @@ const StyledFab = styled(Fab)({
   },
 })
 
-const StyledModalBox = styled(Box)({
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  backgroundColor: '#ffffff',
-  boxShadow: 24,
-  padding: 32,
-  width: '90vw',
-  maxWidth: '600px',
-  height: '80vh',
-  maxHeight: '800px',
+const StyledButton = styled(Fab)({
+  textTransform: 'none',
+  boxShadow: 'none',
+  color: '#ffffffDE',
+  backgroundColor: '#363636',
+  transition: 'transform 100ms',
+  padding: '0 24px',
+
+  '&:hover': {
+    background: '#474747',
+  },
+  '&:active': {
+    boxShadow: 'none',
+    transform: 'scale(.96)',
+  },
+})
+
+const PlayerWrapper = styled(Box)({
+  marginTop: 24,
+  padding: '8px 16px',
+  overflowY: 'auto',
+  height: '70%',
+
+  scrollbarWidth: 'thin',
+  scrollbarColor: '#adadad #f1f1f1',
+
+  '&::-webkit-scrollbar': {
+    width: 5,
+  },
+
+  '&::-webkit-scrollbar-track': {
+    background: '#f1f1f1',
+  },
+
+  '&::-webkit-scrollbar-thumb': {
+    background: '#adadad',
+  },
+
+  '&::-webkit-scrollbar-thumb:hover': {
+    background: '#919191',
+  },
+
+  // TODO alternate bg colors for each child
 })
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -54,6 +89,25 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 const Menu = () => {
   const [openMenu, setOpenMenu] = useState(false)
+  const isSM = useMediaQuery('sm')
+
+  const Player = (name, score, isPlayer) => (
+    <Stack alignItems="center" direction="row" justifyContent="space-between">
+      <Typography
+        variant="p"
+        sx={{
+          maxWidth: '75%',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+        }}
+      >
+        {name}
+        {isPlayer ? ' (You)' : ''}
+      </Typography>
+      <Typography variant="p">{score}</Typography>
+    </Stack>
+  )
 
   const MenuModal = useMemo(
     () => (
@@ -62,16 +116,44 @@ const Menu = () => {
         onClose={() => setOpenMenu(false)}
         TransitionComponent={Transition}
         fullWidth
-        maxWidth="sm"
+        maxWidth="xs"
       >
-        <DialogTitle sx={{ textAlign: 'center' }}>Players</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Jonathon Spencer</DialogContentText>
-          <DialogContentText>Jonathon Spencer</DialogContentText>
-          <DialogContentText>Jonathon Spencer</DialogContentText>
-          <DialogContentText>Jonathon Spencer</DialogContentText>
-          <DialogContentText>Jonathon Spencer</DialogContentText>
-        </DialogContent>
+        <Stack
+          justifyContent="space-between"
+          pt={4}
+          pb={{ xs: 3, md: 6 }}
+          px={{ xs: 2, md: 5 }}
+          sx={{ height: '80vh', maxHeight: '550px' }}
+        >
+          <Box sx={{ height: '90%' }}>
+            <Typography variant="h5" sx={{ textAlign: 'center' }}>
+              Players
+            </Typography>
+            <PlayerWrapper>
+              {Player('First Fisher', (Math.random() * 10) | 0)}
+              {Player('asdf sfdasdfsa', (Math.random() * 10) | 0)}
+              {Player('saf asfd isadf', (Math.random() * 10) | 0)}
+              {Player('asdf asdf asd', (Math.random() * 10) | 0, true)}
+              {Player('asdfasf sdfasdfr', (Math.random() * 10) | 0)}
+              {Player('Jonathan Fisher', (Math.random() * 10) | 0)}
+              {Player('Jasdfi  asdfsher', (Math.random() * 10) | 0)}
+              {Player('Joiuuiup qo er', (Math.random() * 10) | 0)}
+              {Player('asdf jkas sr', (Math.random() * 10) | 0)}
+            </PlayerWrapper>
+          </Box>
+          <Stack
+            direction="row"
+            justifyContent="space-evenly"
+            alignItems="center"
+          >
+            <StyledButton variant="extended" disableRipple>
+              Leave
+            </StyledButton>
+            <StyledButton variant="extended" disableRipple>
+              End Game
+            </StyledButton>
+          </Stack>
+        </Stack>
       </Dialog>
     ),
     [openMenu]

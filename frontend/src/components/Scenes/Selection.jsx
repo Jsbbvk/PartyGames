@@ -52,7 +52,7 @@ const StyledBox = styled(Box)(({ selected }) => ({
     textTransform: 'none',
     color: '#ffffffDE',
     '&:hover': {
-      background: grey[900],
+      background: '#474747',
       boxShadow: 'none',
     },
     '&:active': {
