@@ -132,7 +132,7 @@ const DemoMemes = () => {
             key={`${src} ${name}`}
             selected={selectedMeme?.src === src}
           >
-            <Typography variant="p">{name}</Typography>
+            <Typography variant="body1">{name}</Typography>
             <Box mt={1}>
               <LazyLoadImage
                 src={`/images/memes/${src}`}

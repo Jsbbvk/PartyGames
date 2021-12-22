@@ -132,7 +132,7 @@ const Caption = () => {
 
       <Box textAlign="center" mb={2}>
         <Typography variant="h5">
-          {sceneProps?.name}
+          {sceneProps?.selectedMeme?.name}
 
           <DarkTooltip title="Show example meme" enterDelay={200}>
             <StyledIconButton
@@ -147,7 +147,10 @@ const Caption = () => {
       </Box>
 
       <Box mb={2}>
-        <CanvasWorkarea backgroundImage={sceneProps?.src} ref={workareaRef} />
+        <CanvasWorkarea
+          backgroundImage={sceneProps?.selectedMeme?.src}
+          ref={workareaRef}
+        />
       </Box>
 
       <Stack alignItems="center" justifyContent="center">

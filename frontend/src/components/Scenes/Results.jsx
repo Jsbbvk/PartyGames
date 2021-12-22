@@ -62,7 +62,7 @@ const Results = () => {
               sx={{ width: '100%' }}
             >
               <Typography
-                variant="p"
+                variant="body1"
                 sx={{
                   maxWidth: '75%',
                   textOverflow: 'ellipsis',
@@ -78,7 +78,7 @@ const Results = () => {
                 spacing={1}
                 sx={{ color: '#1e88e5' }}
               >
-                <Typography variant="p" sx={{ color: '#000000de' }}>
+                <Typography variant="body1" sx={{ color: '#000000de' }}>
                   {10 - i}
                 </Typography>
                 <ThumbUpIcon />
@@ -94,7 +94,7 @@ const Results = () => {
             </Box>
             {i < 2 && (
               <Typography
-                variant="p"
+                variant="body1"
                 sx={{ fontWeight: 600, textAlign: 'right', width: '100%' }}
               >
                 +1 point

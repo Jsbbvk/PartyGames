@@ -57,7 +57,7 @@ const StyledButton = styled(Fab)({
 
 const PlayerWrapper = styled(Box)({
   marginTop: 24,
-  padding: '8px 16px',
+  padding: '4px 0',
   overflowY: 'auto',
   height: '70%',
 
@@ -80,7 +80,9 @@ const PlayerWrapper = styled(Box)({
     background: '#919191',
   },
 
-  // TODO alternate bg colors for each child
+  '& > div:nth-of-type(even)': {
+    backgroundColor: '#f0f0f0',
+  },
 })
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -92,9 +94,14 @@ const Menu = () => {
   const isSM = useMediaQuery('sm')
 
   const Player = (name, score, isPlayer) => (
-    <Stack alignItems="center" direction="row" justifyContent="space-between">
+    <Stack
+      alignItems="center"
+      direction="row"
+      justifyContent="space-between"
+      p={0.75}
+    >
       <Typography
-        variant="p"
+        variant="body1"
         sx={{
           maxWidth: '75%',
           textOverflow: 'ellipsis',
@@ -105,7 +112,7 @@ const Menu = () => {
         {name}
         {isPlayer ? ' (You)' : ''}
       </Typography>
-      <Typography variant="p">{score}</Typography>
+      <Typography variant="body1">{score}</Typography>
     </Stack>
   )
 

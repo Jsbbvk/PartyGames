@@ -287,4 +287,11 @@ export default [
   new Meme('259.jpg', "Peter Parker's Glasses"),
   new Meme('260.jpg', 'Learning to be Spider-Man'),
   new Meme('261.jpg', 'Spider-Man With a Wrench'),
+  new Meme('262.jpg', "We Don't Do That Here"),
+  new Meme('263.jpg', 'Oof Size Large'),
+  new Meme('264.jpg', 'Leaning Forward In Chair Diagram'),
+  new Meme('265.jpg', 'Toro Max'),
+  new Meme('266.jpg', "C'mon, Do Something"),
+  new Meme('267.jpg', 'Yuu Buys a Cookie'),
+  new Meme('268.jpg', 'Signature Look of Superiority'),
 ]

@@ -4,12 +4,13 @@
   "rules": {
     "no-unused-vars": 0,
     "no-console": 0,
+    "no-underscore-dangle": 0,
     "prettier/prettier": [
       "error",
       {
         "endOfLine": "auto",
-        "tabWidth": 2,
+        "tabWidth": 2
       }
     ]
-  }  
+  }
 }

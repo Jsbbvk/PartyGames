@@ -1,7 +1,7 @@
-import { SceneManager } from '../../components/Managers'
+import { GameManager } from '../../components/Managers'
 
 const CaptionThis = () => {
-  return <SceneManager />
+  return <GameManager />
 }
 
 export default CaptionThis

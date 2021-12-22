@@ -40,7 +40,7 @@ const WaitingForPlayers = ({ transitionIn, numReady, numTotal }) => {
           }}
         >
           <Box p={1}>
-            <Typography variant="p" sx={{ color: '#ffffffde' }}>
+            <Typography variant="body1" sx={{ color: '#ffffffde' }}>
               Waiting for players... {numReady}/{numTotal}
             </Typography>
           </Box>

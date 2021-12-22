@@ -118,7 +118,7 @@ const Selection = () => {
 
   const onMemeChoiceConfirm = (src) => {
     if (!selectedMeme || src !== selectedMeme?.src) return
-    switchToScene(SCENES.caption, selectedMeme)
+    switchToScene(SCENES.caption, { selectedMeme })
   }
 
   return (
@@ -128,7 +128,7 @@ const Selection = () => {
         <Stack justifyContent="center" alignItems="center" spacing={7} mt={4}>
           {memeChoices.map(({ src, name }) => (
             <StyledBox key={src} selected={selectedMeme?.src === src}>
-              <Typography variant="p" className="meme-title">
+              <Typography variant="body1" className="meme-title">
                 {name}
               </Typography>
               <Box mt={1}>
