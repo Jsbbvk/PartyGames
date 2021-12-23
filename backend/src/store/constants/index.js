@@ -11,3 +11,5 @@ export const ERRORS = {
   PLAYER_NOT_FOUND: 'player_not_found',
   DUPLICATE_ROOM: 'duplicate_room',
 }
+
+export const ROOM_INACTIVE_TIMEOUT = 3 * 60 * 1000

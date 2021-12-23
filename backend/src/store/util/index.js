@@ -1,3 +1,5 @@
-export const Error = (errCode) => {
-  error: errCode
-}
+export const Error = (error) => ({
+  error,
+})
+
+export const temp = ''

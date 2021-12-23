@@ -4,16 +4,17 @@ import { useListener, useEmitter, useSceneContext } from '../Managers'
 
 const Host = () => {
   const { switchToScene, sceneProps, setSceneProps } = useSceneContext()
-  const [data, setData] = useState('nothing')
 
-  const emit = useEmitter('response')
+  const emit = useEmitter()
 
   useEffect(() => {
     setSceneProps({ hideMenu: true })
-
-    console.log('emitting')
-    emit({ data }, (res) => console.log(res))
   }, [])
+
+  const onCreateRoom = () =>
+    emit('create room', { roomId: '1111', name: 'joe' }, (data) =>
+      console.log(data)
+    )
 
   return (
     <Box>
@@ -28,7 +29,11 @@ const Host = () => {
           <TextField id="host-name" label="Name" variant="outlined" />
         </Box>
       </Stack>
-      <Typography>{data}</Typography>
+      <Stack>
+        <button type="button" onClick={onCreateRoom}>
+          Create
+        </button>
+      </Stack>
     </Box>
   )
 }

@@ -5,6 +5,7 @@ import { Error } from '../util'
 
 export const getRoom = async (roomId, lean = false) => {
   const [err, room] = await to(Room.findOne({ roomId }).lean(lean))
+
   if (err) {
     console.log(err)
     return Error(ERRORS.UNEXPECTED_ERROR)
@@ -90,7 +91,15 @@ export const leaveRoom = async (roomId, uuid) => {
   return { uuid }
 }
 
-export const deleteRoom = (roomId) => {}
+export const deleteRoom = async (roomId) => {
+  const [err] = await to(Room.deleteOne({ roomId }))
+  if (err) {
+    console.log(err)
+    return Error(ERRORS.UNEXPECTED_ERROR)
+  }
+
+  return { roomId }
+}
 
 export const dropCollection = async () => {
   const [err] = await to(Room.collection.drop())

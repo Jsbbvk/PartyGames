@@ -45,11 +45,11 @@ export const useListener = (event, cb) => {
   }, [socket, event])
 }
 
-export const useEmitter = (event) => {
+export const useEmitter = () => {
   const { socket } = useGameContext()
   return useCallback(
-    (data, cb) => socket?.emit(event, data, cb),
-    [socket, event]
+    (event, data, cb) => socket?.emit(event, data, cb),
+    [socket]
   )
 }
 
