@@ -294,4 +294,6 @@ export default [
   new Meme('266.jpg', "C'mon, Do Something"),
   new Meme('267.jpg', 'Yuu Buys a Cookie'),
   new Meme('268.jpg', 'Signature Look of Superiority'),
+  new Meme('269.jpg', 'Red and Blue Pills'),
+  new Meme('270.jpg', 'Guy Stretching Before Hitting Button'),
 ]

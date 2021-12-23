@@ -1,18 +1,19 @@
 import { Box, Stack, TextField, Typography } from '@mui/material'
-import { useEffect } from 'react'
-import { useGameContext, useSceneContext } from '../Managers'
+import { useEffect, useState } from 'react'
+import { useListener, useEmitter, useSceneContext } from '../Managers'
 
 const Host = () => {
   const { switchToScene, sceneProps, setSceneProps } = useSceneContext()
-  const { emit, on } = useGameContext()
+  const [data, setData] = useState('nothing')
+
+  const emit = useEmitter('response')
 
   useEffect(() => {
     setSceneProps({ hideMenu: true })
-  }, [])
 
-  useEffect(() => {
-    on('welcome', (data) => console.log(data))
-  }, [on])
+    console.log('emitting')
+    emit({ data }, (res) => console.log(res))
+  }, [])
 
   return (
     <Box>
@@ -27,6 +28,7 @@ const Host = () => {
           <TextField id="host-name" label="Name" variant="outlined" />
         </Box>
       </Stack>
+      <Typography>{data}</Typography>
     </Box>
   )
 }

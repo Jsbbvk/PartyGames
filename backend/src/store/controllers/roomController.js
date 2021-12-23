@@ -9,10 +9,6 @@ export const getRoom = async (roomId, lean = false) => {
     console.log(err)
     return Error(ERRORS.UNEXPECTED_ERROR)
   }
-  if (!room) {
-    console.log('room not found')
-    return Error(ERRORS.ROOM_NOT_EXIST)
-  }
 
   return { room }
 }
@@ -52,29 +48,27 @@ export const createRoom = async (roomId) => {
   return { roomId }
 }
 
-// TODO check if room inactive
+// export const joinRoom = async (roomId, uuid) => {
+//   const [err, room] = await to(Room.findOne({ roomId }))
+//   if (err) {
+//     console.log(err)
+//     return Error(ERRORS.UNEXPECTED_ERROR)
+//   }
 
-export const joinRoom = async (roomId, uuid) => {
-  const [err, room] = await to(Room.findOne({ roomId }))
-  if (err) {
-    console.log(err)
-    return Error(ERRORS.UNEXPECTED_ERROR)
-  }
+//   if (!room) {
+//     console.log("room doesn't exist")
+//     return Error(ERRORS.ROOM_NOT_EXIST)
+//   }
 
-  if (!room) {
-    console.log("room doesn't exist")
-    return Error(ERRORS.ROOM_NOT_EXIST)
-  }
+//   room.players.push(uuid)
+//   const [saveErr] = await to(room.save())
+//   if (saveErr) {
+//     console.log(err)
+//     return Error(ERRORS.UNEXPECTED_ERROR)
+//   }
 
-  room.players.push(uuid)
-  const [saveErr] = await to(room.save())
-  if (saveErr) {
-    console.log(err)
-    return Error(ERRORS.UNEXPECTED_ERROR)
-  }
-
-  return { roomId }
-}
+//   return { roomId }
+// }
 
 export const leaveRoom = async (roomId, uuid) => {
   const [err] = await to(
@@ -95,6 +89,8 @@ export const leaveRoom = async (roomId, uuid) => {
 
   return { uuid }
 }
+
+export const deleteRoom = (roomId) => {}
 
 export const dropCollection = async () => {
   const [err] = await to(Room.collection.drop())

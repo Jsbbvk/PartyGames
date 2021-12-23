@@ -2,4 +2,4 @@
 export { default as SceneManager } from './SceneManager'
 export { default as GameManager } from './GameManager'
 export { useSceneContext } from './SceneManager'
-export { useGameContext } from './GameManager'
+export { useGameContext, useEmitter, useListener } from './GameManager'
