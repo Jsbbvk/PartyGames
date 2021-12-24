@@ -296,4 +296,7 @@ export default [
   new Meme('268.jpg', 'Signature Look of Superiority'),
   new Meme('269.jpg', 'Red and Blue Pills'),
   new Meme('270.jpg', 'Guy Stretching Before Hitting Button'),
+  new Meme('271.jpg', 'I Killed a Man'),
+  new Meme('272.jpg', 'Mercy Offers a Hand'),
+  new Meme('273.jpg', 'Protester Running from Riot Police'),
 ]
