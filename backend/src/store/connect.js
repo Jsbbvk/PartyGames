@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 
+// TODO probably cache when packages update
+
 const uri = 'mongodb://127.0.0.1:27017/party_games'
 
 const setUp = () => {

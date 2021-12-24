@@ -41,7 +41,11 @@ const Memes = () => {
     <Stack py={6} alignItems="center">
       <ScrollToTop top={100} duration={250} />
 
-      <Typography variant="h4">{MemesList.length} Memes</Typography>
+      <Typography variant="h4">
+        {MemesList.length} Memes{' '}
+        <span style={{ fontSize: '0.4em' }}>...and more to come!</span>
+      </Typography>
+
       <Box my={3}>
         <FormControl
           sx={{ width: '300px', maxWidth: '90vw' }}

@@ -9,4 +9,5 @@ export const SCENES = {
   caption: 'caption',
   voting: 'voting',
   results: 'results',
+  waiting: 'waiting',
 }

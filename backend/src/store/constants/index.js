@@ -6,10 +6,10 @@ export const STATES = {
 }
 
 export const ERRORS = {
-  ROOM_NOT_EXIST: 'room_not_exist',
-  UNEXPECTED_ERROR: 'unexpected_error',
-  PLAYER_NOT_FOUND: 'player_not_found',
-  DUPLICATE_ROOM: 'duplicate_room',
+  ROOM_NOT_EXIST: 'Room not found',
+  UNEXPECTED_ERROR: 'Unexpected error',
+  PLAYER_NOT_FOUND: 'Player not found',
+  DUPLICATE_ROOM: 'Duplicate room',
 }
 
 export const ROOM_INACTIVE_TIMEOUT = 3 * 60 * 1000

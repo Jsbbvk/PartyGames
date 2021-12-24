@@ -9,6 +9,7 @@ import {
   Intro,
   Join,
   Host,
+  Waiting,
 } from '../Scenes'
 import { SCENES } from '../../constants'
 import Menu from '../Menu'
@@ -25,9 +26,10 @@ const SceneManager = () => {
     [SCENES.caption]: <Caption />,
     [SCENES.voting]: <Voting />,
     [SCENES.results]: <Results />,
+    [SCENES.waiting]: <Waiting />,
   }
 
-  const [currScene, setCurrScene] = useState(SCENES.host)
+  const [currScene, setCurrScene] = useState(SCENES.join)
   const [sceneProps, setSceneProps] = useState({})
 
   const switchToScene = (scene, props) => {

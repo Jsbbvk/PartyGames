@@ -91,7 +91,6 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 const Menu = () => {
   const [openMenu, setOpenMenu] = useState(false)
-  const isSM = useMediaQuery('sm')
 
   const Player = (name, score, isPlayer) => (
     <Stack

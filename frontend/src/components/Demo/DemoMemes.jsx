@@ -93,7 +93,9 @@ const DemoMemes = () => {
     <Stack pb={6} alignItems="center">
       <ScrollToTop top={100} duration={250} />
 
-      <Typography variant="h6">Select your meme</Typography>
+      <Typography variant="h6" sx={{ mt: 2 }}>
+        Choose your meme to caption
+      </Typography>
       <Box my={3}>
         <FormControl
           sx={{ width: '300px', maxWidth: '90vw' }}

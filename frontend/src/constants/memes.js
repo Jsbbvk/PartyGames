@@ -298,5 +298,5 @@ export default [
   new Meme('270.jpg', 'Guy Stretching Before Hitting Button'),
   new Meme('271.jpg', 'I Killed a Man'),
   new Meme('272.jpg', 'Mercy Offers a Hand'),
-  new Meme('273.jpg', 'Protester Running from Riot Police'),
+  new Meme('273.jpg', 'Protester Running From Riot Police'),
 ]

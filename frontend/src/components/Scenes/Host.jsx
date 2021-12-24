@@ -1,9 +1,43 @@
-import { Box, Stack, TextField, Typography } from '@mui/material'
+import { Box, Fab, Stack, styled, TextField, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useListener, useEmitter, useSceneContext } from '../Managers'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import {
+  useListener,
+  useEmitter,
+  useSceneContext,
+  useGameContext,
+} from '../Managers'
+import { SCENES } from '../../constants'
+
+const StyledButton = styled(Fab)({
+  textTransform: 'none',
+  boxShadow: 'none',
+  color: '#ffffffDE',
+  backgroundColor: '#363636',
+  transition: 'transform 100ms, background-color 250ms',
+  padding: '20px 28px',
+
+  '&:hover': {
+    background: '#474747',
+  },
+  '&:active': {
+    boxShadow: 'none',
+    transform: 'scale(.96)',
+  },
+})
 
 const Host = () => {
-  const { switchToScene, sceneProps, setSceneProps } = useSceneContext()
+  const { switchToScene, setSceneProps } = useSceneContext()
+  const {
+    setName: setGameName,
+    setUUID,
+    setRoomId: setGameRoomId,
+  } = useGameContext()
+  const [error, setError] = useState('')
+  // TODO change
+  const [roomId, setRoomId] = useState('11111')
+  const [name, setName] = useState('hi')
+  const [isLoading, setIsLoading] = useState(false)
 
   const emit = useEmitter()
 
@@ -11,10 +45,25 @@ const Host = () => {
     setSceneProps({ hideMenu: true })
   }, [])
 
-  const onCreateRoom = () =>
-    emit('create room', { roomId: '1111', name: 'joe' }, (data) =>
-      console.log(data)
-    )
+  const onCreateRoom = () => {
+    if (isLoading) return
+
+    setIsLoading(true)
+    emit('create room', { roomId, name }, ({ uuid, error: err }) => {
+      if (err) {
+        setError(err)
+        setIsLoading(false)
+        return
+      }
+
+      setUUID(uuid)
+      setGameName(name)
+      setGameRoomId(roomId)
+      switchToScene(SCENES.waiting)
+    })
+  }
+
+  const enableHost = roomId.length === 5 && name.length > 0 && !isLoading
 
   return (
     <Box>
@@ -23,16 +72,59 @@ const Host = () => {
       </Typography>
       <Stack alignItems="center" spacing={2} mt={5}>
         <Box>
-          <TextField id="host-room-id" label="Room ID" variant="outlined" />
+          <TextField
+            id="host-room-id"
+            label={`Room ID (${5 - roomId.length})`}
+            variant="outlined"
+            value={roomId}
+            error={Boolean(error)}
+            helperText={error || ''}
+            onChange={(e) => {
+              setRoomId(e.target.value.toUpperCase() || '')
+              setError('')
+            }}
+            inputProps={{
+              maxLength: 5,
+            }}
+          />
         </Box>
         <Box>
-          <TextField id="host-name" label="Name" variant="outlined" />
+          <TextField
+            id="host-name"
+            label={`Name (${20 - name.length})`}
+            variant="outlined"
+            value={name}
+            onChange={(e) => setName(e.target.value || '')}
+            inputProps={{
+              maxLength: 20,
+            }}
+          />
         </Box>
       </Stack>
-      <Stack>
-        <button type="button" onClick={onCreateRoom}>
-          Create
-        </button>
+      <Stack
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+        py={4}
+        spacing={7}
+      >
+        <StyledButton
+          disableRipple
+          onClick={() => switchToScene(SCENES.intro)}
+          size="small"
+          sx={{ padding: '24px' }}
+          title="Back"
+        >
+          <ArrowBackIcon />
+        </StyledButton>
+        <StyledButton
+          variant="extended"
+          disableRipple
+          onClick={onCreateRoom}
+          disabled={!enableHost}
+        >
+          <Typography variant="h6">Host!</Typography>
+        </StyledButton>
       </Stack>
     </Box>
   )

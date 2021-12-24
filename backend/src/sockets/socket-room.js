@@ -45,15 +45,17 @@ const createAndJoinRoom = (socket) => async (data, cb) => {
   }
 
   socket.join(roomId)
-  if (cb) cb({ uuid, name })
+  if (cb) cb({ uuid, name, roomId })
 }
 
 const joinRoom = (socket) => async (data, cb) => {
+  console.log('joining')
   const { roomId, name } = data
 
   const { roomId: delRoomId, error: delErr } = await deleteRoomIfInactive(
     roomId
   )
+
   if (delErr) {
     if (cb) cb({ error: delErr })
     return
@@ -71,7 +73,7 @@ const joinRoom = (socket) => async (data, cb) => {
   if (cb) cb({ uuid })
 }
 
-export default (socket) => {
+export default async (socket) => {
   socket.on('create room', createAndJoinRoom(socket))
   socket.on('join room', joinRoom(socket))
 }

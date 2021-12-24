@@ -19,8 +19,14 @@ const GameContext = createContext()
 export const useGameContext = () => useContext(GameContext)
 
 const GameManager = () => {
+  const [name, setName] = useState()
+  const [uuid, setUUID] = useState()
+  const [roomId, setRoomId] = useState()
+
   return (
-    <GameContext.Provider value={{ socket: s }}>
+    <GameContext.Provider
+      value={{ socket: s, name, uuid, setName, setUUID, roomId, setRoomId }}
+    >
       <SceneManager />
     </GameContext.Provider>
   )
