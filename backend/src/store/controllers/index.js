@@ -2,11 +2,11 @@ export {
   createPlayer,
   dropCollection as dropPlayerCollection,
   getPlayer,
+  getPlayerBySocketId,
   setPlayerName,
 } from './playerController'
 
 export {
-  // joinRoom,
   leaveRoom,
   deleteRoom,
   createRoom,

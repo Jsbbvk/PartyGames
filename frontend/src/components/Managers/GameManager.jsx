@@ -23,9 +23,24 @@ const GameManager = () => {
   const [uuid, setUUID] = useState()
   const [roomId, setRoomId] = useState()
 
+  const reset = () => {
+    setName(null)
+    setUUID(null)
+    setRoomId(null)
+  }
+
   return (
     <GameContext.Provider
-      value={{ socket: s, name, uuid, setName, setUUID, roomId, setRoomId }}
+      value={{
+        socket: s,
+        name,
+        uuid,
+        setName,
+        setUUID,
+        roomId,
+        setRoomId,
+        reset,
+      }}
     >
       <SceneManager />
     </GameContext.Provider>

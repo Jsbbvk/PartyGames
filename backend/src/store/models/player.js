@@ -14,11 +14,14 @@ const playerSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    socketId: String,
     points: Number,
     memeUrl: String,
   },
   options
 )
+
+playerSchema.index({ socketId: 1 })
 
 const Player = mongoose.model('Player', playerSchema)
 

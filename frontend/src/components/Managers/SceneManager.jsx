@@ -29,7 +29,7 @@ const SceneManager = () => {
     [SCENES.waiting]: <Waiting />,
   }
 
-  const [currScene, setCurrScene] = useState(SCENES.join)
+  const [currScene, setCurrScene] = useState(SCENES.intro)
   const [sceneProps, setSceneProps] = useState({})
 
   const switchToScene = (scene, props) => {

@@ -57,7 +57,6 @@ const StyledButton = styled(Fab)({
 
 const PlayerWrapper = styled(Box)({
   marginTop: 24,
-  padding: '4px 0',
   overflowY: 'auto',
   height: '70%',
 

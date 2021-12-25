@@ -4,21 +4,21 @@ import {
   createPlayer,
   createRoom,
   deleteRoom,
+  getPlayers,
 } from '../store/controllers'
 
 const deleteRoomIfInactive = async (roomId) => {
-  const { room, error } = await getRoom(roomId, true)
-
-  if (error) return { error }
-  if (!room) return {}
-
-  const { updatedAt } = room
-  if (new Date() - updatedAt > ROOM_INACTIVE_TIMEOUT) {
-    const { roomId: rmId, error: err } = await deleteRoom(roomId)
-    if (err) return { error: err }
-    return { roomId }
-  }
   return {}
+  // const { room, error } = await getRoom(roomId, true)
+  // if (error) return { error }
+  // if (!room) return {}
+  // const { updatedAt } = room
+  // if (new Date() - updatedAt > ROOM_INACTIVE_TIMEOUT) {
+  //   const { roomId: rmId, error: err } = await deleteRoom(roomId)
+  //   if (err) return { error: err }
+  //   return { roomId }
+  // }
+  // return {}
 }
 
 const createAndJoinRoom = (socket) => async (data, cb) => {
@@ -38,7 +38,11 @@ const createAndJoinRoom = (socket) => async (data, cb) => {
     return
   }
 
-  const { uuid, error: errorCreate } = await createPlayer(name, roomId)
+  const { uuid, error: errorCreate } = await createPlayer(
+    name,
+    roomId,
+    socket.id
+  )
   if (errorCreate) {
     if (cb) cb({ error: errorCreate })
     return
@@ -48,8 +52,7 @@ const createAndJoinRoom = (socket) => async (data, cb) => {
   if (cb) cb({ uuid, name, roomId })
 }
 
-const joinRoom = (socket) => async (data, cb) => {
-  console.log('joining')
+const joinRoom = (io, socket) => async (data, cb) => {
   const { roomId, name } = data
 
   const { roomId: delRoomId, error: delErr } = await deleteRoomIfInactive(
@@ -61,19 +64,32 @@ const joinRoom = (socket) => async (data, cb) => {
     return
   }
 
-  const { uuid, error } = await createPlayer(name, roomId)
+  const { uuid, error } = await createPlayer(name, roomId, socket.id)
   if (error) {
     if (cb) cb({ error })
     return
   }
 
   socket.join(roomId)
-  socket.to(roomId).emit('player join', { name, uuid })
+  io.to(roomId).emit('update players')
 
   if (cb) cb({ uuid })
 }
 
-export default async (socket) => {
+const getRoomPlayers = async (data, cb) => {
+  const { roomId } = data
+
+  const { players, error } = await getPlayers(roomId)
+  if (error) {
+    if (cb) cb({ error })
+    return
+  }
+
+  if (cb) cb({ players })
+}
+
+export default async (io, socket) => {
   socket.on('create room', createAndJoinRoom(socket))
-  socket.on('join room', joinRoom(socket))
+  socket.on('join room', joinRoom(io, socket))
+  socket.on('get players', getRoomPlayers)
 }

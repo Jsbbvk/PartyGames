@@ -1,5 +1,5 @@
 import { Box, Fab, Stack, styled, TextField, Typography } from '@mui/material'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import {
   useListener,
@@ -38,6 +38,7 @@ const Join = () => {
   const [roomId, setRoomId] = useState('11111')
   const [name, setName] = useState('hi')
   const [isLoading, setIsLoading] = useState(false)
+  const buttonRef = useRef(null)
 
   const emit = useEmitter()
 
@@ -47,6 +48,7 @@ const Join = () => {
 
   const onJoinRoom = () => {
     if (isLoading) return
+    buttonRef.current.blur()
 
     setIsLoading(true)
 
@@ -124,6 +126,7 @@ const Join = () => {
           disableRipple
           onClick={onJoinRoom}
           disabled={!enableJoin}
+          ref={buttonRef}
         >
           <Typography variant="h6">Join!</Typography>
         </StyledButton>

@@ -72,23 +72,22 @@ export const createRoom = async (roomId) => {
 // }
 
 export const leaveRoom = async (roomId, uuid) => {
-  const [err] = await to(
+  const [err, room] = await to(
     Room.findOneAndUpdate(
       { roomId },
       {
         $pull: { players: uuid },
-      }
+      },
+      { new: true }
     )
   )
-
-  // TODO see if this is empty
 
   if (err) {
     console.log(err)
     return Error(ERRORS.UNEXPECTED_ERROR)
   }
 
-  return { uuid }
+  return { uuid, room }
 }
 
 export const deleteRoom = async (roomId) => {
