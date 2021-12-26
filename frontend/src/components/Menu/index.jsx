@@ -15,8 +15,15 @@ import {
   useMediaQuery,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import { useMemo, useState, forwardRef } from 'react'
+import { useMemo, useState, forwardRef, useEffect } from 'react'
 import { grey } from '@mui/material/colors'
+import {
+  useEmitter,
+  useGameContext,
+  useListener,
+  useSceneContext,
+} from '../Managers'
+import { SCENES, STATES } from '../../constants'
 
 const StyledFab = styled(Fab)({
   position: 'fixed',
@@ -88,15 +95,21 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Fade ref={ref} {...props} />
 })
 
-const Menu = () => {
+const Menu = ({ show }) => {
   const [openMenu, setOpenMenu] = useState(false)
+  const [players, setPlayers] = useState([])
 
-  const Player = (name, score, isPlayer) => (
+  const { uuid, roomId, reset } = useGameContext()
+  const { switchToScene } = useSceneContext
+  const emit = useEmitter()
+
+  const Player = (name, id, score) => (
     <Stack
       alignItems="center"
       direction="row"
       justifyContent="space-between"
       p={0.75}
+      key={id}
     >
       <Typography
         variant="body1"
@@ -108,11 +121,43 @@ const Menu = () => {
         }}
       >
         {name}
-        {isPlayer ? ' (You)' : ''}
+        {uuid === id ? ' (You)' : ''}
       </Typography>
       <Typography variant="body1">{score}</Typography>
     </Stack>
   )
+
+  const getPlayers = () => {
+    emit('get players', { roomId }, (data) => {
+      const { players: roomPlayers, error } = data
+      if (error) {
+        console.log(error)
+        return
+      }
+      setPlayers(roomPlayers)
+    })
+  }
+
+  useListener('update players', () => roomId && getPlayers())
+
+  useEffect(() => {
+    getPlayers()
+  }, [])
+
+  useEffect(() => {
+    if (!show) setOpenMenu(false)
+  }, [show])
+
+  const leaveGame = () => {
+    emit('remove player', { roomId, uuid }, ({ error }) => {
+      if (error) console.log(error)
+      reset()
+      switchToScene(SCENES.intro)
+    })
+  }
+
+  const endGame = () =>
+    emit('set room state', { roomId, state: STATES.waiting })
 
   const MenuModal = useMemo(
     () => (
@@ -128,22 +173,16 @@ const Menu = () => {
           pt={4}
           pb={{ xs: 3, md: 6 }}
           px={{ xs: 2, md: 5 }}
-          sx={{ height: '80vh', maxHeight: '550px' }}
+          sx={{ height: '87vh', maxHeight: '600px' }}
         >
           <Box sx={{ height: '90%' }}>
             <Typography variant="h5" sx={{ textAlign: 'center' }}>
               Players
             </Typography>
             <PlayerWrapper>
-              {Player('First Fisher', (Math.random() * 10) | 0)}
-              {Player('asdf sfdasdfsa', (Math.random() * 10) | 0)}
-              {Player('saf asfd isadf', (Math.random() * 10) | 0)}
-              {Player('asdf asdf asd', (Math.random() * 10) | 0, true)}
-              {Player('asdfasf sdfasdfr', (Math.random() * 10) | 0)}
-              {Player('Jonathan Fisher', (Math.random() * 10) | 0)}
-              {Player('Jasdfi  asdfsher', (Math.random() * 10) | 0)}
-              {Player('Joiuuiup qo er', (Math.random() * 10) | 0)}
-              {Player('asdf jkas sr', (Math.random() * 10) | 0)}
+              {players.map(({ name: playerName, _id: playerId, points }) =>
+                Player(playerName, playerId, points)
+              )}
             </PlayerWrapper>
           </Box>
           <Stack
@@ -151,23 +190,23 @@ const Menu = () => {
             justifyContent="space-evenly"
             alignItems="center"
           >
-            <StyledButton variant="extended" disableRipple>
+            <StyledButton variant="extended" disableRipple onClick={leaveGame}>
               Leave
             </StyledButton>
-            <StyledButton variant="extended" disableRipple>
+            <StyledButton variant="extended" disableRipple onClick={endGame}>
               End Game
             </StyledButton>
           </Stack>
         </Stack>
       </Dialog>
     ),
-    [openMenu]
+    [openMenu, players]
   )
 
   return (
     <>
       {MenuModal}
-      <Slide direction="left" in timeout={350}>
+      <Slide direction="left" in={show} timeout={350}>
         <StyledFab
           disableRipple
           title="Menu"

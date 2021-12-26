@@ -8,6 +8,7 @@ import {
   Tooltip,
   Typography,
   Fade,
+  Collapse,
 } from '@mui/material'
 import { useEffect, useState, useRef } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
@@ -19,10 +20,11 @@ import {
   useEmitter,
   useGameContext,
   useListener,
+  useOnceListener,
   useSceneContext,
 } from '../Managers'
 import Button from '../widgets/Button'
-import { SCENES } from '../../constants'
+import { SCENES, STATES } from '../../constants'
 
 const PlayerWrapper = styled(Box)({
   overflowY: 'auto',
@@ -109,9 +111,13 @@ const Waiting = () => {
   }
 
   useListener('update players', () => roomId && getPlayers())
+  // useOnceListener('room state change', ({ state, error }) => {
+  //   if (error) return
+  //   if (state === STATES.captioning) switchToScene(SCENES.selection)
+  // })
 
   useEffect(() => {
-    setSceneProps({ hideMenu: true })
+    setSceneProps({ showMenu: false })
     getPlayers()
   }, [])
 
@@ -148,6 +154,9 @@ const Waiting = () => {
       if (error) console.log(error)
     })
 
+  const startGame = () =>
+    emit('set room state', { roomId, state: STATES.captioning })
+
   return (
     <Stack alignItems="center">
       <Typography variant="h5">Room ID: {roomId}</Typography>
@@ -160,7 +169,7 @@ const Waiting = () => {
           }}
         >
           {players.map(({ name: playerName, _id: playerId }) => (
-            <Fade in key={playerId}>
+            <Collapse key={playerId} sx={{ width: '100%' }}>
               <StyledPlayerRow
                 direction="row"
                 alignItems="center"
@@ -215,7 +224,7 @@ const Waiting = () => {
                   </Tooltip>
                 )}
               </StyledPlayerRow>
-            </Fade>
+            </Collapse>
           ))}
         </TransitionGroup>
       </PlayerWrapper>
@@ -232,6 +241,7 @@ const Waiting = () => {
           sx={{
             transition: 'transform 100ms, background-color 250ms',
           }}
+          onClick={startGame}
         >
           {players.length < 3
             ? `${3 - players.length} more player${

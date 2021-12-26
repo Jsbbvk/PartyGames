@@ -15,7 +15,10 @@ const playerSchema = mongoose.Schema(
       required: true,
     },
     socketId: String,
-    points: Number,
+    points: {
+      type: Number,
+      default: 0,
+    },
     memeUrl: String,
   },
   options

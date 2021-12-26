@@ -100,6 +100,17 @@ export const deleteRoom = async (roomId) => {
   return { roomId }
 }
 
+export const setRoomState = async (roomId, state) => {
+  const [err] = await to(Room.findOneAndUpdate({ roomId }, { $set: { state } }))
+
+  if (err) {
+    console.log(err)
+    return Error(ERRORS.UNEXPECTED_ERROR)
+  }
+
+  return { roomId }
+}
+
 export const dropCollection = async () => {
   const [err] = await to(Room.collection.drop())
   if (err) console.log(err)

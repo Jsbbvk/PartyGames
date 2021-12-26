@@ -43,7 +43,7 @@ const Join = () => {
   const emit = useEmitter()
 
   useEffect(() => {
-    setSceneProps({ hideMenu: true })
+    setSceneProps({ showMenu: false })
   }, [])
 
   const onJoinRoom = () => {

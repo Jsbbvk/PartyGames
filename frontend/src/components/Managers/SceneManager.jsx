@@ -11,8 +11,9 @@ import {
   Host,
   Waiting,
 } from '../Scenes'
-import { SCENES } from '../../constants'
+import { SCENES, STATES_TO_SCENES } from '../../constants'
 import Menu from '../Menu'
+import { useListener } from '.'
 
 const SceneContext = createContext()
 export const useSceneContext = () => useContext(SceneContext)
@@ -39,6 +40,28 @@ const SceneManager = () => {
 
   const setProps = (props) => setSceneProps(props)
 
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (
+        currScene === SCENES.selection ||
+        currScene === SCENES.caption ||
+        currScene === SCENES.voting ||
+        currScene === SCENES.results
+      ) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [])
+
+  useListener('room state change', ({ state, error }) => {
+    if (error) return
+    switchToScene(STATES_TO_SCENES[state])
+  })
+
   return (
     <>
       <SceneContext.Provider
@@ -47,7 +70,7 @@ const SceneManager = () => {
         <SwitchTransition mode="out-in">
           <Fade key={currScene} in unmountOnExit>
             <Container sx={{ py: 10 }}>
-              {!sceneProps?.hideMenu && <Menu />}
+              <Menu show={sceneProps?.showMenu} />
               {scenes[currScene]}
             </Container>
           </Fade>

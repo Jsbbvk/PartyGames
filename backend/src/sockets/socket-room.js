@@ -1,15 +1,16 @@
-import { ROOM_INACTIVE_TIMEOUT } from '../store/constants'
+import { ROOM_INACTIVE_TIMEOUT, STATES } from '../store/constants'
 import {
-  getRoom,
+  getRoom as getRm,
   createPlayer,
   createRoom,
   deleteRoom,
   getPlayers,
+  setRoomState as setRmState,
 } from '../store/controllers'
 
 const deleteRoomIfInactive = async (roomId) => {
   return {}
-  // const { room, error } = await getRoom(roomId, true)
+  // const { room, error } = await getRm(roomId, true)
   // if (error) return { error }
   // if (!room) return {}
   // const { updatedAt } = room
@@ -64,6 +65,17 @@ const joinRoom = (io, socket) => async (data, cb) => {
     return
   }
 
+  const { error: rmErr, room } = await getRm(roomId, true)
+  if (rmErr) {
+    if (cb) cb({ error: rmErr })
+    return
+  }
+
+  if (room && room.state !== STATES.WAITING) {
+    if (cb) cb({ error: 'Game in session' })
+    return
+  }
+
   const { uuid, error } = await createPlayer(name, roomId, socket.id)
   if (error) {
     if (cb) cb({ error })
@@ -88,8 +100,30 @@ const getRoomPlayers = async (data, cb) => {
   if (cb) cb({ players })
 }
 
+const setRoomState = (io) => async (data, cb) => {
+  const { roomId, state } = data
+  const { error } = await setRmState(roomId, state)
+  if (error) {
+    if (cb) cb({ error })
+    return
+  }
+
+  io.to(roomId).emit('room state change', { state })
+
+  if (cb) cb({ roomId })
+}
+
+const getRoom = async (data, cb) => {
+  const { roomId } = data
+
+  const res = await getRm(roomId, true)
+  if (cb) cb(res)
+}
+
 export default async (io, socket) => {
   socket.on('create room', createAndJoinRoom(socket))
   socket.on('join room', joinRoom(io, socket))
   socket.on('get players', getRoomPlayers)
+  socket.on('set room state', setRoomState(io))
+  socket.on('get room', getRoom)
 }

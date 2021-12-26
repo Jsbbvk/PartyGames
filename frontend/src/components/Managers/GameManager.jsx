@@ -9,7 +9,7 @@ import {
 import { io } from 'socket.io-client'
 import { SceneManager } from '.'
 
-const ENDPOINT = 'http://localhost:4001'
+const ENDPOINT = process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
 
 const s = io(ENDPOINT, {
   transports: ['websocket', 'polling', 'flashsocket'],
@@ -28,6 +28,8 @@ const GameManager = () => {
     setUUID(null)
     setRoomId(null)
   }
+
+  // TODO handle players leaving in the middle
 
   return (
     <GameContext.Provider
@@ -54,13 +56,32 @@ export const useListener = (event, cb) => {
   callbackRef.current = cb
 
   useEffect(() => {
-    function socketHandler(_this, ...args) {
+    function socketHandler(...args) {
       if (callbackRef.current) {
-        callbackRef.current.apply(_this, args)
+        callbackRef.current.apply(this, args)
       }
     }
 
     socket?.on(event, socketHandler)
+
+    return () => socket.off(event, socketHandler)
+  }, [socket, event])
+}
+
+export const useOnceListener = (event, cb) => {
+  const { socket } = useGameContext()
+
+  const callbackRef = useRef(cb)
+  callbackRef.current = cb
+
+  useEffect(() => {
+    function socketHandler(...args) {
+      if (callbackRef.current) {
+        callbackRef.current.apply(this, args)
+      }
+    }
+
+    socket?.once(event, socketHandler)
 
     return () => socket.off(event, socketHandler)
   }, [socket, event])

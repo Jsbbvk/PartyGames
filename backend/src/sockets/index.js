@@ -1,5 +1,6 @@
 import { Server } from 'socket.io'
 import {
+  deleteRoom,
   dropPlayerCollection,
   dropRoomCollection,
   getPlayerBySocketId,
@@ -28,13 +29,14 @@ export default async () => {
       if (!player) return
 
       const { roomId, _id: uuid } = player
-      const { error: err } = await leaveRoom(roomId, uuid)
+      const { error: err, room } = await leaveRoom(roomId, uuid)
       if (err) {
         console.log(err)
         return
       }
 
-      io.to(roomId).emit('update players')
+      if (room.players.length === 0) await deleteRoom(roomId)
+      else io.to(roomId).emit('update players')
     })
 
     socket.on('_health', (cb) => {

@@ -70,33 +70,8 @@ const Caption = () => {
   const [openMemeExampleModal, setOpenMemeExampleModal] = useState(false)
   const [memeDataUrl, setMemeDataUrl] = useState('')
 
-  const handleOnSubmit = async () => {
-    function dataURLtoBlob(dataurl) {
-      const byteString = atob(dataurl.split(',')[1])
-      const mimeString = dataurl.split(',')[0].split(':')[1].split(';')[0]
-      const ab = new ArrayBuffer(byteString.length)
-      const ia = new Uint8Array(ab)
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i)
-      }
-      return new Blob([ab], { type: mimeString })
-    }
-
+  const handleOnSubmit = () => {
     const url = workareaRef.current.getDataUrl()
-    const blob = dataURLtoBlob(url)
-    try {
-      // doesn't work on ios
-      // https://dev.to/viclafouch/the-new-way-to-copy-an-image-or-a-text-to-clipboard-in-javascript-2n1g
-      await navigator.clipboard.write([
-        // eslint-disable-next-line no-undef
-        new ClipboardItem({
-          [blob.type]: blob,
-        }),
-      ])
-    } catch (e) {
-      console.log(e)
-    }
     setMemeDataUrl(url)
     setSubmittedMeme((p) => !p)
   }
@@ -124,11 +99,6 @@ const Caption = () => {
   return (
     <Stack pb={20}>
       {ExampleMemeModal}
-      <Box>
-        <button type="button" onClick={() => switchToScene('selection')}>
-          Back to meme select
-        </button>
-      </Box>
 
       <Box textAlign="center" mb={2}>
         <Typography variant="h5">
@@ -159,9 +129,6 @@ const Caption = () => {
             Submit Meme
           </StyledFab>
         </Fade>
-        <button onClick={handleOnSubmit} type="button">
-          back
-        </button>
       </Stack>
 
       {submittedMeme && (

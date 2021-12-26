@@ -19,7 +19,7 @@ const roomSchema = mongoose.Schema(
         ref: 'Player',
       },
     ],
-    roundState: {
+    state: {
       type: String,
       enum: Object.values(STATES),
       default: STATES.WAITING,

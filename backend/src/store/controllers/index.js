@@ -13,4 +13,5 @@ export {
   dropCollection as dropRoomCollection,
   getPlayers,
   getRoom,
+  setRoomState,
 } from './roomController'

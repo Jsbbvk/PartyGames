@@ -60,7 +60,7 @@ const Intro = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    setSceneProps({ hideMenu: true })
+    setSceneProps({ showMenu: false })
   }, [])
 
   return (
