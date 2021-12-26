@@ -300,4 +300,5 @@ export default [
   new Meme('272.jpg', 'Mercy Offers a Hand'),
   new Meme('273.jpg', 'Protester Running From Riot Police'),
   new Meme('274.jpg', "Let's See Who This Really Is"),
+  new Meme('275.jpg', "Open the Gate!"),
 ]
