@@ -24,7 +24,7 @@ import {
   useSceneContext,
 } from '../Managers'
 import Button from '../widgets/Button'
-import { SCENES, STATES } from '../../constants'
+import { MIN_PLAYERS_TO_START, SCENES, STATES } from '../../constants'
 
 const PlayerWrapper = styled(Box)({
   overflowY: 'auto',
@@ -237,15 +237,15 @@ const Waiting = () => {
         <Button
           variant="extended"
           disableRipple
-          disabled={isEditingName || players.length < 3}
+          disabled={isEditingName || players.length < MIN_PLAYERS_TO_START}
           sx={{
             transition: 'transform 100ms, background-color 250ms',
           }}
           onClick={startGame}
         >
-          {players.length < 3
-            ? `${3 - players.length} more player${
-                3 - players.length <= 1 ? '' : 's'
+          {players.length < MIN_PLAYERS_TO_START
+            ? `${MIN_PLAYERS_TO_START - players.length} more player${
+                MIN_PLAYERS_TO_START - players.length <= 1 ? '' : 's'
               }`
             : 'Start'}
         </Button>

@@ -15,8 +15,9 @@ import {
   useMediaQuery,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import { useMemo, useState, forwardRef, useEffect } from 'react'
+import { useMemo, useState, forwardRef, useEffect, useCallback } from 'react'
 import { grey } from '@mui/material/colors'
+import debounce from 'lodash/debounce'
 import {
   useEmitter,
   useGameContext,
@@ -127,16 +128,20 @@ const Menu = ({ show }) => {
     </Stack>
   )
 
-  const getPlayers = () => {
-    emit('get players', { roomId }, (data) => {
-      const { players: roomPlayers, error } = data
-      if (error) {
-        console.log(error)
-        return
-      }
-      setPlayers(roomPlayers)
-    })
-  }
+  const getPlayers = debounce(
+    useCallback(() => {
+      if (!roomId || !openMenu) return
+      emit('get players', { roomId }, (data) => {
+        const { players: roomPlayers, error } = data
+        if (error) {
+          console.log(error)
+          return
+        }
+        setPlayers(roomPlayers)
+      })
+    }, [emit, roomId, openMenu]),
+    300
+  )
 
   useListener('update players', () => roomId && getPlayers())
 

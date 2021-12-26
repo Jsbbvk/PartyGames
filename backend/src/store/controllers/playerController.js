@@ -53,9 +53,9 @@ export const createPlayer = async (name, roomId, socketId) => {
   return { uuid: player._id }
 }
 
-export const setPlayerName = async (uuid, name) => {
+export const updatePlayer = async (uuid, update) => {
   const [err] = await to(
-    Player.findOneAndUpdate({ _id: uuid }, { $set: { name } })
+    Player.findOneAndUpdate({ _id: uuid }, { $set: update })
   )
 
   if (err) {

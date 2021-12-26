@@ -25,3 +25,5 @@ export const STATES_TO_SCENES = {
   voting: 'voting',
   results: 'results',
 }
+
+export const MIN_PLAYERS_TO_START = 1

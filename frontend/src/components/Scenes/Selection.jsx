@@ -71,9 +71,7 @@ const Selection = () => {
   useEffect(() => {
     setSceneProps({ showMenu: true })
 
-    let availableMemes = LZString.decompressFromEncodedURIComponent(
-      cookies.UnusedMemes
-    )
+    let availableMemes = LZString.decompressFromUTF16(cookies.UnusedMemes)
 
     if (!availableMemes) availableMemes = MemesList.map(({ src }) => src)
     else availableMemes = availableMemes.split('/')
@@ -102,9 +100,7 @@ const Selection = () => {
       )[0],
     }))
 
-    const compressedMemeList = LZString.compressToEncodedURIComponent(
-      restMemes.join('/')
-    )
+    const compressedMemeList = LZString.compressToUTF16(restMemes.join('/'))
 
     setMemeChoices(memes)
     setCookie('UnusedMemes', compressedMemeList, {

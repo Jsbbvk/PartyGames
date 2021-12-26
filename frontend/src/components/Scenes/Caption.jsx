@@ -12,10 +12,17 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { grey } from '@mui/material/colors'
 import InfoIcon from '@mui/icons-material/Info'
+import LZString from 'lz-string'
 import { isMobile } from 'react-device-detect'
-import { useSceneContext } from '../Managers'
+import {
+  useEmitter,
+  useGameContext,
+  useSceneContext,
+  useListener,
+} from '../Managers'
 import CanvasWorkarea from '../Canvas'
 import WaitingForPlayers from '../WaitingForPlayers'
+import { STATES } from '../../constants'
 
 const DarkTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -64,17 +71,48 @@ const StyledModalBox = styled(Box)({
 
 const Caption = () => {
   const { switchToScene, sceneProps } = useSceneContext()
+  const { uuid, roomId } = useGameContext()
   const workareaRef = useRef(null)
 
   const [submittedMeme, setSubmittedMeme] = useState(false)
   const [openMemeExampleModal, setOpenMemeExampleModal] = useState(false)
-  const [memeDataUrl, setMemeDataUrl] = useState('')
+  const [playersReady, setPlayersReady] = useState([0, 1])
+
+  const emit = useEmitter()
+
+  const setPlayers = () => {
+    emit('get players', { roomId }, (data) => {
+      const { players: roomPlayers, error } = data
+      if (error) {
+        console.log(error)
+        return
+      }
+
+      const numReady = roomPlayers.reduce(
+        (accum, curr) => accum + (curr?.ready?.captioning ? 1 : 0),
+        0
+      )
+
+      setPlayersReady([numReady, roomPlayers.length])
+    })
+  }
+
+  useListener('update players', () => submittedMeme && setPlayers())
 
   const handleOnSubmit = () => {
     const url = workareaRef.current.getDataUrl()
-    setMemeDataUrl(url)
-    setSubmittedMeme((p) => !p)
+
+    setPlayers()
+    setSubmittedMeme(true)
+
+    emit('set player meme url', { url, uuid, roomId })
   }
+
+  useEffect(() => {
+    if (playersReady[0] > 0 && playersReady[0] === playersReady[1]) {
+      emit('set room state', { roomId, state: STATES.voting })
+    }
+  }, [playersReady])
 
   const ExampleMemeModal = useMemo(
     () => (
@@ -131,21 +169,10 @@ const Caption = () => {
         </Fade>
       </Stack>
 
-      {submittedMeme && (
-        <Stack alignItems="center" mt={4}>
-          <Typography variant="h6">Copied Meme!</Typography>
-          <img
-            alt="captioned meme"
-            src={memeDataUrl}
-            width={isMobile ? window.innerWidth * 0.8 : '400px'}
-          />
-        </Stack>
-      )}
-
       <WaitingForPlayers
         transitionIn={submittedMeme}
-        numReady={5}
-        numTotal={5}
+        numReady={playersReady[0]}
+        numTotal={playersReady[1]}
       />
     </Stack>
   )

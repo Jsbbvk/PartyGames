@@ -3,7 +3,7 @@ export {
   dropCollection as dropPlayerCollection,
   getPlayer,
   getPlayerBySocketId,
-  setPlayerName,
+  updatePlayer,
 } from './playerController'
 
 export {

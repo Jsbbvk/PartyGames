@@ -4,6 +4,16 @@ const options = {
   collection: 'players',
 }
 
+export const defaultPlayer = {
+  points: 0,
+  votesReceived: 0,
+  ready: {
+    captioning: false,
+    voting: false,
+    results: false,
+  },
+}
+
 const playerSchema = mongoose.Schema(
   {
     roomId: {
@@ -19,7 +29,25 @@ const playerSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    votesReceived: {
+      type: Number,
+      default: 0,
+    },
     memeUrl: String,
+    ready: {
+      captioning: {
+        type: Boolean,
+        default: false,
+      },
+      voting: {
+        type: Boolean,
+        default: false,
+      },
+      results: {
+        type: Boolean,
+        default: false,
+      },
+    },
   },
   options
 )
