@@ -95,7 +95,7 @@ const Waiting = () => {
     emit('get players', { roomId }, (data) => {
       const { players: roomPlayers, error } = data
       if (error) {
-        console.log(error)
+        if (process.env.REACT_APP_NODE_ENV === 'development') console.log(error)
         return
       }
 
@@ -120,7 +120,8 @@ const Waiting = () => {
 
   const leaveGame = () => {
     emit('remove player', { roomId, uuid }, ({ error }) => {
-      if (error) console.log(error)
+      if (error && process.env.REACT_APP_NODE_ENV === 'development')
+        console.log(error)
       reset()
       switchToScene(SCENES.intro)
     })
@@ -139,7 +140,7 @@ const Waiting = () => {
     emit('set player name', { roomId, uuid, name: userName }, ({ error }) => {
       setIsEditingName(false)
       if (error) {
-        console.log(error)
+        if (process.env.REACT_APP_NODE_ENV === 'development') console.log(error)
         return
       }
       setName(userName)
@@ -148,7 +149,8 @@ const Waiting = () => {
 
   const removePlayer = (playerId) =>
     emit('remove player', { roomId, uuid: playerId }, ({ error }) => {
-      if (error) console.log(error)
+      if (error && process.env.REACT_APP_NODE_ENV === 'development')
+        console.log(error)
     })
 
   const startGame = () =>

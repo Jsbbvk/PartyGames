@@ -22,7 +22,7 @@ export default async () => {
       // removes players from room who refresh/leave page
       const { player, error } = await getPlayerBySocketId(socket.id)
       if (error) {
-        console.log(error)
+        if (process.env.NODE_ENV === 'development') console.log(error)
         return
       }
 
@@ -31,7 +31,7 @@ export default async () => {
       const { roomId, _id: uuid } = player
       const { error: err, room } = await leaveRoom(roomId, uuid)
       if (err) {
-        console.log(err)
+        if (process.env.NODE_ENV === 'development') console.log(err)
         return
       }
 

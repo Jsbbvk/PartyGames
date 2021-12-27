@@ -121,7 +121,8 @@ const Menu = ({ show, players, getPlayers }) => {
 
   const leaveGame = () => {
     emit('remove player', { roomId, uuid }, ({ error }) => {
-      if (error) console.log(error)
+      if (error && process.env.REACT_APP_NODE_ENV === 'development')
+        console.log(error)
       reset()
       switchToScene(SCENES.intro)
     })

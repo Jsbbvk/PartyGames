@@ -8,12 +8,12 @@ export const resetPlayers = async (roomId, resetPoints = true) => {
     Room.findOne({ roomId }).select('players').lean()
   )
   if (err) {
-    console.log(err)
+    if (process.env.NODE_ENV === 'development') console.log(err)
     return Error(ERRORS.UNEXPECTED_ERROR)
   }
 
   if (!room) {
-    console.log('room not found')
+    if (process.env.NODE_ENV === 'development') console.log('room not found')
     return Error(ERRORS.ROOM_NOT_EXIST)
   }
 
@@ -32,7 +32,7 @@ export const resetPlayers = async (roomId, resetPoints = true) => {
   )
 
   if (error) {
-    console.log(error)
+    if (process.env.NODE_ENV === 'development') console.log(error)
     return Error(ERRORS.UNEXPECTED_ERROR)
   }
 
@@ -43,7 +43,7 @@ export const getRoom = async (roomId, lean = false) => {
   const [err, room] = await to(Room.findOne({ roomId }).lean(lean))
 
   if (err) {
-    console.log(err)
+    if (process.env.NODE_ENV === 'development') console.log(err)
     return Error(ERRORS.UNEXPECTED_ERROR)
   }
 
@@ -59,12 +59,13 @@ export const getPlayers = async (roomId, includeMemeUrl = false) => {
       .lean()
   )
   if (err) {
-    console.log(err)
+    if (process.env.NODE_ENV === 'development') console.log(err)
     return Error(ERRORS.UNEXPECTED_ERROR)
   }
 
   if (!room) {
-    console.log("room doesn't exist")
+    if (process.env.NODE_ENV === 'development')
+      console.log("room doesn't exist")
     return Error(ERRORS.ROOM_NOT_EXIST)
   }
 
@@ -101,7 +102,7 @@ export const leaveRoom = async (roomId, uuid) => {
   )
 
   if (err) {
-    console.log(err)
+    if (process.env.NODE_ENV === 'development') console.log(err)
     return Error(ERRORS.UNEXPECTED_ERROR)
   }
 
@@ -111,7 +112,7 @@ export const leaveRoom = async (roomId, uuid) => {
 export const deleteRoom = async (roomId) => {
   const [err] = await to(Room.deleteOne({ roomId }))
   if (err) {
-    console.log(err)
+    if (process.env.NODE_ENV === 'development') console.log(err)
     return Error(ERRORS.UNEXPECTED_ERROR)
   }
 
@@ -122,7 +123,7 @@ export const setRoomState = async (roomId, state) => {
   const [err] = await to(Room.findOneAndUpdate({ roomId }, { $set: { state } }))
 
   if (err) {
-    console.log(err)
+    if (process.env.NODE_ENV === 'development') console.log(err)
     return Error(ERRORS.UNEXPECTED_ERROR)
   }
 
@@ -131,5 +132,5 @@ export const setRoomState = async (roomId, state) => {
 
 export const dropCollection = async () => {
   const [err] = await to(Room.collection.drop())
-  if (err) console.log(err)
+  if (err && process.env.NODE_ENV === 'development') console.log(err)
 }

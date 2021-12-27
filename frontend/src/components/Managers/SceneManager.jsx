@@ -76,7 +76,7 @@ const SceneManager = () => {
     emit('get players', { roomId }, (data) => {
       const { players: roomPlayers, error } = data
       if (error) {
-        console.log(error)
+        if (process.env.REACT_APP_NODE_ENV === 'development') console.log(error)
         return
       }
 
