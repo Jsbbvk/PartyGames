@@ -203,7 +203,7 @@ const Results = () => {
       <Box
         sx={{
           position: 'fixed',
-          bottom: '20px',
+          bottom: '40px',
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 1,

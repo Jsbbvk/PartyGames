@@ -7,6 +7,7 @@ import {
 } from '../store/controllers'
 
 const setPlayerName = (io) => async (data, cb) => {
+  if (!data) return
   const { roomId, uuid, name } = data
 
   const { error } = await updatePlayer(uuid, { $set: { name } })
@@ -21,7 +22,8 @@ const setPlayerName = (io) => async (data, cb) => {
   io.to(roomId).emit('update players')
 }
 
-const removePlayer = (io, socket) => async (data, cb) => {
+const removePlayer = (io) => async (data, cb) => {
+  if (!data) return
   const { uuid, roomId } = data
 
   const { error, room } = await leaveRoom(roomId, uuid)
@@ -46,6 +48,7 @@ const removePlayer = (io, socket) => async (data, cb) => {
 }
 
 const setMemeUrl = (io) => async (data, cb) => {
+  if (!data) return
   const { uuid, url, roomId } = data
 
   const { error } = await updatePlayer(uuid, {
@@ -65,6 +68,7 @@ const setMemeUrl = (io) => async (data, cb) => {
 }
 
 const setPlayerVote = (io) => async (data, cb) => {
+  if (!data) return
   const { uuid, votedPlayer, roomId } = data
 
   const { error } = await updatePlayer(uuid, {
@@ -84,6 +88,7 @@ const setPlayerVote = (io) => async (data, cb) => {
 }
 
 const setPlayerReady = (io) => async (data, cb) => {
+  if (!data) return
   const { uuid, roomId, ready, isReady } = data
 
   const { error } = await updatePlayer(uuid, {
@@ -100,6 +105,7 @@ const setPlayerReady = (io) => async (data, cb) => {
 }
 
 const addPointToPlayer = (io) => async (data, cb) => {
+  if (!data) return
   const { roomId, uuid } = data
 
   const { error } = await updatePlayer(uuid, {
@@ -119,7 +125,7 @@ const addPointToPlayer = (io) => async (data, cb) => {
 
 export default async (io, socket) => {
   socket.on('set player name', setPlayerName(io))
-  socket.on('remove player', removePlayer(io, socket))
+  socket.on('remove player', removePlayer(io))
   socket.on('set player meme url', setMemeUrl(io))
   socket.on('set player vote', setPlayerVote(io))
   socket.on('set player ready', setPlayerReady(io))

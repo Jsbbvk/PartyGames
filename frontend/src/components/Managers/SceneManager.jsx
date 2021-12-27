@@ -39,10 +39,12 @@ const SceneManager = () => {
   const [sceneProps, setSceneProps] = useState({})
   const [players, setPlayers] = useState([])
   const [showMenu, setShowMenu] = useState(false)
-  const { roomId } = useGameContext()
+  const { roomId, socket } = useGameContext()
   const emit = useEmitter()
 
   const switchToScene = (scene, props) => {
+    if (scene === currScene) return
+
     setCurrScene(scene)
     if (props) setSceneProps(props)
   }
@@ -68,6 +70,11 @@ const SceneManager = () => {
 
   useListener('room state change', ({ state, error }) => {
     if (error) return
+    if (
+      STATES_TO_SCENES[state] === SCENES.selection &&
+      currScene === SCENES.caption
+    )
+      return
     switchToScene(STATES_TO_SCENES[state])
   })
 

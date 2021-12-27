@@ -13,6 +13,7 @@ const ENDPOINT = process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
 
 const s = io(ENDPOINT, {
   transports: ['websocket', 'polling', 'flashsocket'],
+  closeOnBeforeunload: false,
 })
 
 const GameContext = createContext()
@@ -23,12 +24,51 @@ const GameManager = () => {
   const [uuid, setUUID] = useState()
   const [roomId, setRoomId] = useState()
 
+  useEffect(() => {
+    s.on('connect', () => {
+      if (roomId && uuid) s.emit('reconnect', { uuid, roomId })
+    })
+  }, [roomId, uuid])
+
   const reset = () => {
     s.emit('leave socket room', { roomId })
     setName(null)
     setUUID(null)
     setRoomId(null)
   }
+
+  useEffect(() => {
+    const unload = () => {
+      s.emit('remove player', { roomId, uuid })
+    }
+
+    window.addEventListener('beforeunload', unload)
+
+    return () => {
+      window.removeEventListener('beforeunload', unload)
+    }
+  }, [roomId, uuid])
+
+  useEffect(() => {
+    // const onBlur = () => {
+    //   s.emit('blur')
+    // }
+    // const onFocus = () => {
+    //   s.emit('focus')
+    // }
+    // const onVisibility = (e) => {
+    //   s.emit('visibility', document.visibilityState)
+    // }
+    // const pagehide = () => s.emit('pagehide')
+    // // window.addEventListener('blur', onBlur)
+    // // window.addEventListener('focus', onFocus)
+    // // window.addEventListener('pagehide', pagehide)
+    // // window.addEventListener('visibilitychange', onVisibility)
+    // return () => {
+    //   window.removeEventListener('blur', onBlur)
+    //   window.removeEventListener('focus', onFocus)
+    // }
+  }, [])
 
   return (
     <GameContext.Provider

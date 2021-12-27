@@ -58,6 +58,7 @@ const StyledIconButton = styled(IconButton)({
 const Intro = () => {
   const { switchToScene, sceneProps, setSceneProps, setShowMenu } =
     useSceneContext()
+
   const navigate = useNavigate()
 
   useEffect(() => {

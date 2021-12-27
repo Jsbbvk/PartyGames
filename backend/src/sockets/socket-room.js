@@ -13,7 +13,9 @@ const deleteRoomIfInactive = async (roomId) => {
   const { room, error } = await getRm(roomId, true)
   if (error) return { error }
   if (!room) return {}
+
   const { updatedAt } = room
+
   if (new Date() - updatedAt > ROOM_INACTIVE_TIMEOUT) {
     const { roomId: rmId, error: err } = await deleteRoom(roomId)
     if (err) return { error: err }
@@ -23,6 +25,7 @@ const deleteRoomIfInactive = async (roomId) => {
 }
 
 const createAndJoinRoom = (socket) => async (data, cb) => {
+  if (!data) return
   const { roomId, name } = data
 
   const { roomId: delRoomId, error: delErr } = await deleteRoomIfInactive(
@@ -54,6 +57,7 @@ const createAndJoinRoom = (socket) => async (data, cb) => {
 }
 
 const joinRoom = (io, socket) => async (data, cb) => {
+  if (!data) return
   const { roomId, name } = data
 
   const { roomId: delRoomId, error: delErr } = await deleteRoomIfInactive(
@@ -89,6 +93,7 @@ const joinRoom = (io, socket) => async (data, cb) => {
 }
 
 const getRoomPlayers = async (data, cb) => {
+  if (!data) return
   const { roomId, includeMemeUrl } = data
 
   const { players, error } = await getPlayers(roomId, includeMemeUrl)
@@ -101,6 +106,7 @@ const getRoomPlayers = async (data, cb) => {
 }
 
 const setRoomState = (io) => async (data, cb) => {
+  if (!data) return
   const { roomId, state } = data
   const { error } = await setRmState(roomId, state)
   if (error) {
@@ -114,6 +120,7 @@ const setRoomState = (io) => async (data, cb) => {
 }
 
 const restartGame = (io) => async (data, cb) => {
+  if (!data) return
   const { roomId } = data
   const { error } = await resetPlayers(roomId)
   if (error) {
@@ -125,6 +132,7 @@ const restartGame = (io) => async (data, cb) => {
 }
 
 const continueGame = (io) => async (data, cb) => {
+  if (!data) return
   const { roomId } = data
   const { error } = await resetPlayers(roomId, false)
   if (error) {
@@ -136,6 +144,7 @@ const continueGame = (io) => async (data, cb) => {
 }
 
 const getRoom = async (data, cb) => {
+  if (!data) return
   const { roomId } = data
 
   const res = await getRm(roomId, true)
