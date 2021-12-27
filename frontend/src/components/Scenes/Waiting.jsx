@@ -20,7 +20,6 @@ import {
   useEmitter,
   useGameContext,
   useListener,
-  useOnceListener,
   useSceneContext,
 } from '../Managers'
 import Button from '../widgets/Button'
@@ -92,6 +91,7 @@ const Waiting = () => {
   const emit = useEmitter()
 
   const getPlayers = () => {
+    if (!roomId) return
     emit('get players', { roomId }, (data) => {
       const { players: roomPlayers, error } = data
       if (error) {
@@ -101,6 +101,7 @@ const Waiting = () => {
 
       const inRoom = roomPlayers.some(({ _id: playerId }) => uuid === playerId)
       if (!inRoom) {
+        // handle getting kicked
         reset()
         switchToScene(SCENES.intro)
         return
@@ -110,7 +111,7 @@ const Waiting = () => {
     })
   }
 
-  useListener('update players', () => roomId && getPlayers())
+  useListener('update players', getPlayers)
 
   useEffect(() => {
     setShowMenu(false)
@@ -151,7 +152,7 @@ const Waiting = () => {
     })
 
   const startGame = () =>
-    emit('start game', { roomId, state: STATES.captioning })
+    emit('restart game', { roomId, state: STATES.captioning })
 
   return (
     <Stack alignItems="center">

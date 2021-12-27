@@ -43,6 +43,10 @@ export default async () => {
       if (cb) cb('OK')
     })
 
+    socket.on('leave socket room', ({ roomId }) => {
+      if (roomId) socket.leave(roomId)
+    })
+
     initRoomSocket(io, socket)
     initPlayerSocket(io, socket)
   })

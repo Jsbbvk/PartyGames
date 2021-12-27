@@ -1,29 +1,16 @@
-/* eslint-disable no-bitwise */
 import {
   Box,
   Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Fab,
   Fade,
-  Modal,
   Slide,
   Stack,
   styled,
   Typography,
-  useMediaQuery,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import { useMemo, useState, forwardRef, useEffect, useCallback } from 'react'
-import { grey } from '@mui/material/colors'
-import debounce from 'lodash/debounce'
-import {
-  useEmitter,
-  useGameContext,
-  useListener,
-  useSceneContext,
-} from '../Managers'
+import { useMemo, useState, forwardRef, useEffect } from 'react'
+import { useEmitter, useGameContext, useSceneContext } from '../Managers'
 import { SCENES, STATES } from '../../constants'
 
 const StyledFab = styled(Fab)({
@@ -96,9 +83,8 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Fade ref={ref} {...props} />
 })
 
-const Menu = ({ show }) => {
+const Menu = ({ show, players, getPlayers }) => {
   const [openMenu, setOpenMenu] = useState(false)
-  const [players, setPlayers] = useState([])
 
   const { uuid, roomId, reset } = useGameContext()
   const { switchToScene } = useSceneContext()
@@ -127,23 +113,6 @@ const Menu = ({ show }) => {
       <Typography variant="body1">{score}</Typography>
     </Stack>
   )
-
-  const getPlayers = debounce(
-    useCallback(() => {
-      if (!show || !roomId) return
-      emit('get players', { roomId }, (data) => {
-        const { players: roomPlayers, error } = data
-        if (error) {
-          console.log(error)
-          return
-        }
-        setPlayers(roomPlayers)
-      })
-    }, [emit, roomId, show]),
-    300
-  )
-
-  useListener('update players', () => roomId && getPlayers())
 
   useEffect(() => {
     if (show) getPlayers()

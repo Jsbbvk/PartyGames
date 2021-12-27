@@ -86,7 +86,7 @@ const Voting = () => {
   const emit = useEmitter()
 
   const getPlayers = () => {
-    emit('get players', { roomId }, (data) => {
+    emit('get players', { roomId, includeMemeUrl: true }, (data) => {
       const { players: roomPlayers, error } = data
       if (error) {
         console.log(error)

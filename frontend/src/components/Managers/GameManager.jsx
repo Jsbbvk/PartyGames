@@ -24,12 +24,11 @@ const GameManager = () => {
   const [roomId, setRoomId] = useState()
 
   const reset = () => {
+    s.emit('leave socket room', { roomId })
     setName(null)
     setUUID(null)
     setRoomId(null)
   }
-
-  // TODO handle players leaving in the middle
 
   return (
     <GameContext.Provider

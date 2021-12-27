@@ -3,7 +3,7 @@ import { defaultPlayer, Player, Room } from '../models'
 import { ERRORS } from '../constants'
 import { Error } from '../util'
 
-export const resetPlayers = async (roomId) => {
+export const resetPlayers = async (roomId, resetPoints = true) => {
   const [err, room] = await to(
     Room.findOne({ roomId }).select('players').lean()
   )
@@ -17,11 +17,16 @@ export const resetPlayers = async (roomId) => {
     return Error(ERRORS.ROOM_NOT_EXIST)
   }
 
+  const resetValues = {
+    ...defaultPlayer,
+    ...(resetPoints && { points: 0 }),
+  }
+
   const [error] = await to(
     Player.updateMany(
       { _id: { $in: room.players } },
       {
-        $set: defaultPlayer,
+        $set: resetValues,
       }
     )
   )
@@ -45,9 +50,13 @@ export const getRoom = async (roomId, lean = false) => {
   return { room }
 }
 
-export const getPlayers = async (roomId) => {
+export const getPlayers = async (roomId, includeMemeUrl = false) => {
   const [err, room] = await to(
-    Room.findOne({ roomId }).select('players').populate('players').lean()
+    Room.findOne({ roomId })
+      .select('players')
+      .populate('players')
+      .select({ memeUrl: includeMemeUrl })
+      .lean()
   )
   if (err) {
     console.log(err)

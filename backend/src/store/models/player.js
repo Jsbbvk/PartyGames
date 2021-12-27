@@ -5,7 +5,6 @@ const options = {
 }
 
 export const defaultPlayer = {
-  points: 0,
   ready: {
     captioning: false,
     voting: false,

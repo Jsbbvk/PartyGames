@@ -10,17 +10,16 @@ import {
 } from '../store/controllers'
 
 const deleteRoomIfInactive = async (roomId) => {
+  const { room, error } = await getRm(roomId, true)
+  if (error) return { error }
+  if (!room) return {}
+  const { updatedAt } = room
+  if (new Date() - updatedAt > ROOM_INACTIVE_TIMEOUT) {
+    const { roomId: rmId, error: err } = await deleteRoom(roomId)
+    if (err) return { error: err }
+    return { roomId }
+  }
   return {}
-  // const { room, error } = await getRm(roomId, true)
-  // if (error) return { error }
-  // if (!room) return {}
-  // const { updatedAt } = room
-  // if (new Date() - updatedAt > ROOM_INACTIVE_TIMEOUT) {
-  //   const { roomId: rmId, error: err } = await deleteRoom(roomId)
-  //   if (err) return { error: err }
-  //   return { roomId }
-  // }
-  // return {}
 }
 
 const createAndJoinRoom = (socket) => async (data, cb) => {
@@ -90,9 +89,9 @@ const joinRoom = (io, socket) => async (data, cb) => {
 }
 
 const getRoomPlayers = async (data, cb) => {
-  const { roomId } = data
+  const { roomId, includeMemeUrl } = data
 
-  const { players, error } = await getPlayers(roomId)
+  const { players, error } = await getPlayers(roomId, includeMemeUrl)
   if (error) {
     if (cb) cb({ error })
     return
@@ -114,9 +113,20 @@ const setRoomState = (io) => async (data, cb) => {
   if (cb) cb({ roomId })
 }
 
-const startGame = (io) => async (data, cb) => {
+const restartGame = (io) => async (data, cb) => {
   const { roomId } = data
   const { error } = await resetPlayers(roomId)
+  if (error) {
+    if (cb) cb({ error })
+    return
+  }
+
+  await setRoomState(io)(data, cb)
+}
+
+const continueGame = (io) => async (data, cb) => {
+  const { roomId } = data
+  const { error } = await resetPlayers(roomId, false)
   if (error) {
     if (cb) cb({ error })
     return
@@ -137,6 +147,7 @@ export default async (io, socket) => {
   socket.on('join room', joinRoom(io, socket))
   socket.on('get players', getRoomPlayers)
   socket.on('set room state', setRoomState(io))
-  socket.on('start game', startGame(io))
+  socket.on('restart game', restartGame(io))
+  socket.on('continue game', continueGame(io))
   socket.on('get room', getRoom)
 }

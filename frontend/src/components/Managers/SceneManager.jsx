@@ -11,9 +11,14 @@ import {
   Host,
   Waiting,
 } from '../Scenes'
-import { SCENES, STATES_TO_SCENES } from '../../constants'
+import {
+  MIN_PLAYERS_TO_START,
+  SCENES,
+  STATES,
+  STATES_TO_SCENES,
+} from '../../constants'
 import Menu from '../Menu'
-import { useListener } from '.'
+import { useEmitter, useGameContext, useListener } from '.'
 
 const SceneContext = createContext()
 export const useSceneContext = () => useContext(SceneContext)
@@ -32,7 +37,10 @@ const SceneManager = () => {
 
   const [currScene, setCurrScene] = useState(SCENES.intro)
   const [sceneProps, setSceneProps] = useState({})
+  const [players, setPlayers] = useState([])
   const [showMenu, setShowMenu] = useState(false)
+  const { roomId } = useGameContext()
+  const emit = useEmitter()
 
   const switchToScene = (scene, props) => {
     setCurrScene(scene)
@@ -63,6 +71,30 @@ const SceneManager = () => {
     switchToScene(STATES_TO_SCENES[state])
   })
 
+  const getPlayers = () => {
+    if (!roomId) return
+    emit('get players', { roomId }, (data) => {
+      const { players: roomPlayers, error } = data
+      if (error) {
+        console.log(error)
+        return
+      }
+
+      if (
+        roomPlayers.length < MIN_PLAYERS_TO_START &&
+        (currScene === SCENES.selection ||
+          currScene === SCENES.caption ||
+          currScene === SCENES.voting ||
+          currScene === SCENES.results)
+      )
+        emit('set room state', { roomId, state: STATES.waiting })
+
+      setPlayers(roomPlayers)
+    })
+  }
+
+  useListener('update players', getPlayers)
+
   return (
     <>
       <SceneContext.Provider
@@ -73,7 +105,7 @@ const SceneManager = () => {
           setShowMenu,
         }}
       >
-        <Menu show={showMenu} />
+        <Menu show={showMenu} players={players} getPlayers={getPlayers} />
         <SwitchTransition mode="out-in">
           <Fade key={currScene} in unmountOnExit>
             <Container sx={{ py: 10 }}>{scenes[currScene]}</Container>
