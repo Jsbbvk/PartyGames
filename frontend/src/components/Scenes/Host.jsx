@@ -27,7 +27,7 @@ const StyledButton = styled(Fab)({
 })
 
 const Host = () => {
-  const { switchToScene, setSceneProps } = useSceneContext()
+  const { switchToScene, setSceneProps, setShowMenu } = useSceneContext()
   const {
     setName: setGameName,
     setUUID,
@@ -42,7 +42,7 @@ const Host = () => {
   const emit = useEmitter()
 
   useEffect(() => {
-    setSceneProps({ showMenu: false })
+    setShowMenu(false)
   }, [])
 
   const onCreateRoom = () => {

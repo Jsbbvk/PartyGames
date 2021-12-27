@@ -66,6 +66,16 @@ export const updatePlayer = async (uuid, update) => {
   return { uuid }
 }
 
+export const deletePlayer = async (uuid) => {
+  const [err] = await to(Player.deleteOne({ _id: uuid }))
+  if (err) {
+    console.log(err)
+    return Error(ERRORS.UNEXPECTED_ERROR)
+  }
+
+  return { uuid }
+}
+
 export const dropCollection = async () => {
   const [err] = await to(Player.collection.drop())
   if (err) console.log(err)

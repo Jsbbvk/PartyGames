@@ -6,6 +6,7 @@ import {
   deleteRoom,
   getPlayers,
   setRoomState as setRmState,
+  resetPlayers,
 } from '../store/controllers'
 
 const deleteRoomIfInactive = async (roomId) => {
@@ -113,6 +114,17 @@ const setRoomState = (io) => async (data, cb) => {
   if (cb) cb({ roomId })
 }
 
+const startGame = (io) => async (data, cb) => {
+  const { roomId } = data
+  const { error } = await resetPlayers(roomId)
+  if (error) {
+    if (cb) cb({ error })
+    return
+  }
+
+  await setRoomState(io)(data, cb)
+}
+
 const getRoom = async (data, cb) => {
   const { roomId } = data
 
@@ -125,5 +137,6 @@ export default async (io, socket) => {
   socket.on('join room', joinRoom(io, socket))
   socket.on('get players', getRoomPlayers)
   socket.on('set room state', setRoomState(io))
+  socket.on('start game', startGame(io))
   socket.on('get room', getRoom)
 }

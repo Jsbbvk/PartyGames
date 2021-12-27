@@ -1,7 +1,38 @@
 import { to } from 'await-to-js'
-import { Player, Room } from '../models'
+import { defaultPlayer, Player, Room } from '../models'
 import { ERRORS } from '../constants'
 import { Error } from '../util'
+
+export const resetPlayers = async (roomId) => {
+  const [err, room] = await to(
+    Room.findOne({ roomId }).select('players').lean()
+  )
+  if (err) {
+    console.log(err)
+    return Error(ERRORS.UNEXPECTED_ERROR)
+  }
+
+  if (!room) {
+    console.log('room not found')
+    return Error(ERRORS.ROOM_NOT_EXIST)
+  }
+
+  const [error] = await to(
+    Player.updateMany(
+      { _id: { $in: room.players } },
+      {
+        $set: defaultPlayer,
+      }
+    )
+  )
+
+  if (error) {
+    console.log(error)
+    return Error(ERRORS.UNEXPECTED_ERROR)
+  }
+
+  return { roomId }
+}
 
 export const getRoom = async (roomId, lean = false) => {
   const [err, room] = await to(Room.findOne({ roomId }).lean(lean))
@@ -48,28 +79,6 @@ export const createRoom = async (roomId) => {
 
   return { roomId }
 }
-
-// export const joinRoom = async (roomId, uuid) => {
-//   const [err, room] = await to(Room.findOne({ roomId }))
-//   if (err) {
-//     console.log(err)
-//     return Error(ERRORS.UNEXPECTED_ERROR)
-//   }
-
-//   if (!room) {
-//     console.log("room doesn't exist")
-//     return Error(ERRORS.ROOM_NOT_EXIST)
-//   }
-
-//   room.players.push(uuid)
-//   const [saveErr] = await to(room.save())
-//   if (saveErr) {
-//     console.log(err)
-//     return Error(ERRORS.UNEXPECTED_ERROR)
-//   }
-
-//   return { roomId }
-// }
 
 export const leaveRoom = async (roomId, uuid) => {
   const [err, room] = await to(

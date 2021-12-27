@@ -66,10 +66,10 @@ const Selection = () => {
   const [cookies, setCookie] = useCookies(['UnusedMemes'])
   const [memeChoices, setMemeChoices] = useState([])
   const [selectedMeme, setSelectedMeme] = useState()
-  const { switchToScene, setSceneProps } = useSceneContext()
+  const { switchToScene, setSceneProps, setShowMenu } = useSceneContext()
 
   useEffect(() => {
-    setSceneProps({ showMenu: true })
+    setShowMenu(true)
 
     let availableMemes = LZString.decompressFromUTF16(cookies.UnusedMemes)
 

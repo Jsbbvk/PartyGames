@@ -56,11 +56,12 @@ const StyledIconButton = styled(IconButton)({
 })
 
 const Intro = () => {
-  const { switchToScene, sceneProps, setSceneProps } = useSceneContext()
+  const { switchToScene, sceneProps, setSceneProps, setShowMenu } =
+    useSceneContext()
   const navigate = useNavigate()
 
   useEffect(() => {
-    setSceneProps({ showMenu: false })
+    setShowMenu(false)
   }, [])
 
   return (

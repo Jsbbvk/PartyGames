@@ -6,7 +6,6 @@ const options = {
 
 export const defaultPlayer = {
   points: 0,
-  votesReceived: 0,
   ready: {
     captioning: false,
     voting: false,
@@ -29,9 +28,9 @@ const playerSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    votesReceived: {
-      type: Number,
-      default: 0,
+    votedPlayer: {
+      type: mongoose.Schema.Types.ObjectID,
+      ref: 'Player',
     },
     memeUrl: String,
     ready: {

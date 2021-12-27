@@ -32,6 +32,7 @@ const SceneManager = () => {
 
   const [currScene, setCurrScene] = useState(SCENES.intro)
   const [sceneProps, setSceneProps] = useState({})
+  const [showMenu, setShowMenu] = useState(false)
 
   const switchToScene = (scene, props) => {
     setCurrScene(scene)
@@ -65,14 +66,17 @@ const SceneManager = () => {
   return (
     <>
       <SceneContext.Provider
-        value={{ switchToScene, sceneProps, setSceneProps: setProps }}
+        value={{
+          switchToScene,
+          sceneProps,
+          setSceneProps: setProps,
+          setShowMenu,
+        }}
       >
+        <Menu show={showMenu} />
         <SwitchTransition mode="out-in">
           <Fade key={currScene} in unmountOnExit>
-            <Container sx={{ py: 10 }}>
-              <Menu show={sceneProps?.showMenu} />
-              {scenes[currScene]}
-            </Container>
+            <Container sx={{ py: 10 }}>{scenes[currScene]}</Container>
           </Fade>
         </SwitchTransition>
       </SceneContext.Provider>

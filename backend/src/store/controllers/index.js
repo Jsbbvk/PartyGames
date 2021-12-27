@@ -4,6 +4,7 @@ export {
   getPlayer,
   getPlayerBySocketId,
   updatePlayer,
+  deletePlayer,
 } from './playerController'
 
 export {
@@ -14,4 +15,5 @@ export {
   getPlayers,
   getRoom,
   setRoomState,
+  resetPlayers,
 } from './roomController'

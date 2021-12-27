@@ -1,13 +1,16 @@
-import { Typography, Box, Stack, Button, Fab } from '@mui/material'
-import { styled } from '@mui/material/styles'
-import { useContext, useEffect, useState } from 'react'
+import { Typography, Box, Stack, Fab, styled } from '@mui/material'
+import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import { grey, orange } from '@mui/material/colors'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
+import shuffle from 'lodash/shuffle'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
-import MemesList from '../../constants/memes'
-import { SCENES } from '../../constants'
-import { useSceneContext } from '../Managers'
+import { STATES } from '../../constants'
+import {
+  useEmitter,
+  useGameContext,
+  useListener,
+  useSceneContext,
+} from '../Managers'
 import WaitingForPlayers from '../WaitingForPlayers'
 
 import 'react-lazy-load-image-component/src/effects/blur.css'
@@ -69,21 +72,111 @@ const StyledBox = styled(Box)(({ selected, voted }) => ({
 }))
 
 const Voting = () => {
-  const [selectedMeme, setSelectedMeme] = useState()
-  const [votedMeme, setVotedMeme] = useState()
-  const { switchToScene } = useSceneContext()
+  const [selectedMemeId, setSelectedMemeId] = useState()
+  const [votedMemeId, setVotedMemeId] = useState()
+  const [players, setPlayers] = useState([])
+  const [currMemeUrl, setCurrMemeUrl] = useState()
+  const [playersReady, setPlayersReady] = useState([0, 1])
 
-  const onMemeSelect = (selected) => {
-    if (votedMeme) return
-    if (!selectedMeme || selected.src !== selectedMeme?.src)
-      setSelectedMeme(selected)
-    else setSelectedMeme(null)
+  const [playerMemes, setPlayerMemes] = useState([])
+
+  const { switchToScene } = useSceneContext()
+  const { uuid, roomId } = useGameContext()
+
+  const emit = useEmitter()
+
+  const getPlayers = () => {
+    emit('get players', { roomId }, (data) => {
+      const { players: roomPlayers, error } = data
+      if (error) {
+        console.log(error)
+        return
+      }
+
+      setPlayers(roomPlayers)
+    })
   }
 
-  const onMemeChoiceConfirm = (src) => {
-    if (!selectedMeme || src !== selectedMeme?.src) return
+  useListener('update players', getPlayers)
 
-    setVotedMeme(selectedMeme)
+  useEffect(() => {
+    getPlayers()
+  }, [])
+
+  useEffect(() => {
+    if (!players.length) return
+
+    if (!playerMemes || !playerMemes.length) {
+      setPlayerMemes(
+        shuffle(
+          players.map(({ _id: playerId, memeUrl: url }) => ({
+            playerId,
+            url,
+          }))
+        )
+      )
+    } else if (playerMemes.length !== players.length) {
+      setPlayerMemes((prev) =>
+        prev.filter(({ playerId }) =>
+          players.some(({ _id }) => _id === playerId)
+        )
+      )
+    }
+
+    if (!selectedMemeId && currMemeUrl) return
+
+    let memeAvailable = false
+    let numReady = 0
+
+    players.forEach((p) => {
+      if (p._id === selectedMemeId || p._id === votedMemeId)
+        memeAvailable = true
+
+      if (p._id === uuid && !currMemeUrl) {
+        setCurrMemeUrl(p.memeUrl)
+      }
+
+      if (p.ready?.voting) numReady += 1
+    })
+
+    setPlayersReady([numReady, players.length])
+
+    if (!memeAvailable) {
+      setSelectedMemeId(null)
+      setVotedMemeId(null)
+      setPlayersReady([0, 1])
+
+      emit('set player ready', {
+        uuid,
+        roomId,
+        ready: 'ready.voting',
+        isReady: false,
+      })
+    }
+  }, [players])
+
+  useEffect(() => {
+    if (playersReady[0] > 0 && playersReady[0] === playersReady[1]) {
+      emit('set room state', { roomId, state: STATES.results })
+    }
+  }, [playersReady])
+
+  const onMemeSelect = (selectedId) => {
+    if (votedMemeId) return
+    if (!selectedMemeId || selectedId !== selectedMemeId)
+      setSelectedMemeId(selectedId)
+    else setSelectedMemeId(null)
+  }
+
+  const onMemeChoiceConfirm = (selectedId) => {
+    if (!selectedMemeId || selectedId !== selectedMemeId) return
+
+    setVotedMemeId(selectedMemeId)
+    emit('set player vote', {
+      uuid,
+      roomId,
+      votedPlayer: selectedMemeId,
+    })
   }
 
   return (
@@ -100,8 +193,8 @@ const Voting = () => {
         <Box mt={1}>
           <LazyLoadImage
             effect="blur"
-            src="/images/memes/1.jpg"
-            alt="1.jpg"
+            src={currMemeUrl}
+            alt="Your meme"
             width={isMobile ? window.innerWidth * 0.8 : '400px'}
             style={{
               boxShadow:
@@ -112,41 +205,44 @@ const Voting = () => {
       </Box>
 
       <Typography variant="h5">
-        {votedMeme ? 'Voted!' : 'Vote for the funniest meme'}
+        {votedMemeId ? 'Voted!' : 'Vote for the funniest meme'}
       </Typography>
 
       <Stack justifyContent="center" alignItems="center" spacing={3} mt={2}>
-        {MemesList.slice(0, 10).map(({ src, name }) => (
-          <StyledBox
-            key={src}
-            selected={selectedMeme?.src === src}
-            voted={votedMeme}
-          >
-            <Box mt={1}>
-              <LazyLoadImage
-                effect="blur"
-                src={`/images/memes/${src}`}
-                alt={src}
-                width={isMobile ? window.innerWidth * 0.8 : '400px'}
-                onClick={() => onMemeSelect({ src, name })}
-              />
-            </Box>
-            <Fab
-              className="caption-button"
-              disableRipple
-              onClick={() => onMemeChoiceConfirm(src)}
-              title="Vote?"
-            >
-              <ThumbUpIcon />
-            </Fab>
-          </StyledBox>
-        ))}
+        {playerMemes.map(
+          ({ playerId, url }) =>
+            playerId !== uuid && (
+              <StyledBox
+                key={playerId}
+                selected={selectedMemeId === playerId}
+                voted={votedMemeId}
+              >
+                <Box mt={1}>
+                  <LazyLoadImage
+                    effect="blur"
+                    src={url}
+                    alt="Meme"
+                    width={isMobile ? window.innerWidth * 0.8 : '400px'}
+                    onClick={() => onMemeSelect(playerId)}
+                  />
+                </Box>
+                <Fab
+                  className="caption-button"
+                  disableRipple
+                  onClick={() => onMemeChoiceConfirm(playerId)}
+                  title="Vote?"
+                >
+                  <ThumbUpIcon />
+                </Fab>
+              </StyledBox>
+            )
+        )}
       </Stack>
 
       <WaitingForPlayers
-        transitionIn={Boolean(votedMeme)}
-        numReady={5}
-        numTotal={5}
+        transitionIn={Boolean(votedMemeId)}
+        numReady={playersReady[0]}
+        numTotal={playersReady[1]}
       />
     </Stack>
   )

@@ -10,10 +10,7 @@ import {
 } from '@mui/material'
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { grey } from '@mui/material/colors'
 import InfoIcon from '@mui/icons-material/Info'
-import LZString from 'lz-string'
-import { isMobile } from 'react-device-detect'
 import {
   useEmitter,
   useGameContext,
@@ -70,7 +67,7 @@ const StyledModalBox = styled(Box)({
 })
 
 const Caption = () => {
-  const { switchToScene, sceneProps } = useSceneContext()
+  const { sceneProps } = useSceneContext()
   const { uuid, roomId } = useGameContext()
   const workareaRef = useRef(null)
 

@@ -101,7 +101,7 @@ const Menu = ({ show }) => {
   const [players, setPlayers] = useState([])
 
   const { uuid, roomId, reset } = useGameContext()
-  const { switchToScene } = useSceneContext
+  const { switchToScene } = useSceneContext()
   const emit = useEmitter()
 
   const Player = (name, id, score) => (
@@ -130,7 +130,7 @@ const Menu = ({ show }) => {
 
   const getPlayers = debounce(
     useCallback(() => {
-      if (!roomId || !openMenu) return
+      if (!show || !roomId) return
       emit('get players', { roomId }, (data) => {
         const { players: roomPlayers, error } = data
         if (error) {
@@ -139,18 +139,15 @@ const Menu = ({ show }) => {
         }
         setPlayers(roomPlayers)
       })
-    }, [emit, roomId, openMenu]),
+    }, [emit, roomId, show]),
     300
   )
 
   useListener('update players', () => roomId && getPlayers())
 
   useEffect(() => {
-    getPlayers()
-  }, [])
-
-  useEffect(() => {
-    if (!show) setOpenMenu(false)
+    if (show) getPlayers()
+    else setOpenMenu(false)
   }, [show])
 
   const leaveGame = () => {

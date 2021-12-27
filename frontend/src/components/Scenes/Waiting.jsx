@@ -82,7 +82,7 @@ const StyledIconButton = styled(IconButton)({
 })
 
 const Waiting = () => {
-  const { switchToScene, setSceneProps } = useSceneContext()
+  const { switchToScene, setSceneProps, setShowMenu } = useSceneContext()
   const { name, setName, uuid, roomId, reset } = useGameContext()
   const [players, setPlayers] = useState([])
   const [isEditingName, setIsEditingName] = useState(false)
@@ -111,13 +111,9 @@ const Waiting = () => {
   }
 
   useListener('update players', () => roomId && getPlayers())
-  // useOnceListener('room state change', ({ state, error }) => {
-  //   if (error) return
-  //   if (state === STATES.captioning) switchToScene(SCENES.selection)
-  // })
 
   useEffect(() => {
-    setSceneProps({ showMenu: false })
+    setShowMenu(false)
     getPlayers()
   }, [])
 
@@ -155,7 +151,7 @@ const Waiting = () => {
     })
 
   const startGame = () =>
-    emit('set room state', { roomId, state: STATES.captioning })
+    emit('start game', { roomId, state: STATES.captioning })
 
   return (
     <Stack alignItems="center">
@@ -190,7 +186,10 @@ const Waiting = () => {
                     }}
                   />
                 ) : (
-                  <Typography variant="body1">{playerName}</Typography>
+                  <Typography variant="body1">
+                    {playerName}
+                    {playerId === uuid ? ' (You)' : ''}
+                  </Typography>
                 )}
 
                 {playerId === uuid && isEditingName ? (

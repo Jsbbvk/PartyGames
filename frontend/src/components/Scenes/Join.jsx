@@ -27,7 +27,7 @@ const StyledButton = styled(Fab)({
 })
 
 const Join = () => {
-  const { switchToScene, setSceneProps } = useSceneContext()
+  const { switchToScene, setSceneProps, setShowMenu } = useSceneContext()
   const {
     setName: setGameName,
     setUUID,
@@ -43,7 +43,7 @@ const Join = () => {
   const emit = useEmitter()
 
   useEffect(() => {
-    setSceneProps({ showMenu: false })
+    setShowMenu(false)
   }, [])
 
   const onJoinRoom = () => {
