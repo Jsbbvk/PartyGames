@@ -5,25 +5,28 @@
   "main": "server.js",
   "scripts": {
     "build": "babel ./src --out-dir ./build",
-    "start": "nodemon --exec babel-node src/server.js"
+    "start": "nodemon --exec npx babel-node src/server.js",
+    "lint": "eslint .",
+    "prod": "babel ./src --out-dir ./build & node ./build/server.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.15.7",
-    "@babel/core": "^7.15.8",
-    "@babel/node": "^7.15.8",
-    "@babel/preset-env": "^7.15.8",
-    "@babel/runtime": "^7.15.4",
-    "eslint": "^8.0.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-prettier": "^4.0.0",
-    "nodemon": "^2.0.13",
-    "prettier": "^2.4.1"
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.5",
+    "@babel/eslint-parser": "^7.16.5",
+    "@babel/node": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-prettier": "^3.0.1",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
     "await-to-js": "^3.0.0",
     "dotenv": "^10.0.0",
     "mongoose": "^6.1.3",

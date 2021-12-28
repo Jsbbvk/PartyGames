@@ -1,3 +1,4 @@
+import '@babel/polyfill'
 import { to } from 'await-to-js'
 import { MongoConnection } from './store'
 import initSockets from './sockets'
