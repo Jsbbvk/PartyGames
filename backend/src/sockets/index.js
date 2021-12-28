@@ -12,7 +12,7 @@ import initRoomSocket from './socket-room'
 import initPlayerSocket from './socket-player'
 
 export default async () => {
-  const io = new Server(4001, {
+  const io = new Server(process.env.PORT || 4001, {
     // cors: {
     //   origin: ['http://localhost:3000', 'http://10.0.0.16:3000'],
     //   methods: ['GET', 'POST'],

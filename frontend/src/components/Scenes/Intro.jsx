@@ -96,10 +96,7 @@ const Intro = () => {
 
       <Box
         sx={{
-          position: 'fixed',
-          bottom: '28px',
-          left: '50%',
-          transform: 'translateX(-50%)',
+          mt: 18,
         }}
       >
         <Stack

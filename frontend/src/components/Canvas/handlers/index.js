@@ -96,7 +96,7 @@ export default class Handler {
     const text = new fabric.IText(str)
     text.set({
       ...fontOptions,
-      ...impactOptions,
+      ...arialOptions,
       left: this.canvas.width / 2,
       top: this.canvas.height / 6,
       originX: 'center',
@@ -148,7 +148,7 @@ export default class Handler {
   }
 
   exportAsDataURL() {
-    return this.canvas.toDataURL('png')
+    return this.canvas.toDataURL('image/png', 1.0)
   }
 
   setByPartial(obj, option) {

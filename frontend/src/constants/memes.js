@@ -303,4 +303,6 @@ export default [
   new Meme('275.jpg', 'Open the Gate!'),
   new Meme('276.jpg', "Oh Yeah, It's All Coming Together"),
   new Meme('277.jpg', 'They Had Us in the First Half'),
+  new Meme('278.jpg', 'For Five Minutes'),
+  new Meme('279.jpg', 'I Missed the Part Where That’s My Problem'),
 ]
