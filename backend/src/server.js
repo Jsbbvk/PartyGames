@@ -1,4 +1,5 @@
-import '@babel/polyfill'
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 import { to } from 'await-to-js'
 import { MongoConnection } from './store'
 import initSockets from './sockets'
