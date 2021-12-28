@@ -119,6 +119,8 @@ const Selection = () => {
     switchToScene(SCENES.caption, { selectedMeme })
   }
 
+  // TODO add example modal for memes
+
   return (
     <>
       <Stack pt={3} pb={10} alignItems="center">

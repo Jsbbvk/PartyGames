@@ -93,12 +93,13 @@ class Canvas extends Component {
     await this.handler.setBackgroundImage(`/images/memes/${src}`)
   }
 
-  addText = (text) => this.handler.addText(text || '')
+  addText = (text, options) => this.handler.addText(text || '', options)
   alignText = (align) => this.handler.alignText(align)
   remove = (target) => this.handler.remove(target)
   redo = () => this.handler.redo()
   undo = () => this.handler.undo()
   exportCanvas = () => this.handler.exportAsDataURL()
+  setTextFill = (color) => this.handler.setTextFill(color)
 
   render() {
     const { id } = this.state

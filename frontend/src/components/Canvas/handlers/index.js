@@ -88,11 +88,18 @@ export default class Handler {
     this.setByPartial(text, { textAlign: align })
   }
 
+  setTextFill = (color) => {
+    const text = this.canvas.getActiveObject()
+
+    if (!text || text?.type !== 'i-text') return
+    this.setByPartial(text, { fill: color })
+  }
+
   undo = () => this.transactionHandler.undo()
 
   redo = () => this.transactionHandler.redo()
 
-  addText = (str) => {
+  addText = (str, options) => {
     const text = new fabric.IText(str)
     text.set({
       ...fontOptions,
@@ -103,6 +110,7 @@ export default class Handler {
       originY: 'center',
       cursorColor: 'black',
       initial: true,
+      ...options,
     })
 
     this.canvas.add(text)

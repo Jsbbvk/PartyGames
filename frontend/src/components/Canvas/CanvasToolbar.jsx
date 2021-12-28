@@ -5,6 +5,7 @@ import UndoIcon from '@mui/icons-material/Undo'
 import RedoIcon from '@mui/icons-material/Redo'
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft'
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter'
+import CircleIcon from '@mui/icons-material/Circle'
 import React from 'react'
 
 const StyledButton = styled(Button)({
@@ -30,12 +31,13 @@ const StyledButton = styled(Button)({
 const iconFontSize = 16
 
 const CanvasToolbar = ({
-  alignLeftProps,
-  alignCenterProps,
+  alignProps,
+  textColorProps,
   textProps,
   deleteProps,
   undoProps,
   redoProps,
+  props,
 }) => {
   const buttonGroupStyles = {
     padding: '7px 7px 0 7px',
@@ -51,11 +53,22 @@ const CanvasToolbar = ({
   return (
     <Box>
       <ButtonGroup variant="contained" size="small" sx={buttonGroupStyles}>
-        <ToolbarButton title="Align text left" {...alignLeftProps}>
-          <FormatAlignLeftIcon sx={{ fontSize: iconFontSize }} />
+        <ToolbarButton title="Toggle text color" {...textColorProps}>
+          <CircleIcon
+            sx={{
+              fontSize: iconFontSize,
+              color: props.textColor,
+              stroke: '#000000',
+              strokeWidth: 1,
+            }}
+          />
         </ToolbarButton>
-        <ToolbarButton title="Align text center" {...alignCenterProps}>
-          <FormatAlignCenterIcon sx={{ fontSize: iconFontSize }} />
+        <ToolbarButton title="Toggle text alignment" {...alignProps}>
+          {props?.alignment === 'center' ? (
+            <FormatAlignCenterIcon sx={{ fontSize: iconFontSize }} />
+          ) : (
+            <FormatAlignLeftIcon sx={{ fontSize: iconFontSize }} />
+          )}
         </ToolbarButton>
         <ToolbarButton title="Add text" {...textProps}>
           <TextFieldsIcon sx={{ fontSize: iconFontSize }} />

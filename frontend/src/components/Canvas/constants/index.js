@@ -21,10 +21,10 @@ export const impactOptions = {
 
 export const arialOptions = {
   fontFamily: 'Arial',
-  stroke: '#ffffff',
-  fill: '#000000',
-  strokeWidth: 1,
-  paintFirst: 'stroke',
+  // stroke: '#ffffff',
+  // fill: '#000000',
+  // strokeWidth: 1,
+  // paintFirst: 'stroke',
 }
 
 export const objectOptions = {

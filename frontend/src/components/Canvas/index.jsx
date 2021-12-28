@@ -16,6 +16,14 @@ const CanvasWorkarea = ({ backgroundImage }, ref) => {
   const [activeObject, setActiveObject] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
 
+  const black = '#000000'
+  const white = '#e9e9e9'
+
+  const [alignment, setAlignment] = useState('left')
+  const [defaultAlignment, setDefaultAlignment] = useState('left')
+  const [defaultTextColor, setDefaultTextColor] = useState(black)
+  const [textColor, setTextColor] = useState(black)
+
   useEffect(() => {
     canvasRef.current.setBackgroundImage(backgroundImage)
   }, [backgroundImage])
@@ -23,7 +31,10 @@ const CanvasWorkarea = ({ backgroundImage }, ref) => {
   const getDataUrl = () => canvasRef.current?.exportCanvas()
 
   const onTextAdd = () => {
-    canvasRef.current?.addText('text')
+    canvasRef.current?.addText('text', {
+      textAlign: defaultAlignment,
+      fill: defaultTextColor,
+    })
   }
 
   const onDelete = () => {
@@ -45,8 +56,49 @@ const CanvasWorkarea = ({ backgroundImage }, ref) => {
     setActiveObject(object)
   }
 
+  useEffect(() => {
+    if (!activeObject) {
+      setAlignment(defaultAlignment)
+      setTextColor(defaultTextColor)
+      return
+    }
+
+    if (activeObject.type === 'i-text') {
+      setAlignment(activeObject.textAlign)
+      setTextColor(activeObject.fill)
+    }
+  }, [activeObject])
+
   const alignText = (align) => {
     canvasRef.current?.alignText(align)
+  }
+
+  const setTextFill = (color) => {
+    canvasRef.current?.setTextFill(color)
+  }
+
+  const toggleAlignment = () => {
+    if (activeObject) {
+      const newAlign = alignment === 'left' ? 'center' : 'left'
+      setAlignment(newAlign)
+      alignText(newAlign)
+    } else {
+      const newAlign = defaultAlignment === 'left' ? 'center' : 'left'
+      setDefaultAlignment(newAlign)
+      setAlignment(newAlign)
+    }
+  }
+
+  const toggleTextColor = () => {
+    if (activeObject) {
+      const newColor = textColor === black ? white : black
+      setTextColor(newColor)
+      setTextFill(newColor)
+    } else {
+      const newColor = textColor === black ? white : black
+      setTextColor(newColor)
+      setDefaultTextColor(newColor)
+    }
   }
 
   useImperativeHandle(ref, () => ({
@@ -57,13 +109,17 @@ const CanvasWorkarea = ({ backgroundImage }, ref) => {
     <Box>
       <Stack alignItems="center" mb={1.5}>
         <CanvasToolbar
-          alignCenterProps={{
-            onClick: () => alignText('center'),
-            disabled: !activeObject || isEditing,
+          props={{
+            alignment,
+            textColor,
           }}
-          alignLeftProps={{
-            onClick: () => alignText('left'),
-            disabled: !activeObject || isEditing,
+          textColorProps={{
+            onClick: toggleTextColor,
+            disabled: isEditing,
+          }}
+          alignProps={{
+            onClick: toggleAlignment,
+            disabled: isEditing,
           }}
           textProps={{ onClick: onTextAdd }}
           deleteProps={{
