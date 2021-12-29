@@ -15,6 +15,7 @@ const CanvasWorkarea = ({ backgroundImage }, ref) => {
   const [transactions, setTransactions] = useState()
   const [activeObject, setActiveObject] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [editable, setEditable] = useState(true)
 
   const black = '#000000'
   const white = '#e9e9e9'
@@ -47,6 +48,11 @@ const CanvasWorkarea = ({ backgroundImage }, ref) => {
 
   const onRedo = () => {
     canvasRef.current?.redo()
+  }
+
+  const setCanvasEditable = (canEdit) => {
+    setEditable(canEdit)
+    canvasRef.current?.setCanvasEditable(canEdit)
   }
 
   const onTransaction = (t) => setTransactions(t)
@@ -103,6 +109,7 @@ const CanvasWorkarea = ({ backgroundImage }, ref) => {
 
   useImperativeHandle(ref, () => ({
     getDataUrl,
+    setCanvasEditable,
   }))
 
   return (
@@ -115,24 +122,24 @@ const CanvasWorkarea = ({ backgroundImage }, ref) => {
           }}
           textColorProps={{
             onClick: toggleTextColor,
-            disabled: isEditing,
+            disabled: isEditing || !editable,
           }}
           alignProps={{
             onClick: toggleAlignment,
-            disabled: isEditing,
+            disabled: isEditing || !editable,
           }}
-          textProps={{ onClick: onTextAdd }}
+          textProps={{ onClick: onTextAdd, disabled: !editable }}
           deleteProps={{
             onClick: onDelete,
-            disabled: !activeObject || isEditing,
+            disabled: !activeObject || isEditing || !editable,
           }}
           undoProps={{
             onClick: onUndo,
-            disabled: isEditing || !transactions?.undos.length,
+            disabled: isEditing || !transactions?.undos.length || !editable,
           }}
           redoProps={{
             onClick: onRedo,
-            disabled: isEditing || !transactions?.redos.length,
+            disabled: isEditing || !transactions?.redos.length || !editable,
           }}
         />
       </Stack>

@@ -99,14 +99,6 @@ const Waiting = () => {
         return
       }
 
-      const inRoom = roomPlayers.some(({ _id: playerId }) => uuid === playerId)
-      if (!inRoom) {
-        // handle getting kicked
-        reset()
-        switchToScene(SCENES.intro)
-        return
-      }
-
       setPlayers(roomPlayers)
     })
   }

@@ -31,6 +31,8 @@ class HammerHandler {
   }
 
   onPinchStart = (e) => {
+    if (!this.handler.editable) return
+
     const object = this.handler.canvas.getActiveObject()
     if (!object || (object.type === 'i-text' && object.isEditing)) return
     this.scale.adjustScaleX = object.scaleX
@@ -45,6 +47,8 @@ class HammerHandler {
   }
 
   onPinchMove = (e) => {
+    if (!this.handler.editable) return
+
     this.scale.currentScaleX = this.scale.adjustScaleX * e.scale
     this.scale.currentScaleY = this.scale.adjustScaleY * e.scale
     this.rotate.currentRotation = this.rotate.adjustRotation + e.rotation
@@ -80,6 +84,8 @@ class HammerHandler {
   }
 
   onPinchEnd = (e) => {
+    if (!this.handler.editable) return
+
     const object = this.handler.canvas.getActiveObject()
     if (!object || (object.type === 'i-text' && object.isEditing)) return
 

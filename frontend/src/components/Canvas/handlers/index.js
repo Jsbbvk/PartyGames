@@ -1,5 +1,5 @@
+/* eslint-disable no-param-reassign */
 import { fabric } from 'fabric'
-import FontFaceObserver from 'fontfaceobserver'
 import {
   objectOptions,
   fontOptions,
@@ -36,6 +36,7 @@ export default class Handler {
     this.width = options?.width
     this.height = options?.height
     this.isMobile = options?.isMobile
+    this.editable = true
   }
 
   initHandlers = () => {
@@ -50,6 +51,8 @@ export default class Handler {
   }
 
   clear = () => {
+    if (!this.editable) return
+
     this.canvas.discardActiveObject()
     this.canvas.getObjects().forEach((obj) => {
       if (obj.id === 'workarea') return
@@ -59,6 +62,8 @@ export default class Handler {
   }
 
   remove = (target, save = true) => {
+    if (!this.editable) return
+
     const activeObject = target || this.canvas.getActiveObject()
     if (
       !activeObject ||
@@ -82,6 +87,8 @@ export default class Handler {
   }
 
   alignText = (align) => {
+    if (!this.editable) return
+
     const text = this.canvas.getActiveObject()
 
     if (!text || text?.type !== 'i-text') return
@@ -89,17 +96,29 @@ export default class Handler {
   }
 
   setTextFill = (color) => {
+    if (!this.editable) return
+
     const text = this.canvas.getActiveObject()
 
     if (!text || text?.type !== 'i-text') return
     this.setByPartial(text, { fill: color })
   }
 
-  undo = () => this.transactionHandler.undo()
+  setEditable = (canEdit) => {
+    this.editable = canEdit
+    this.canvas.getObjects().forEach((obj) => {
+      obj.selectable = canEdit
+      obj.evented = canEdit
+    })
+  }
 
-  redo = () => this.transactionHandler.redo()
+  undo = () => this.editable && this.transactionHandler.undo()
+
+  redo = () => this.editable && this.transactionHandler.redo()
 
   addText = (str, options) => {
+    if (!this.editable) return
+
     const text = new fabric.IText(str)
     text.set({
       ...fontOptions,
@@ -160,6 +179,8 @@ export default class Handler {
   }
 
   setByPartial(obj, option) {
+    if (!this.editable) return
+
     if (!obj) {
       return
     }

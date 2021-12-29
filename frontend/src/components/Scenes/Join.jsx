@@ -34,9 +34,8 @@ const Join = () => {
     setRoomId: setGameRoomId,
   } = useGameContext()
   const [error, setError] = useState('')
-  // TODO change
-  const [roomId, setRoomId] = useState('11111')
-  const [name, setName] = useState('hi')
+  const [roomId, setRoomId] = useState('')
+  const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const buttonRef = useRef(null)
 
@@ -52,7 +51,7 @@ const Join = () => {
 
     setIsLoading(true)
 
-    emit('join room', { roomId, name }, ({ uuid, error: err }) => {
+    emit('join room', { roomId, name: name.trim() }, ({ uuid, error: err }) => {
       if (err) {
         setError(err)
         setIsLoading(false)
@@ -61,7 +60,7 @@ const Join = () => {
       }
 
       setUUID(uuid)
-      setGameName(name)
+      setGameName(name.trim())
       setGameRoomId(roomId)
       switchToScene(SCENES.waiting)
     })
@@ -84,7 +83,7 @@ const Join = () => {
             error={Boolean(error)}
             helperText={error || ''}
             onChange={(e) => {
-              setRoomId(e.target.value.toUpperCase() || '')
+              setRoomId(e.target.value.toUpperCase().trim() || '')
               setError('')
             }}
             inputProps={{

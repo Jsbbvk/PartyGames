@@ -35,6 +35,8 @@ const SceneManager = () => {
     [SCENES.waiting]: <Waiting />,
   }
 
+  const { uuid, reset } = useGameContext()
+
   const [currScene, setCurrScene] = useState(SCENES.intro)
   const [sceneProps, setSceneProps] = useState({})
   const [players, setPlayers] = useState([])
@@ -84,6 +86,26 @@ const SceneManager = () => {
       const { players: roomPlayers, error } = data
       if (error) {
         if (process.env.REACT_APP_NODE_ENV === 'development') console.log(error)
+        if (
+          error === 'Room not found' &&
+          (currScene === SCENES.waiting ||
+            currScene === SCENES.selection ||
+            currScene === SCENES.caption ||
+            currScene === SCENES.voting ||
+            currScene === SCENES.results)
+        ) {
+          // room inactive, so kick them out
+          reset()
+          switchToScene(SCENES.intro)
+        }
+        return
+      }
+
+      const inRoom = roomPlayers.some(({ _id: playerId }) => uuid === playerId)
+      if (!inRoom) {
+        // handle getting kicked
+        reset()
+        switchToScene(SCENES.intro)
         return
       }
 

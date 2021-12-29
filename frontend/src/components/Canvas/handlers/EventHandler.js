@@ -35,6 +35,8 @@ class EventHandler {
   }
 
   handleModified = (e) => {
+    if (!this.handler.editable) return
+
     const { target } = e
     if (!target) return
 
@@ -59,6 +61,8 @@ class EventHandler {
   }
 
   handleObjectRotating = (e) => {
+    if (!this.handler.editable) return
+
     if (this.handler.isMobile) return
     const { target } = e
 
@@ -78,6 +82,8 @@ class EventHandler {
   }
 
   keydown = (e) => {
+    if (!this.handler.editable) return
+
     if (e.code === 'Backspace' || e.code === 'Delete') this.handler.remove()
     else if (
       e.ctrlKey &&
@@ -93,6 +99,8 @@ class EventHandler {
   }
 
   handleScroll = (e) => {
+    if (!this.handler.editable) return
+
     function doScrolling(elementY, duration) {
       const startingY = window.pageYOffset
       const diff = elementY - startingY

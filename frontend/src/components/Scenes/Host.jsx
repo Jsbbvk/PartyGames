@@ -34,9 +34,8 @@ const Host = () => {
     setRoomId: setGameRoomId,
   } = useGameContext()
   const [error, setError] = useState('')
-  // TODO change
-  const [roomId, setRoomId] = useState('11111')
-  const [name, setName] = useState('hi')
+  const [roomId, setRoomId] = useState('')
+  const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const emit = useEmitter()
@@ -49,18 +48,22 @@ const Host = () => {
     if (isLoading) return
 
     setIsLoading(true)
-    emit('create room', { roomId, name }, ({ uuid, error: err }) => {
-      if (err) {
-        setError(err)
-        setIsLoading(false)
-        return
-      }
+    emit(
+      'create room',
+      { roomId, name: name.trim() },
+      ({ uuid, error: err }) => {
+        if (err) {
+          setError(err)
+          setIsLoading(false)
+          return
+        }
 
-      setUUID(uuid)
-      setGameName(name)
-      setGameRoomId(roomId)
-      switchToScene(SCENES.waiting)
-    })
+        setUUID(uuid)
+        setGameName(name.trim())
+        setGameRoomId(roomId)
+        switchToScene(SCENES.waiting)
+      }
+    )
   }
 
   const enableHost = roomId.length === 5 && name.length > 0 && !isLoading
@@ -80,7 +83,7 @@ const Host = () => {
             error={Boolean(error)}
             helperText={error || ''}
             onChange={(e) => {
-              setRoomId(e.target.value.toUpperCase() || '')
+              setRoomId(e.target.value.toUpperCase().trim() || '')
               setError('')
             }}
             inputProps={{

@@ -97,8 +97,8 @@ const Caption = () => {
   useListener('update players', () => submittedMeme && setPlayers())
 
   const handleOnSubmit = () => {
-    const url = workareaRef.current.getDataUrl()
-
+    const url = workareaRef.current?.getDataUrl()
+    workareaRef.current?.setCanvasEditable(false)
     setPlayers()
     setSubmittedMeme(true)
 

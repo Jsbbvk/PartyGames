@@ -100,6 +100,7 @@ class Canvas extends Component {
   undo = () => this.handler.undo()
   exportCanvas = () => this.handler.exportAsDataURL()
   setTextFill = (color) => this.handler.setTextFill(color)
+  setCanvasEditable = (editable) => this.handler.setEditable(editable)
 
   render() {
     const { id } = this.state

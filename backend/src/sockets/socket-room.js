@@ -9,7 +9,7 @@ import {
   resetPlayers,
 } from '../store/controllers'
 
-const deleteRoomIfInactive = async (roomId) => {
+const deleteRoomIfInactive = async (io, roomId) => {
   const { room, error } = await getRm(roomId, true)
   if (error) return { error }
   if (!room) return {}
@@ -19,16 +19,18 @@ const deleteRoomIfInactive = async (roomId) => {
   if (new Date() - updatedAt > ROOM_INACTIVE_TIMEOUT) {
     const { roomId: rmId, error: err } = await deleteRoom(roomId)
     if (err) return { error: err }
+    io.to(roomId).emit('update players')
     return { roomId }
   }
   return {}
 }
 
-const createAndJoinRoom = (socket) => async (data, cb) => {
+const createAndJoinRoom = (io, socket) => async (data, cb) => {
   if (!data) return
   const { roomId, name } = data
 
   const { roomId: delRoomId, error: delErr } = await deleteRoomIfInactive(
+    io,
     roomId
   )
   if (delErr) {
@@ -60,14 +62,14 @@ const joinRoom = (io, socket) => async (data, cb) => {
   if (!data) return
   const { roomId, name } = data
 
-  const { roomId: delRoomId, error: delErr } = await deleteRoomIfInactive(
-    roomId
-  )
-
-  if (delErr) {
-    if (cb) cb({ error: delErr })
-    return
-  }
+  // const { roomId: delRoomId, error: delErr } = await deleteRoomIfInactive(
+  //   io,
+  //   roomId
+  // )
+  // if (delErr) {
+  //   if (cb) cb({ error: delErr })
+  //   return
+  // }
 
   const { error: rmErr, room } = await getRm(roomId, true)
   if (rmErr) {
@@ -152,7 +154,7 @@ const getRoom = async (data, cb) => {
 }
 
 export default async (io, socket) => {
-  socket.on('create room', createAndJoinRoom(socket))
+  socket.on('create room', createAndJoinRoom(io, socket))
   socket.on('join room', joinRoom(io, socket))
   socket.on('get players', getRoomPlayers)
   socket.on('set room state', setRoomState(io))

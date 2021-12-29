@@ -12,6 +12,8 @@ class TransactionHandler {
   }
 
   save = (type) => {
+    if (!this.handler.editable) return
+
     try {
       const { objects } = this.handler.canvas.toJSON()
 
@@ -41,6 +43,8 @@ class TransactionHandler {
   }
 
   resetState = () => {
+    if (!this.handler.editable) return
+
     this.state = this.handler.canvas
       .toJSON()
       .objects.filter((obj) => obj.id !== 'workarea')
@@ -49,6 +53,8 @@ class TransactionHandler {
   }
 
   redo = throttle(() => {
+    if (!this.handler.editable) return
+
     const redo = this.redos.pop()
     if (!redo) {
       return
@@ -62,6 +68,8 @@ class TransactionHandler {
   }, 100)
 
   undo = throttle(() => {
+    if (!this.handler.editable) return
+
     const undo = this.undos.pop()
 
     if (!undo) {
@@ -76,6 +84,8 @@ class TransactionHandler {
   }, 100)
 
   replay = (transaction) => {
+    if (!this.handler.editable) return
+
     const objects = JSON.parse(transaction.json)
     this.state = objects
     this.active = true
