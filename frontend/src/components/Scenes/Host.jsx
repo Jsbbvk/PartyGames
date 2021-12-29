@@ -73,6 +73,7 @@ const Host = () => {
       <Typography variant="h3" sx={{ textAlign: 'center' }}>
         Host Room
       </Typography>
+
       <Stack alignItems="center" spacing={2} mt={5}>
         <Box>
           <TextField
@@ -128,6 +129,14 @@ const Host = () => {
         >
           <Typography variant="h6">Host!</Typography>
         </StyledButton>
+      </Stack>
+
+      <Stack alignItems="center" mt={10}>
+        <img
+          src="/images/captionthis/host.gif"
+          width={250}
+          alt="hosting a room"
+        />
       </Stack>
     </Box>
   )

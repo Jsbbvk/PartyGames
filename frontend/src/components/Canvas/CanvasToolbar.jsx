@@ -6,6 +6,7 @@ import RedoIcon from '@mui/icons-material/Redo'
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft'
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter'
 import CircleIcon from '@mui/icons-material/Circle'
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
 import React from 'react'
 
 const StyledButton = styled(Button)({
@@ -81,6 +82,14 @@ const CanvasToolbar = ({
         </ToolbarButton>
         <ToolbarButton title="Redo" {...redoProps}>
           <RedoIcon sx={{ fontSize: iconFontSize }} />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Help!"
+          onClick={() =>
+            window.open('/images/captionthis/you-right-now.gif', '_blank')
+          }
+        >
+          <QuestionMarkIcon sx={{ fontSize: iconFontSize }} />
         </ToolbarButton>
       </ButtonGroup>
     </Box>

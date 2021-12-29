@@ -130,6 +130,14 @@ const Join = () => {
           <Typography variant="h6">Join!</Typography>
         </StyledButton>
       </Stack>
+
+      <Stack alignItems="center" mt={10}>
+        <img
+          src="/images/captionthis/join.jpg"
+          width={250}
+          alt="joining a room"
+        />
+      </Stack>
     </Box>
   )
 }

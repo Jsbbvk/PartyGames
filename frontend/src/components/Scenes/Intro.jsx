@@ -11,9 +11,11 @@ import { useEffect } from 'react'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import DevicesIcon from '@mui/icons-material/Devices'
 import BallotIcon from '@mui/icons-material/Ballot'
+import CelebrationIcon from '@mui/icons-material/Celebration'
 import { useNavigate } from 'react-router-dom'
 import { useSceneContext } from '../Managers'
 import { SCENES } from '../../constants'
+import ImagesDisplay from '../ImagesDisplay'
 
 const StyledFab = styled(Fab)({
   textTransform: 'none',
@@ -68,15 +70,17 @@ const Intro = () => {
   return (
     <Box textAlign="center">
       <Typography variant="h3">Caption This!</Typography>
-      <Typography variant="body1" sx={{ mt: 1 }}>
+
+      {/* <Typography variant="body1" sx={{ mt: 1 }}>
         <i>How dank are you?</i>
-      </Typography>
+      </Typography> */}
+
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         alignItems="center"
         justifyContent="center"
         spacing={{ xs: 7, md: 10 }}
-        mt={{ xs: 6, md: 20 }}
+        mt={{ xs: 6, md: 15 }}
       >
         <StyledButton
           disableRipple
@@ -94,9 +98,11 @@ const Intro = () => {
         </StyledButton>
       </Stack>
 
+      {/* <ImagesDisplay /> */}
+
       <Box
         sx={{
-          mt: 18,
+          mt: { xs: 18, md: 27 },
         }}
       >
         <Stack
@@ -122,6 +128,20 @@ const Intro = () => {
               onClick={() => navigate('/captionthis/memes')}
             >
               <BallotIcon sx={{ fontSize: 18 }} />
+            </StyledFab>
+          </Tooltip>
+          <Tooltip title="?" placement="top">
+            <StyledFab
+              disableRipple
+              size="small"
+              onClick={() =>
+                window.open(
+                  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                  '_blank'
+                )
+              }
+            >
+              <CelebrationIcon sx={{ fontSize: 18 }} />
             </StyledFab>
           </Tooltip>
         </Stack>

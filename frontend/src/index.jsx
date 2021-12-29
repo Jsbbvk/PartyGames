@@ -3,6 +3,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { CookiesProvider } from 'react-cookie'
+import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
 
 const theme = createTheme({
@@ -16,7 +17,9 @@ ReactDOM.render(
     <CookiesProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <App />
+        <HelmetProvider>
+          <App />
+        </HelmetProvider>
       </ThemeProvider>
     </CookiesProvider>
   </React.StrictMode>,
