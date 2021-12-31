@@ -44,35 +44,6 @@ export default async () => {
       io.to(socket.id).emit('room state change', { state: room.state })
     })
 
-    // socket.on('blur', () => {
-    //   console.log('blur')
-    //   // blurredSockets.set(socket.id, socket)
-    // })
-
-    // socket.on('unload', () => {
-    //   console.log('unload', socket.id)
-    // })
-
-    // socket.on('pagehide', () => {
-    //   console.log('pagehide', socket.id)
-    // })
-
-    // socket.on('focus', () => {
-    //   console.log('focus')
-    //   // blurredSockets.delete(socket.id)
-    // })
-
-    // socket.on('visibility', (visibility) => {
-    //   console.log(visibility)
-    //   // if (visibility === 'hidden') {
-    //   //   // user will come back, so don't disconnect
-    //   //   blurredSockets.set(socket.id, socket)
-    //   // } else if (visibility === 'visible') {
-    //   //   // user came back, so we can disconnect
-    //   //   blurredSockets.set(socket.id, socket)
-    //   // }
-    // })
-
     socket.on('disconnect', async () => {
       // removes players from room who refresh/leave page
       // TODO player cannot leave upon refresh/leaving the page

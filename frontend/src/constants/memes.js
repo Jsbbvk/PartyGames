@@ -308,4 +308,5 @@ export default [
   new Meme('280.jpg', 'Gus Fring We Are Not the Same'),
   new Meme('281.jpg', 'Marvel Civil War'),
   new Meme('282.jpg', 'Dumbest Man Alive'),
+  new Meme('283.jpg', 'Angry NPC'),
 ]

@@ -67,13 +67,17 @@ const StyledModalBox = styled(Box)({
 })
 
 const Caption = () => {
-  const { sceneProps } = useSceneContext()
+  const { sceneProps, setShowMenu } = useSceneContext()
   const { uuid, roomId } = useGameContext()
   const workareaRef = useRef(null)
 
   const [submittedMeme, setSubmittedMeme] = useState(false)
   const [openMemeExampleModal, setOpenMemeExampleModal] = useState(false)
   const [playersReady, setPlayersReady] = useState([0, 1])
+
+  useEffect(() => {
+    setShowMenu(true)
+  }, [])
 
   const emit = useEmitter()
 

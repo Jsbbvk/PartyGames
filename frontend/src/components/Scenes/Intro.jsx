@@ -145,7 +145,16 @@ const Intro = () => {
             </StyledFab>
           </Tooltip>
         </Stack>
-        <Typography variant="body2">By Jacob Zhang</Typography>
+        <Typography variant="body2">
+          By Jacob Zhang{' '}
+          <a
+            href="/images/captionthis/credits.jpg"
+            target="_blank"
+            style={{ fontSize: '0.7em' }}
+          >
+            ...and friends
+          </a>
+        </Typography>
         <StyledIconButton
           disableRipple
           title="Github Repo"

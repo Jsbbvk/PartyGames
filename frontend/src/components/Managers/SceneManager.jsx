@@ -1,6 +1,16 @@
-import { Fade, Container } from '@mui/material'
+import {
+  Fade,
+  Container,
+  Modal,
+  styled,
+  Box,
+  Typography,
+  Stack,
+} from '@mui/material'
+import ConnectWithoutContactIcon from '@mui/icons-material/ConnectWithoutContact'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { SwitchTransition } from 'react-transition-group'
+import { isMobile } from 'react-device-detect'
 import {
   Voting,
   Caption,
@@ -19,9 +29,24 @@ import {
 } from '../../constants'
 import Menu from '../Menu'
 import { useEmitter, useGameContext, useListener } from '.'
+import Button from '../widgets/Button'
 
 const SceneContext = createContext()
 export const useSceneContext = () => useContext(SceneContext)
+
+const StyledModalBox = styled(Box)({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  textAlign: 'center',
+  transform: 'translate(-50%, -50%)',
+  width: '90%',
+  maxWidth: 400,
+  backgroundColor: 'white',
+  boxShadow: 24,
+  padding: 32,
+  borderRadius: 7,
+})
 
 const SceneManager = () => {
   const scenes = {
@@ -35,13 +60,14 @@ const SceneManager = () => {
     [SCENES.waiting]: <Waiting />,
   }
 
-  const { uuid, reset } = useGameContext()
-
   const [currScene, setCurrScene] = useState(SCENES.intro)
   const [sceneProps, setSceneProps] = useState({})
   const [players, setPlayers] = useState([])
   const [showMenu, setShowMenu] = useState(false)
-  const { roomId, socket } = useGameContext()
+  const [openModal, setOpenModal] = useState(false)
+  const [reconnectRoomData, setReconnectRoomData] = useState({})
+
+  const { roomId, uuid, name, set, reset } = useGameContext()
   const emit = useEmitter()
 
   const switchToScene = (scene, props) => {
@@ -54,20 +80,15 @@ const SceneManager = () => {
   const setProps = (props) => setSceneProps(props)
 
   useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      if (
-        currScene === SCENES.selection ||
-        currScene === SCENES.caption ||
-        currScene === SCENES.voting ||
-        currScene === SCENES.results
-      ) {
-        e.preventDefault()
-        e.returnValue = ''
-      }
-    }
-    window.addEventListener('beforeunload', handleBeforeUnload)
+    if (!isMobile || !sessionStorage.getItem('captionthis:data')) return
 
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+    try {
+      const roomData = JSON.parse(sessionStorage.getItem('captionthis:data'))
+      setReconnectRoomData(roomData)
+      setOpenModal(true)
+    } catch (e) {
+      if (process.env.REACT_APP_NODE_ENV === 'development') console.log(e)
+    }
   }, [])
 
   useListener('room state change', ({ state, error }) => {
@@ -77,6 +98,20 @@ const SceneManager = () => {
       currScene === SCENES.caption
     )
       return
+
+    if (STATES_TO_SCENES[state] === SCENES.selection) {
+      try {
+        sessionStorage.setItem(
+          'captionthis:data',
+          JSON.stringify({ name, uuid, roomId })
+        )
+      } catch (e) {
+        if (process.env.REACT_APP_NODE_ENV === 'development') console.log(e)
+      }
+    } else if (STATES_TO_SCENES[state] === SCENES.waiting) {
+      sessionStorage.setItem('captionthis:data', '')
+    }
+
     switchToScene(STATES_TO_SCENES[state])
   })
 
@@ -124,6 +159,65 @@ const SceneManager = () => {
 
   useListener('update players', getPlayers)
 
+  const reconnect = () => {
+    set(reconnectRoomData)
+    setOpenModal(false)
+    emit('reconnect', {
+      uuid: reconnectRoomData.uuid,
+      roomId: reconnectRoomData.roomId,
+    })
+  }
+
+  const cancelReconnect = () => {
+    setOpenModal(false)
+    sessionStorage.setItem('captionthis:data', '')
+    emit('remove player', {
+      uuid: reconnectRoomData.uuid,
+      roomId: reconnectRoomData.roomId,
+    })
+  }
+
+  const ReconnectModal = (
+    <Modal
+      open={openModal}
+      onClose={() => {}}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      disableEscapeKeyDown
+      disableAutoFocus
+    >
+      <Fade in={openModal}>
+        <StyledModalBox>
+          <Typography id="modal-modal-title" variant="h5">
+            Reconnect?
+          </Typography>
+          <Typography variant="body1" sx={{ mt: 1 }}>
+            RoomID: <b>{reconnectRoomData?.roomId}</b>
+          </Typography>
+          <Typography variant="body1">
+            Name: <b>{reconnectRoomData?.name}</b>
+          </Typography>
+
+          <Stack
+            mt={5}
+            spacing={2}
+            direction="row"
+            alignItems="center"
+            justifyContent="space-around"
+          >
+            <Button variant="extended" disableRipple onClick={cancelReconnect}>
+              No
+            </Button>
+            <Button variant="extended" disableRipple onClick={reconnect}>
+              Reconnect
+              <ConnectWithoutContactIcon sx={{ ml: 1 }} />
+            </Button>
+          </Stack>
+        </StyledModalBox>
+      </Fade>
+    </Modal>
+  )
+
   return (
     <>
       <SceneContext.Provider
@@ -134,6 +228,7 @@ const SceneManager = () => {
           setShowMenu,
         }}
       >
+        {ReconnectModal}
         <Menu show={showMenu} players={players} getPlayers={getPlayers} />
         <SwitchTransition mode="out-in">
           <Fade key={currScene} in unmountOnExit>

@@ -7,7 +7,10 @@ const Main = () => {
     <>
       <Helmet>
         <link rel="icon" type="image/png" href="/logo16.png" />
-        <meta name="description" content="Collection of popular party games" />
+        <meta
+          name="description"
+          content="Collection of popular party games for social hangouts!"
+        />
       </Helmet>
       <Container sx={{ mt: 4 }}>
         <Link to="/captionthis">Caption This</Link>

@@ -89,6 +89,7 @@ const Join = () => {
             inputProps={{
               maxLength: 5,
             }}
+            autoComplete="off"
           />
         </Box>
         <Box>
@@ -101,6 +102,7 @@ const Join = () => {
             inputProps={{
               maxLength: 20,
             }}
+            autoComplete="off"
           />
         </Box>
       </Stack>

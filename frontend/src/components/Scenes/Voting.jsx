@@ -80,7 +80,7 @@ const Voting = () => {
 
   const [playerMemes, setPlayerMemes] = useState([])
 
-  const { switchToScene } = useSceneContext()
+  const { switchToScene, setShowMenu } = useSceneContext()
   const { uuid, roomId } = useGameContext()
 
   const emit = useEmitter()
@@ -100,6 +100,7 @@ const Voting = () => {
   useListener('update players', getPlayers)
 
   useEffect(() => {
+    setShowMenu(true)
     getPlayers()
   }, [])
 

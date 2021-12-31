@@ -1,19 +1,13 @@
-import {
-  Typography,
-  Box,
-  Stack,
-  Button,
-  Fab,
-  getTableSortLabelUtilityClass,
-} from '@mui/material'
+import { Typography, Box, Stack, Fab } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import { grey, orange } from '@mui/material/colors'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import MemesList from '../../constants/memes'
-import { SCENES, STATES } from '../../constants'
+import ShareIcon from '@mui/icons-material/Share'
+import LinkIcon from '@mui/icons-material/Link'
+import CheckIcon from '@mui/icons-material/Check'
+import { STATES } from '../../constants'
 import {
   useEmitter,
   useGameContext,
@@ -23,7 +17,7 @@ import {
 import WaitingForPlayers from '../WaitingForPlayers'
 import 'react-lazy-load-image-component/src/effects/blur.css'
 
-const StyledBox = styled(Box)(() => ({
+const StyledBox = styled(Box)(({ selected, copiedMeme }) => ({
   position: 'relative',
   maxWidth: '90vw',
   textAlign: 'center',
@@ -31,12 +25,37 @@ const StyledBox = styled(Box)(() => ({
   justifyContent: 'center',
   alignItems: 'center',
   flexDirection: 'column',
-
   '& img': {
+    opacity: selected ? '0.6 !important' : '1',
     willChange: 'opacity',
     userSelect: 'none',
+    cursor: 'pointer',
     boxShadow:
       'rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px',
+  },
+
+  '& .share-button': {
+    transition: 'opacity 300ms, background-color 250ms, transform 100ms',
+    opacity: selected ? 1 : 0,
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: copiedMeme ? '#07bc0c' : '#363636',
+    boxShadow: 'none',
+    textTransform: 'none',
+    color: '#ffffffDE',
+    pointerEvents: selected ? 'auto' : 'none',
+    '&:hover': {
+      background: copiedMeme ? '#07bc0c' : '#474747',
+      boxShadow: 'none',
+    },
+    '&:active': {
+      boxShadow: 'none',
+      transform: copiedMeme
+        ? 'translate(-50%, -50%)'
+        : 'translate(-50%, -50%) scale(.96)',
+    },
   },
 }))
 
@@ -46,6 +65,7 @@ const StyledFab = styled(Fab)({
   color: '#ffffffDE',
   backgroundColor: '#363636',
   transition: 'transform 100ms',
+  padding: '20px 30px',
 
   '&:hover': {
     background: '#474747',
@@ -58,12 +78,14 @@ const StyledFab = styled(Fab)({
 
 const Results = () => {
   const [ready, setReady] = useState(false)
-  const { switchToScene } = useSceneContext()
+  const { setShowMenu } = useSceneContext()
   const { uuid, roomId } = useGameContext()
 
   const [players, setPlayers] = useState([])
-  const [playerPoints, setPlayerPoints] = useState()
   const [playersReady, setPlayersReady] = useState([0, 1])
+  const [selectedMemeId, setSelectedMemeId] = useState()
+  const [copiedMeme, setCopiedMeme] = useState(false)
+  const [memeFiles, setMemeFiles] = useState({})
 
   const emit = useEmitter()
 
@@ -121,6 +143,7 @@ const Results = () => {
   useListener('update players', getPlayers)
 
   useEffect(() => {
+    setShowMenu(true)
     getPlayers()
   }, [])
 
@@ -140,14 +163,80 @@ const Results = () => {
     }
   }, [playersReady])
 
+  const createImageFile = (dataURL) => {
+    const arr = dataURL.split(',')
+    const mime = arr[0].match(/:(.*?);/)[1]
+    const bstr = atob(arr[1])
+    let n = bstr.length
+    const u8arr = new Uint8Array(n)
+    // eslint-disable-next-line no-plusplus
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new File([u8arr], 'CaptionThis Meme', { type: mime })
+  }
+
+  const shareImage = (id, dataURL) => {
+    if (isMobile && (!navigator || !navigator.canShare)) return
+
+    let file
+    if (memeFiles[id]) file = memeFiles[id]
+    else {
+      file = createImageFile(dataURL)
+      setMemeFiles((p) => ({ ...p, [id]: file }))
+    }
+
+    if (isMobile) {
+      if (!navigator.canShare({ files: [file] })) return
+      navigator.share({
+        title: 'Caption This Meme',
+        text: 'Share this meme!',
+        files: [file],
+      })
+    } else {
+      navigator.clipboard.write([
+        // eslint-disable-next-line no-undef
+        new ClipboardItem({
+          'image/png': file,
+        }),
+      ])
+      setCopiedMeme(true)
+    }
+  }
+
+  useEffect(() => {
+    if (!copiedMeme) return
+
+    const timeout = setTimeout(() => setCopiedMeme(false), 600)
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [copiedMeme])
+
+  const onMemeSelect = (selectedId) => {
+    if (!selectedMemeId || selectedId !== selectedMemeId) {
+      setCopiedMeme(false)
+      setSelectedMemeId(selectedId)
+    } else setSelectedMemeId(null)
+  }
+
   return (
     <Stack pt={3} pb={10} alignItems="center">
       <Typography variant="h5">Results</Typography>
+      <Typography variant="body2">
+        Click on a meme to {isMobile ? 'share' : 'copy'}!
+      </Typography>
 
       <Stack justifyContent="center" alignItems="center" spacing={10} mt={5}>
         {players.map(
           ({ name, _id: playerId, memeUrl, numVotes, earnedPoint }) => (
-            <StyledBox key={playerId}>
+            <StyledBox
+              key={playerId}
+              selected={selectedMemeId === playerId}
+              copiedMeme={copiedMeme}
+            >
               <Stack
                 direction="row"
                 justifyContent="space-between"
@@ -184,7 +273,23 @@ const Results = () => {
                   src={memeUrl}
                   alt="Meme"
                   width={isMobile ? window.innerWidth * 0.8 : '400px'}
+                  onClick={() => onMemeSelect(playerId)}
                 />
+                <Fab
+                  className="share-button"
+                  disableRipple
+                  onClick={() =>
+                    !copiedMeme &&
+                    selectedMemeId === playerId &&
+                    shareImage(playerId, memeUrl)
+                  }
+                >
+                  {(() => {
+                    if (isMobile) return <ShareIcon />
+                    if (copiedMeme) return <CheckIcon />
+                    return <LinkIcon />
+                  })()}
+                </Fab>
               </Box>
 
               {earnedPoint && (

@@ -13,19 +13,6 @@ const CaptionThis = () => {
           popular meme templates and then vote for the funniest one. 
           With over 250+ memes, there's no limit on how dank one can make their meme!"
         />
-        <meta property="og:title" content="Caption This!" />
-        <meta property="og:site_name" content="Party Games" />
-        <meta
-          property="og:url"
-          content="https://partygames.social/captionthis"
-        />
-        <meta
-          property="og:description"
-          content="Caption This! is a party game where friends caption 
-          popular meme templates and then vote for the funniest one. 
-          With over 250+ memes, there's no limit on how dank one can make their meme!"
-        />
-        <meta property="og:type" content="website" />
 
         <link
           rel="apple-touch-icon-precomposed"

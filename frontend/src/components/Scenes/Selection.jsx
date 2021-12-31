@@ -41,6 +41,7 @@ const StyledBox = styled(Box)(({ selected }) => ({
   },
 
   '& .caption-button': {
+    pointerEvents: selected ? 'auto' : 'none',
     transition: 'opacity 300ms, background-color 250ms, transform 100ms',
     opacity: selected ? 1 : 0,
     position: 'absolute',

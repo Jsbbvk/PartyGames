@@ -106,10 +106,12 @@ export default class Handler {
 
   setEditable = (canEdit) => {
     this.editable = canEdit
+    if (!canEdit) this.canvas.discardActiveObject()
     this.canvas.getObjects().forEach((obj) => {
       obj.selectable = canEdit
       obj.evented = canEdit
     })
+    this.canvas.renderAll()
   }
 
   undo = () => this.editable && this.transactionHandler.undo()

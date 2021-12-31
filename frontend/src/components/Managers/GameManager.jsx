@@ -7,6 +7,7 @@ import {
   useRef,
 } from 'react'
 import { io } from 'socket.io-client'
+import { isMobile } from 'react-device-detect'
 import { SceneManager } from '.'
 
 // https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
@@ -33,43 +34,32 @@ const GameManager = () => {
 
   const reset = () => {
     s.emit('leave socket room', { roomId })
+    sessionStorage.setItem('captionthis:data', '')
     setName(null)
     setUUID(null)
     setRoomId(null)
   }
 
   useEffect(() => {
+    if (isMobile) return
+
     const unload = () => {
       s.emit('remove player', { roomId, uuid })
     }
 
     window.addEventListener('beforeunload', unload)
 
+    // eslint-disable-next-line consistent-return
     return () => {
       window.removeEventListener('beforeunload', unload)
     }
   }, [roomId, uuid])
 
-  useEffect(() => {
-    // const onBlur = () => {
-    //   s.emit('blur')
-    // }
-    // const onFocus = () => {
-    //   s.emit('focus')
-    // }
-    // const onVisibility = (e) => {
-    //   s.emit('visibility', document.visibilityState)
-    // }
-    // const pagehide = () => s.emit('pagehide')
-    // // window.addEventListener('blur', onBlur)
-    // // window.addEventListener('focus', onFocus)
-    // // window.addEventListener('pagehide', pagehide)
-    // // window.addEventListener('visibilitychange', onVisibility)
-    // return () => {
-    //   window.removeEventListener('blur', onBlur)
-    //   window.removeEventListener('focus', onFocus)
-    // }
-  }, [])
+  const set = ({ name: n, uuid: id, roomId: rmId }) => {
+    setName(n)
+    setUUID(id)
+    setRoomId(rmId)
+  }
 
   return (
     <GameContext.Provider
@@ -82,6 +72,7 @@ const GameManager = () => {
         roomId,
         setRoomId,
         reset,
+        set,
       }}
     >
       <SceneManager />
