@@ -164,27 +164,28 @@ const Results = () => {
   }, [playersReady])
 
   const createImageFile = async (dataURL) => {
-    const arr = dataURL.split(',')
-    const mime = arr[0].match(/:(.*?);/)[1]
-    const bstr = atob(arr[1])
-    let n = bstr.length
-    const u8arr = new Uint8Array(n)
-    // eslint-disable-next-line no-plusplus
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n)
-    }
-    return new File([u8arr], 'meme.png', {
+    // const arr = dataURL.split(',')
+    // const mime = arr[0].match(/:(.*?);/)[1]
+    // const bstr = atob(arr[1])
+    // let n = bstr.length
+    // const u8arr = new Uint8Array(n)
+    // // eslint-disable-next-line no-plusplus
+    // while (n--) {
+    //   u8arr[n] = bstr.charCodeAt(n)
+    // }
+    const blob = await (await fetch(dataURL)).blob()
+    return new File([blob], 'meme.png', {
       type: 'image/png',
     })
   }
 
-  const shareImage = (id, dataURL) => {
+  const shareImage = async (id, dataURL) => {
     if (isMobile && (!navigator || !navigator.canShare)) return
 
     let file
     if (memeFiles[id]) file = memeFiles[id]
     else {
-      file = createImageFile(dataURL)
+      file = await createImageFile(dataURL)
       setMemeFiles((p) => ({ ...p, [id]: file }))
     }
 
