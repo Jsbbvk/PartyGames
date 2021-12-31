@@ -71,16 +71,16 @@ const Intro = () => {
     <Box textAlign="center">
       <Typography variant="h3">Caption This!</Typography>
 
-      {/* <Typography variant="body1" sx={{ mt: 1 }}>
+      <Typography variant="body1" sx={{ mt: 1 }}>
         <i>How dank are you?</i>
-      </Typography> */}
+      </Typography>
 
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         alignItems="center"
         justifyContent="center"
-        spacing={{ xs: 7, md: 10 }}
-        mt={{ xs: 6, md: 15 }}
+        spacing={{ xs: 4, md: 10 }}
+        mt={{ xs: 3, md: 10 }}
       >
         <StyledButton
           disableRipple
@@ -98,11 +98,17 @@ const Intro = () => {
         </StyledButton>
       </Stack>
 
-      {/* <ImagesDisplay /> */}
+      <Stack alignItems="center" mt={{ xs: 3, md: 7 }}>
+        <img
+          src="/images/captionthis/struggle.jpg"
+          alt="struggle"
+          width="200"
+        />
+      </Stack>
 
       <Box
         sx={{
-          mt: { xs: 18, md: 27 },
+          mt: { xs: 5, md: 8 },
         }}
       >
         <Stack
