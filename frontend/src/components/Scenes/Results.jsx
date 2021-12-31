@@ -173,7 +173,7 @@ const Results = () => {
     while (n--) {
       u8arr[n] = bstr.charCodeAt(n)
     }
-    return new File([u8arr], 'CaptionThis Meme', { type: mime })
+    return new File([u8arr], 'CaptionThis Meme', { type: 'image/png' })
   }
 
   const shareImage = (id, dataURL) => {
