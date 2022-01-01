@@ -309,4 +309,5 @@ export default [
   new Meme('281.jpg', 'Marvel Civil War'),
   new Meme('282.jpg', 'Dumbest Man Alive'),
   new Meme('283.jpg', 'Angry NPC'),
+  new Meme('284.jpg', 'Rotten Robbie Reveals Nothing'),
 ]
