@@ -35,5 +35,4 @@ export const defaultCanvasOptions = {
   maxHeight: 600,
   selection: true,
   defaultCursor: 'default',
-  isFullscreen: false,
 }
