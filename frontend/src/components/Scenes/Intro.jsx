@@ -15,7 +15,6 @@ import CelebrationIcon from '@mui/icons-material/Celebration'
 import { useNavigate } from 'react-router-dom'
 import { useSceneContext } from '../Managers'
 import { SCENES } from '../../constants'
-import ImagesDisplay from '../ImagesDisplay'
 
 const StyledFab = styled(Fab)({
   textTransform: 'none',
