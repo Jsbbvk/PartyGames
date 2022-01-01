@@ -12,7 +12,7 @@ const init = async () => {
 
   initSockets()
 
-  console.log('server listening on http://localhost:4001')
+  console.log(`server listening on port ${process.env.PORT || 4001}`)
 }
 
 init()
