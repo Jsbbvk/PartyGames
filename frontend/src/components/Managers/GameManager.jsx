@@ -8,7 +8,12 @@ import {
 } from 'react'
 import { io } from 'socket.io-client'
 import { isMobile } from 'react-device-detect'
+import LZString from 'lz-string'
+import { useCookies } from 'react-cookie'
+import shuffle from 'lodash/shuffle'
 import { SceneManager } from '.'
+import MemesList from '../../constants/memes'
+import { NUMBER_OF_MEME_CHOICES } from '../../constants'
 
 // https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
 const ENDPOINT = process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
@@ -22,15 +27,12 @@ const GameContext = createContext()
 export const useGameContext = () => useContext(GameContext)
 
 const GameManager = () => {
+  const [cookies, setCookies] = useCookies(['UnusedMemes', 'UsedMemes'])
+  const [memeChoices, setMemeChoices] = useState([])
+
   const [name, setName] = useState()
   const [uuid, setUUID] = useState()
   const [roomId, setRoomId] = useState()
-
-  useEffect(() => {
-    s.on('connect', () => {
-      if (roomId && uuid) s.emit('reconnect', { uuid, roomId })
-    })
-  }, [roomId, uuid])
 
   const reset = () => {
     s.emit('leave socket room', { roomId })
@@ -40,7 +42,72 @@ const GameManager = () => {
     setRoomId(null)
   }
 
+  const getMemes = () => {
+    const memes = LZString.decompressFromUTF16(cookies.UsedMemes)
+    if (!memes) return
+    setMemeChoices(
+      memes.split('/').map((src) => ({
+        src,
+        name: MemesList.find(({ src: memeSrc }) => memeSrc === src).name,
+      }))
+    )
+  }
+
+  const refreshMemes = () => {
+    let availableMemes = LZString.decompressFromUTF16(cookies.UnusedMemes)
+
+    if (!availableMemes) availableMemes = MemesList.map(({ src }) => src)
+    else availableMemes = availableMemes.split('/')
+
+    const shuffledMemesList = shuffle(availableMemes)
+    let memes = shuffledMemesList.slice(0, NUMBER_OF_MEME_CHOICES)
+    let restMemes = shuffledMemesList.slice(NUMBER_OF_MEME_CHOICES)
+
+    if (memes.length < NUMBER_OF_MEME_CHOICES) {
+      // add more memes
+      const memesList = shuffle(
+        MemesList.flatMap(({ src }) => (memes.includes(src) ? [] : [src]))
+      )
+
+      restMemes = memesList.slice(NUMBER_OF_MEME_CHOICES - memes.length)
+      memes = [
+        ...memes,
+        ...memesList.slice(0, NUMBER_OF_MEME_CHOICES - memes.length),
+      ]
+    }
+
+    const memeObjects = memes.map((src) => ({
+      src,
+      name: MemesList.find(({ src: memeSrc }) => memeSrc === src).name,
+    }))
+
+    const compressedMemeList = LZString.compressToUTF16(restMemes.join('/'))
+
+    setMemeChoices(memeObjects)
+    setCookies('UnusedMemes', compressedMemeList, {
+      path: '/',
+    })
+    setCookies('UsedMemes', LZString.compressToUTF16(memes.join('/')), {
+      path: '/',
+    })
+  }
+
+  const set = ({ name: n, uuid: id, roomId: rmId }) => {
+    setName(n)
+    setUUID(id)
+    setRoomId(rmId)
+  }
+
   useEffect(() => {
+    getMemes()
+  }, [])
+
+  useEffect(() => {
+    s.on('connect', () => {
+      if (roomId && uuid) s.emit('reconnect', { uuid, roomId })
+    })
+
+    // handle leaving room upon refresh for desktop
     if (isMobile) return
 
     const unload = () => {
@@ -55,12 +122,6 @@ const GameManager = () => {
     }
   }, [roomId, uuid])
 
-  const set = ({ name: n, uuid: id, roomId: rmId }) => {
-    setName(n)
-    setUUID(id)
-    setRoomId(rmId)
-  }
-
   return (
     <GameContext.Provider
       value={{
@@ -73,6 +134,8 @@ const GameManager = () => {
         setRoomId,
         reset,
         set,
+        memeChoices,
+        refreshMemes,
       }}
     >
       <SceneManager />

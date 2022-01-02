@@ -11,6 +11,7 @@ import {
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import InfoIcon from '@mui/icons-material/Info'
+import ArrowBack from '@mui/icons-material/ArrowBack'
 import {
   useEmitter,
   useGameContext,
@@ -19,7 +20,7 @@ import {
 } from '../Managers'
 import CanvasWorkarea from '../Canvas'
 import WaitingForPlayers from '../WaitingForPlayers'
-import { STATES } from '../../constants'
+import { SCENES, STATES } from '../../constants'
 
 const DarkTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -67,7 +68,7 @@ const StyledModalBox = styled(Box)({
 })
 
 const Caption = () => {
-  const { sceneProps, setShowMenu } = useSceneContext()
+  const { sceneProps, setShowMenu, switchToScene } = useSceneContext()
   const { uuid, roomId } = useGameContext()
   const workareaRef = useRef(null)
 
@@ -139,17 +140,53 @@ const Caption = () => {
     <Stack pb={20}>
       {ExampleMemeModal}
 
+      <StyledFab
+        disableRipple
+        onClick={() => switchToScene(SCENES.selection)}
+        size="small"
+        disabled={submittedMeme}
+        sx={{
+          padding: '12px',
+          position: 'fixed',
+          zIndex: 2,
+          top: '20px',
+          left: '20px',
+          backgroundColor: '#ffffff',
+          color: '#000000de',
+          boxShadow:
+            'rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px',
+          transition: 'transform 200ms',
+          '&:hover': {
+            backgroundColor: '#f8f8f8',
+          },
+
+          '&:active': {
+            transform: 'scale(0.93)',
+            boxShadow:
+              'rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px',
+          },
+        }}
+        title="Back to meme selection"
+      >
+        <ArrowBack sx={{ fontSize: 20 }} />
+      </StyledFab>
+
       <Box textAlign="center" mb={2}>
         <Typography variant="h5">
           {sceneProps?.selectedMeme?.name}
 
-          <DarkTooltip title="Show example meme" enterDelay={200}>
+          <DarkTooltip
+            title="Show example meme"
+            enterDelay={200}
+            placement="top"
+          >
             <StyledIconButton
               disableRipple
               size="small"
               onClick={() => setOpenMemeExampleModal(true)}
+              sx={{ mt: '-7px' }}
             >
-              <InfoIcon />
+              <InfoIcon sx={{ fontSize: 20 }} />
             </StyledIconButton>
           </DarkTooltip>
         </Typography>

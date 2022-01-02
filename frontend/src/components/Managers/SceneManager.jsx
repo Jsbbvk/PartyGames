@@ -67,11 +67,18 @@ const SceneManager = () => {
   const [openModal, setOpenModal] = useState(false)
   const [reconnectRoomData, setReconnectRoomData] = useState({})
 
-  const { roomId, uuid, name, set, reset } = useGameContext()
+  const { roomId, uuid, name, set, reset, refreshMemes } = useGameContext()
   const emit = useEmitter()
 
   const switchToScene = (scene, props) => {
     if (scene === currScene) return
+
+    if (
+      (currScene === SCENES.waiting || currScene === SCENES.results) &&
+      scene === SCENES.selection
+    ) {
+      refreshMemes()
+    }
 
     setCurrScene(scene)
     if (props) setSceneProps(props)
@@ -84,6 +91,7 @@ const SceneManager = () => {
 
     try {
       const roomData = JSON.parse(sessionStorage.getItem('captionthis:data'))
+      if (!roomData?.roomId || !roomData?.uuid || !roomData?.name) return
       setReconnectRoomData(roomData)
       setOpenModal(true)
     } catch (e) {

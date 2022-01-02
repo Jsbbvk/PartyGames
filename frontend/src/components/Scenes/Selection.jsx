@@ -1,15 +1,10 @@
 import { Typography, Box, Stack, Fab } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import shuffle from 'lodash/shuffle'
-import { useCookies } from 'react-cookie'
-import LZString from 'lz-string'
-import { grey, orange } from '@mui/material/colors'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import MemesList from '../../constants/memes'
-import { NUMBER_OF_MEME_CHOICES, SCENES } from '../../constants'
-import { useSceneContext } from '../Managers'
+import { SCENES } from '../../constants'
+import { useSceneContext, useEmitter, useGameContext } from '../Managers'
 import 'react-lazy-load-image-component/src/effects/blur.css'
 
 const StyledBox = styled(Box)(({ selected }) => ({
@@ -64,48 +59,20 @@ const StyledBox = styled(Box)(({ selected }) => ({
 }))
 
 const Selection = () => {
-  const [cookies, setCookie] = useCookies(['UnusedMemes'])
-  const [memeChoices, setMemeChoices] = useState([])
   const [selectedMeme, setSelectedMeme] = useState()
   const { switchToScene, setSceneProps, setShowMenu } = useSceneContext()
+  const { uuid, roomId, memeChoices } = useGameContext()
+
+  const emit = useEmitter()
 
   useEffect(() => {
     setShowMenu(true)
 
-    let availableMemes = LZString.decompressFromUTF16(cookies.UnusedMemes)
-
-    if (!availableMemes) availableMemes = MemesList.map(({ src }) => src)
-    else availableMemes = availableMemes.split('/')
-
-    const shuffledMemesList = shuffle(availableMemes)
-    let memes = shuffledMemesList.slice(0, NUMBER_OF_MEME_CHOICES)
-    let restMemes = shuffledMemesList.slice(NUMBER_OF_MEME_CHOICES)
-
-    if (memes.length < NUMBER_OF_MEME_CHOICES) {
-      // add more memes
-      const memesList = shuffle(
-        MemesList.flatMap(({ src }) => (memes.includes(src) ? [] : [src]))
-      )
-
-      restMemes = memesList.slice(NUMBER_OF_MEME_CHOICES - memes.length)
-      memes = [
-        ...memes,
-        ...memesList.slice(0, NUMBER_OF_MEME_CHOICES - memes.length),
-      ]
-    }
-
-    memes = memes.map((src) => ({
-      src,
-      name: MemesList.flatMap(({ src: s, name }) =>
-        s === src ? [name] : []
-      )[0],
-    }))
-
-    const compressedMemeList = LZString.compressToUTF16(restMemes.join('/'))
-
-    setMemeChoices(memes)
-    setCookie('UnusedMemes', compressedMemeList, {
-      path: '/',
+    emit('set player ready', {
+      uuid,
+      roomId,
+      ready: 'ready.captioning',
+      isReady: false,
     })
   }, [])
 

@@ -94,7 +94,15 @@ class EventHandler {
   }
 
   handleSelection = (e) => {
+    if (!this.handler.editable) return
     const { target } = e
+
+    this.handler.setByPartial(target, {
+      lockMovementX: false,
+      lockMovementY: false,
+      editable: true,
+    })
+
     if (this.handler.onSelect) this.handler.onSelect(target)
   }
 

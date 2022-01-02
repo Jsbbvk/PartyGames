@@ -100,6 +100,12 @@ const Voting = () => {
   useListener('update players', getPlayers)
 
   useEffect(() => {
+    emit('set player ready', {
+      uuid,
+      roomId,
+      ready: 'ready.voting',
+      isReady: false,
+    })
     setShowMenu(true)
     getPlayers()
   }, [])
