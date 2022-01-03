@@ -1,4 +1,7 @@
-import { ROOM_INACTIVE_TIMEOUT, STATES } from '../store/constants'
+import {
+  ROOM_INACTIVE_TIMEOUT,
+  STATES,
+} from '../../store/CaptionThis/constants'
 import {
   getRoom as getRm,
   createPlayer,
@@ -7,7 +10,7 @@ import {
   getPlayers,
   setRoomState as setRmState,
   resetPlayers,
-} from '../store/controllers'
+} from '../../store/CaptionThis/controllers'
 
 const deleteRoomIfInactive = async (io, roomId) => {
   const { room, error } = await getRm(roomId, true)

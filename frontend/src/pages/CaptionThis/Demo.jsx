@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async'
-import DemoManager from '../../components/Demo/DemoManager'
+import DemoManager from '../../CaptionThis/components/Demo/DemoManager'
 
 const Demo = () => {
   return (

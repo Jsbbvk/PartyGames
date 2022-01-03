@@ -7,7 +7,7 @@ import {
   getRoom,
   leaveRoom,
   updatePlayer,
-} from '../store/controllers'
+} from '../../store/CaptionThis/controllers'
 import initRoomSocket from './socket-room'
 import initPlayerSocket from './socket-player'
 

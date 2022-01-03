@@ -14,7 +14,6 @@ import { useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import CloseIcon from '@mui/icons-material/Close'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { grey } from '@mui/material/colors'
 // eslint-disable-next-line import/no-cycle
 import { useDemoContext } from './DemoManager'
 import ScrollToTop from '../ScrollToTop'
@@ -53,6 +52,7 @@ const StyledBox = styled(Box)(({ selected }) => ({
     transition: 'opacity 300ms, background-color 250ms, transform 100ms',
     opacity: selected ? 1 : 0,
     position: 'absolute',
+    pointerEvents: selected ? 'auto' : 'none',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',

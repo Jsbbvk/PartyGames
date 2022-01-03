@@ -14,8 +14,8 @@ import { isMobile } from 'react-device-detect'
 import CloseIcon from '@mui/icons-material/Close'
 import { Helmet } from 'react-helmet-async'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import ScrollToTop from '../../components/ScrollToTop'
-import MemesList from '../../constants/memes'
+import ScrollToTop from '../../CaptionThis/components/ScrollToTop'
+import MemesList from '../../CaptionThis/constants/memes'
 
 import 'react-lazy-load-image-component/src/effects/blur.css'
 

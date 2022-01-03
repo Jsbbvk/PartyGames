@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async'
-import { GameManager } from '../../components/Managers'
+import { GameManager } from '../../CaptionThis/components/Managers'
 
 const CaptionThis = () => {
   return (

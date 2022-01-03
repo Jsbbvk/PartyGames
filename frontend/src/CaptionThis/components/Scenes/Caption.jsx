@@ -186,7 +186,7 @@ const Caption = () => {
               onClick={() => setOpenMemeExampleModal(true)}
               sx={{ mt: '-7px' }}
             >
-              <InfoIcon sx={{ fontSize: 20 }} />
+              <InfoIcon sx={{ fontSize: 16 }} />
             </StyledIconButton>
           </DarkTooltip>
         </Typography>

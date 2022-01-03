@@ -4,7 +4,7 @@ import {
   deleteRoom,
   deletePlayer,
   getPlayer,
-} from '../store/controllers'
+} from '../../store/CaptionThis/controllers'
 
 const setPlayerName = (io) => async (data, cb) => {
   if (!data) return
