@@ -16,4 +16,5 @@ export {
   getRoom,
   setRoomState,
   resetPlayers,
+  updateRoom,
 } from './roomController'

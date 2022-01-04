@@ -7,6 +7,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component'
 import ShareIcon from '@mui/icons-material/Share'
 import LinkIcon from '@mui/icons-material/Link'
 import CheckIcon from '@mui/icons-material/Check'
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import { STATES } from '../../constants'
 import {
   useEmitter,
@@ -253,12 +254,12 @@ const Results = () => {
                   direction="row"
                   alignItems="center"
                   spacing={1}
-                  sx={{ color: '#1e88e5' }}
+                  sx={{ color: earnedPoint ? '#ffcc00' : '#1e88e5' }}
                 >
                   <Typography variant="body1" sx={{ color: '#000000de' }}>
                     {numVotes}
                   </Typography>
-                  <ThumbUpIcon />
+                  {earnedPoint ? <WorkspacePremiumIcon /> : <ThumbUpIcon />}
                 </Stack>
               </Stack>
               <Box mt={1}>

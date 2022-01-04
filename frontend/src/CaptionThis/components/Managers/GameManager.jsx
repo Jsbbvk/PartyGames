@@ -29,6 +29,7 @@ export const useGameContext = () => useContext(GameContext)
 const GameManager = () => {
   const [cookies, setCookies] = useCookies(['UnusedMemes', 'UsedMemes'])
   const [memeChoices, setMemeChoices] = useState([])
+  const [numMemeChoices, setNumMemeChoices] = useState(NUMBER_OF_MEME_CHOICES)
 
   const [name, setName] = useState()
   const [uuid, setUUID] = useState()
@@ -60,20 +61,17 @@ const GameManager = () => {
     else availableMemes = availableMemes.split('/')
 
     const shuffledMemesList = shuffle(availableMemes)
-    let memes = shuffledMemesList.slice(0, NUMBER_OF_MEME_CHOICES)
-    let restMemes = shuffledMemesList.slice(NUMBER_OF_MEME_CHOICES)
+    let memes = shuffledMemesList.slice(0, numMemeChoices)
+    let restMemes = shuffledMemesList.slice(numMemeChoices)
 
-    if (memes.length < NUMBER_OF_MEME_CHOICES) {
+    if (memes.length < numMemeChoices) {
       // add more memes
       const memesList = shuffle(
         MemesList.flatMap(({ src }) => (memes.includes(src) ? [] : [src]))
       )
 
-      restMemes = memesList.slice(NUMBER_OF_MEME_CHOICES - memes.length)
-      memes = [
-        ...memes,
-        ...memesList.slice(0, NUMBER_OF_MEME_CHOICES - memes.length),
-      ]
+      restMemes = memesList.slice(numMemeChoices - memes.length)
+      memes = [...memes, ...memesList.slice(0, numMemeChoices - memes.length)]
     }
 
     const memeObjects = memes.map((src) => ({
@@ -136,6 +134,8 @@ const GameManager = () => {
         set,
         memeChoices,
         refreshMemes,
+        numMemeChoices,
+        setNumMemeChoices,
       }}
     >
       <SceneManager />

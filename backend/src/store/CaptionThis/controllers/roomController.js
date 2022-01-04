@@ -130,6 +130,17 @@ export const setRoomState = async (roomId, state) => {
   return { roomId }
 }
 
+export const updateRoom = async (roomId, update) => {
+  const [err] = await to(Room.findOneAndUpdate({ roomId }, update))
+
+  if (err) {
+    if (process.env.NODE_ENV === 'development') console.log(err)
+    return Error(ERRORS.UNEXPECTED_ERROR)
+  }
+
+  return { roomId }
+}
+
 export const dropCollection = async () => {
   const [err] = await to(Room.collection.drop())
   if (err && process.env.NODE_ENV === 'development') console.log(err)

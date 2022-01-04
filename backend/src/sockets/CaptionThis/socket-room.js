@@ -1,3 +1,4 @@
+import debounce from 'lodash/debounce'
 import {
   ROOM_INACTIVE_TIMEOUT,
   STATES,
@@ -10,6 +11,7 @@ import {
   getPlayers,
   setRoomState as setRmState,
   resetPlayers,
+  updateRoom,
 } from '../../store/CaptionThis/controllers'
 
 const deleteRoomIfInactive = async (io, roomId) => {
@@ -156,6 +158,25 @@ const getRoom = async (data, cb) => {
   if (cb) cb(res)
 }
 
+const updateNumberMemes = (io) =>
+  debounce(async (data, cb) => {
+    if (!data) return
+    const { roomId, numMemes } = data
+    const { error } = await updateRoom(roomId, {
+      $set: {
+        memeChoices: numMemes,
+      },
+    })
+
+    if (error) {
+      if (cb) cb({ error })
+      return
+    }
+
+    io.to(roomId).emit('update number meme choices', { numMemes })
+    if (cb) cb({ roomId })
+  }, 250)
+
 export default async (io, socket) => {
   socket.on('create room', createAndJoinRoom(io, socket))
   socket.on('join room', joinRoom(io, socket))
@@ -164,4 +185,5 @@ export default async (io, socket) => {
   socket.on('restart game', restartGame(io))
   socket.on('continue game', continueGame(io))
   socket.on('get room', getRoom)
+  socket.on('set number meme choices', updateNumberMemes(io))
 }

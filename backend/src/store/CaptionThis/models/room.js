@@ -24,6 +24,10 @@ const roomSchema = mongoose.Schema(
       enum: Object.values(STATES),
       default: STATES.WAITING,
     },
+    memeChoices: {
+      type: Number,
+      default: 10,
+    },
   },
   options
 )

@@ -9,13 +9,17 @@ import {
   Typography,
   Fade,
   Collapse,
+  Select,
+  MenuItem,
+  Slider,
 } from '@mui/material'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
 import CheckIcon from '@mui/icons-material/Check'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { TransitionGroup } from 'react-transition-group'
+import debounce from 'lodash/debounce'
 import {
   useEmitter,
   useGameContext,
@@ -23,12 +27,17 @@ import {
   useSceneContext,
 } from '../Managers'
 import Button from '../widgets/Button'
-import { MIN_PLAYERS_TO_START, SCENES, STATES } from '../../constants'
+import {
+  MIN_PLAYERS_TO_START,
+  NUMBER_OF_MEME_CHOICES,
+  SCENES,
+  STATES,
+} from '../../constants'
 
 const PlayerWrapper = styled(Box)({
   overflowY: 'auto',
-  height: '75vh',
-  maxHeight: '450px',
+  height: '50vh',
+  maxHeight: '375px',
   width: '90vw',
   maxWidth: '400px',
   padding: '0 8px',
@@ -80,12 +89,38 @@ const StyledIconButton = styled(IconButton)({
   },
 })
 
+const StyledSlider = styled(Slider)({
+  width: 200,
+
+  '& .MuiSlider-thumb': {
+    height: 18,
+    width: 18,
+    backgroundColor: '#fff',
+    border: '2px solid currentColor',
+    '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+      boxShadow: 'inherit',
+    },
+    '&:before': {
+      display: 'none',
+    },
+  },
+})
+
 const Waiting = () => {
   const { switchToScene, setSceneProps, setShowMenu } = useSceneContext()
-  const { name, setName, uuid, roomId, reset } = useGameContext()
+  const {
+    name,
+    setName,
+    uuid,
+    roomId,
+    reset,
+    numMemeChoices,
+    setNumMemeChoices,
+  } = useGameContext()
   const [players, setPlayers] = useState([])
   const [isEditingName, setIsEditingName] = useState(false)
   const [userName, setUserName] = useState(name)
+
   const inputRef = useRef(null)
 
   const emit = useEmitter()
@@ -148,9 +183,40 @@ const Waiting = () => {
   const startGame = () =>
     emit('restart game', { roomId, state: STATES.captioning })
 
+  const emitMemeChange = useCallback(
+    debounce((numMemes) => {
+      emit('set number meme choices', { roomId, numMemes })
+    }, 250),
+    [emit, roomId]
+  )
+
+  const onMemeChoiceChange = (_, newVal) => {
+    setNumMemeChoices(newVal)
+    emitMemeChange(newVal)
+  }
+
+  useListener('update number meme choices', (data) => {
+    if (!data) return
+    const { numMemes } = data
+    setNumMemeChoices(numMemes)
+  })
+
   return (
     <Stack alignItems="center">
       <Typography variant="h5">Room ID: {roomId}</Typography>
+      <Box mt={3}>
+        <Typography variant="body2" sx={{ textAlign: 'center' }}>
+          Number of meme choices: {numMemeChoices}
+        </Typography>
+        <StyledSlider
+          defaultValue={NUMBER_OF_MEME_CHOICES}
+          value={numMemeChoices}
+          step={1}
+          min={1}
+          max={20}
+          onChange={onMemeChoiceChange}
+        />
+      </Box>
       <PlayerWrapper mt={2}>
         <TransitionGroup
           style={{
@@ -159,67 +225,120 @@ const Waiting = () => {
             alignItems: 'center',
           }}
         >
-          {players.map(({ name: playerName, _id: playerId }) => (
-            <Collapse key={playerId} sx={{ width: '100%' }}>
-              <StyledPlayerRow
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                editing={playerId === uuid && isEditingName}
-              >
-                {playerId === uuid && isEditingName ? (
-                  <InputBase
-                    inputRef={inputRef}
-                    value={userName}
-                    autoFocus
-                    onBlur={() => {}}
-                    onChange={(e) => setUserName(e.target.value || '')}
-                    sx={{ p: 0, width: '85%' }}
-                    inputProps={{
-                      maxLength: 20,
-                      style: { padding: 0 },
-                    }}
-                  />
-                ) : (
-                  <Typography variant="body1">
-                    {playerName}
-                    {playerId === uuid ? ' (You)' : ''}
-                  </Typography>
-                )}
+          <Collapse key={uuid} sx={{ width: '100%' }}>
+            <StyledPlayerRow
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              editing={isEditingName}
+            >
+              {isEditingName ? (
+                <InputBase
+                  inputRef={inputRef}
+                  value={userName}
+                  autoFocus
+                  onBlur={() => {}}
+                  onChange={(e) => setUserName(e.target.value || '')}
+                  sx={{ p: 0, width: '85%' }}
+                  inputProps={{
+                    maxLength: 20,
+                    style: { padding: 0 },
+                  }}
+                />
+              ) : (
+                <Typography variant="body1">{name} (You)</Typography>
+              )}
 
-                {playerId === uuid && isEditingName ? (
-                  <Stack direction="row" spacing={1}>
-                    <StyledIconButton
-                      disableRipple
-                      onClick={() => {
-                        setUserName(name)
-                        setIsEditingName(false)
-                      }}
-                    >
-                      <CloseIcon />
-                    </StyledIconButton>
-                    <StyledIconButton disableRipple onClick={confirmName}>
-                      <CheckIcon />
-                    </StyledIconButton>
-                  </Stack>
-                ) : (
-                  <Tooltip
-                    placement="right"
-                    title={playerId === uuid ? 'Edit name' : 'Kick'}
+              {isEditingName ? (
+                <Stack direction="row" spacing={1}>
+                  <StyledIconButton
+                    disableRipple
+                    onClick={() => {
+                      setUserName(name)
+                      setIsEditingName(false)
+                    }}
                   >
-                    <StyledIconButton
-                      disableRipple
-                      onClick={() =>
-                        playerId === uuid ? editName() : removePlayer(playerId)
-                      }
+                    <CloseIcon />
+                  </StyledIconButton>
+                  <StyledIconButton disableRipple onClick={confirmName}>
+                    <CheckIcon />
+                  </StyledIconButton>
+                </Stack>
+              ) : (
+                <Tooltip placement="right" title="Edit name">
+                  <StyledIconButton disableRipple onClick={editName}>
+                    <EditIcon />
+                  </StyledIconButton>
+                </Tooltip>
+              )}
+            </StyledPlayerRow>
+          </Collapse>
+
+          {players
+            .filter(({ _id }) => _id !== uuid)
+            .map(({ name: playerName, _id: playerId }) => (
+              <Collapse key={playerId} sx={{ width: '100%' }}>
+                <StyledPlayerRow
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  editing={playerId === uuid && isEditingName}
+                >
+                  {playerId === uuid && isEditingName ? (
+                    <InputBase
+                      inputRef={inputRef}
+                      value={userName}
+                      autoFocus
+                      onBlur={() => {}}
+                      onChange={(e) => setUserName(e.target.value || '')}
+                      sx={{ p: 0, width: '85%' }}
+                      inputProps={{
+                        maxLength: 20,
+                        style: { padding: 0 },
+                      }}
+                    />
+                  ) : (
+                    <Typography variant="body1">
+                      {playerName}
+                      {playerId === uuid ? ' (You)' : ''}
+                    </Typography>
+                  )}
+
+                  {playerId === uuid && isEditingName ? (
+                    <Stack direction="row" spacing={1}>
+                      <StyledIconButton
+                        disableRipple
+                        onClick={() => {
+                          setUserName(name)
+                          setIsEditingName(false)
+                        }}
+                      >
+                        <CloseIcon />
+                      </StyledIconButton>
+                      <StyledIconButton disableRipple onClick={confirmName}>
+                        <CheckIcon />
+                      </StyledIconButton>
+                    </Stack>
+                  ) : (
+                    <Tooltip
+                      placement="right"
+                      title={playerId === uuid ? 'Edit name' : 'Kick'}
                     >
-                      {playerId === uuid ? <EditIcon /> : <CloseIcon />}
-                    </StyledIconButton>
-                  </Tooltip>
-                )}
-              </StyledPlayerRow>
-            </Collapse>
-          ))}
+                      <StyledIconButton
+                        disableRipple
+                        onClick={() =>
+                          playerId === uuid
+                            ? editName()
+                            : removePlayer(playerId)
+                        }
+                      >
+                        {playerId === uuid ? <EditIcon /> : <CloseIcon />}
+                      </StyledIconButton>
+                    </Tooltip>
+                  )}
+                </StyledPlayerRow>
+              </Collapse>
+            ))}
         </TransitionGroup>
       </PlayerWrapper>
       <Stack direction="row" alignItems="center" spacing={5} mt={3}>
