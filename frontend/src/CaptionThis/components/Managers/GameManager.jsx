@@ -98,6 +98,12 @@ const GameManager = () => {
 
   useEffect(() => {
     getMemes()
+
+    s.on('update number meme choices', (data) => {
+      if (!data) return
+      const { numMemes } = data
+      setNumMemeChoices(numMemes)
+    })
   }, [])
 
   useEffect(() => {
