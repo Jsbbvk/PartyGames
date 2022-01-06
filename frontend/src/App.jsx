@@ -5,6 +5,7 @@ import {
   CaptionThisDemo,
   CaptionThisMemes,
 } from './pages/CaptionThis'
+import CardsForUs from './pages/CardsForUs'
 
 function App() {
   return (
@@ -15,6 +16,9 @@ function App() {
           <Route path="" element={<CaptionThis />} />
           <Route path="demo" element={<CaptionThisDemo />} />
           <Route path="memes" element={<CaptionThisMemes />} />
+        </Route>
+        <Route path="/cardsforus">
+          <Route path="" element={<CardsForUs />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
