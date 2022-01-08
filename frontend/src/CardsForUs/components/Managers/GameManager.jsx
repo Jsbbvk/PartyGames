@@ -13,8 +13,8 @@ import { useCookies } from 'react-cookie'
 import shuffle from 'lodash/shuffle'
 import { SceneManager } from '.'
 import { NUMBER_OF_CARD_CHOICES } from '../../constants'
+import { ThemeContext } from '../../../App'
 
-// https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
 const ENDPOINT = process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
 
 const s = io(ENDPOINT, {
@@ -26,6 +26,12 @@ const GameContext = createContext()
 export const useGameContext = () => useContext(GameContext)
 
 const GameManager = () => {
+  const { setBodyTransition } = useContext(ThemeContext)
+
+  useEffect(() => {
+    setBodyTransition(true)
+  }, [])
+
   const [cookies, setCookies] = useCookies(['UnusedCards', 'UsedCards'])
 
   const [name, setName] = useState()

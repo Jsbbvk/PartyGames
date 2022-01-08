@@ -1,4 +1,6 @@
 import { Stack, Container, styled, Typography, Box } from '@mui/material'
+import { useContext } from 'react'
+import { ThemeContext } from '../../../App'
 
 const CardRow = styled(Stack)({
   padding: '12px',
@@ -32,6 +34,8 @@ const CardWrapper = styled(Box)({
 })
 
 const Selection = () => {
+  const { toggleColorMode } = useContext(ThemeContext)
+
   const dummyText = 'A sample string that represents a black card'
 
   const Card = (id, text) => (
@@ -44,6 +48,9 @@ const Selection = () => {
     <Container maxWidth="sm">
       <Box sx={{ height: '40vh', pt: 10 }}>
         <Typography variant="body1">{dummyText}</Typography>
+        <button type="button" onClick={toggleColorMode}>
+          Toggle!
+        </button>
       </Box>
       <CardWrapper sx={{ height: '50vh' }} spacing={3}>
         {[...new Array(10).keys()].map((i) => Card(i, dummyText))}
