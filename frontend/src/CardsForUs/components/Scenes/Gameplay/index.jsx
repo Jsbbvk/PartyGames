@@ -4,7 +4,7 @@ import Czar from './Czar'
 
 const Gameplay = () => {
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{ p: 0 }}>
       <Czar />
       <Cards />
     </Container>

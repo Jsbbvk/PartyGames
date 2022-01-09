@@ -7,7 +7,7 @@ const Czar = () => {
   const dummyText = 'A sample string that represents a black card'
 
   return (
-    <Box sx={{ height: '40vh', pt: 10 }}>
+    <Box sx={{ height: '40vh', pt: 10, px: 2 }}>
       <Typography variant="body1">{dummyText}</Typography>
       <button type="button" onClick={toggleColorMode}>
         Toggle!
