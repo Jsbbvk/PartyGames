@@ -11,7 +11,7 @@ import ConnectWithoutContactIcon from '@mui/icons-material/ConnectWithoutContact
 import { useState, useEffect, createContext, useContext } from 'react'
 import { SwitchTransition } from 'react-transition-group'
 import { isMobile } from 'react-device-detect'
-import { Selection, Results, Intro, Join, Host, Waiting } from '../Scenes'
+import { Gameplay, Intro, Join, Host, Waiting } from '../Scenes'
 import { MIN_PLAYERS_TO_START, SCENES, STATES } from '../../constants'
 import Menu from '../Menu'
 import { useEmitter, useGameContext, useListener } from '.'
@@ -39,12 +39,11 @@ const SceneManager = () => {
     [SCENES.intro]: <Intro />,
     [SCENES.join]: <Join />,
     [SCENES.host]: <Host />,
-    [SCENES.selection]: <Selection />,
-    [SCENES.results]: <Results />,
+    [SCENES.gameplay]: <Gameplay />,
     [SCENES.waiting]: <Waiting />,
   }
 
-  const [currScene, setCurrScene] = useState(SCENES.selection)
+  const [currScene, setCurrScene] = useState(SCENES.gameplay)
   const [sceneProps, setSceneProps] = useState({})
   const [players, setPlayers] = useState([])
   const [showMenu, setShowMenu] = useState(false)
