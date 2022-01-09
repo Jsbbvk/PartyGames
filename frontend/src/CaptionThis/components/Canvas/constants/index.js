@@ -13,9 +13,10 @@ export const fontOptions = {
 }
 
 export const impactOptions = {
-  fontFamily: 'Impact',
+  fontFamily: 'Anton',
   fill: '#ffffff',
   stroke: '#000000',
+  strokeWidth: 1,
   fontWeight: 'bold',
 }
 

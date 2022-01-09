@@ -21,12 +21,6 @@ export default class Handler {
     this.initOptions(options)
     this.initHandlers()
     this.initCallback(options)
-
-    // const impactFont = new FontFaceObserver('Quicksand')
-    // impactFont
-    //   .load()
-    //   .then(() => console.log('loaded'))
-    //   .catch((e) => console.log(e))
   }
 
   initOptions = (options) => {

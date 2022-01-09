@@ -153,6 +153,7 @@ const Memes = () => {
               id="search-field"
               onChange={onSearchChange}
               value={query}
+              autoComplete="off"
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
