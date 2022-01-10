@@ -9,7 +9,6 @@ import {
 import { io } from 'socket.io-client'
 import { isMobile } from 'react-device-detect'
 import LZString from 'lz-string'
-import { useCookies } from 'react-cookie'
 import shuffle from 'lodash/shuffle'
 import { SceneManager } from '.'
 import { NUMBER_OF_CARD_CHOICES } from '../../constants'
@@ -31,8 +30,6 @@ const GameManager = () => {
   useEffect(() => {
     setBodyTransition(true)
   }, [])
-
-  const [cookies, setCookies] = useCookies(['UnusedCards', 'UsedCards'])
 
   const [name, setName] = useState()
   const [uuid, setUUID] = useState()
