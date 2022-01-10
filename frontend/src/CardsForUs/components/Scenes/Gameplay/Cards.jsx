@@ -85,30 +85,25 @@ const INFO = {
 
 const Cards = () => {
   const [info, setInfo] = useState(INFO.skips)
-  const [selectedCard, setSelectedCard] = useState()
-  const [cards, setCards] = useState([])
-  const [CARDS, ASIAN_CARDS] = useCardManager()
+  const [selectedCardId, setSelectedCardId] = useState()
+  const [cards, skipCard] = useCardManager()
 
-  useEffect(() => {
-    setCards(shuffle(ASIAN_CARDS.white).slice(0, 7))
-  }, [])
+  useEffect(() => {}, [])
 
   const onCardSelect = (id) => {
-    if (id === selectedCard) setSelectedCard(null)
-    else setSelectedCard(id)
+    if (id === selectedCardId) setSelectedCardId(null)
+    else setSelectedCardId(id)
   }
 
   const onSkipCard = (id) => {
-    const newCard = shuffle(ASIAN_CARDS.black).find(
-      ({ id: cId }) => !cards.some((_id) => cId === _id)
-    )
-    setCards((p) => [...p.filter(({ id: cId }) => id !== cId), newCard])
+    if (selectedCardId === id) setSelectedCardId(null)
+    skipCard(id, 'white')
   }
 
   const Card = (id, text) => (
     <Collapse key={id} sx={{ width: '100%' }}>
       <CardRow
-        selected={selectedCard === id}
+        selected={selectedCardId === id}
         onClick={() => onCardSelect(id)}
         direction="row"
         alignItems="center"
@@ -154,7 +149,7 @@ const Cards = () => {
             alignItems: 'center',
           }}
         >
-          {cards.map(({ id, text }) => Card(id, text))}
+          {cards.white.map(({ id, text }) => Card(id, text))}
         </TransitionGroup>
       </CardWrapper>
     </Stack>

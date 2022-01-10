@@ -9,7 +9,6 @@ import {
 import { io } from 'socket.io-client'
 import { isMobile } from 'react-device-detect'
 import LZString from 'lz-string'
-import { useCookies } from 'react-cookie'
 import shuffle from 'lodash/shuffle'
 import { SceneManager } from '.'
 import MemesList from '../../constants/memes'
@@ -27,7 +26,6 @@ const GameContext = createContext()
 export const useGameContext = () => useContext(GameContext)
 
 const GameManager = () => {
-  const [cookies, setCookies] = useCookies(['UnusedMemes', 'UsedMemes'])
   const [memeChoices, setMemeChoices] = useState([])
   const [numMemeChoices, setNumMemeChoices] = useState(NUMBER_OF_MEME_CHOICES)
 
@@ -44,7 +42,9 @@ const GameManager = () => {
   }
 
   const getMemes = () => {
-    const memes = LZString.decompressFromUTF16(cookies.UsedMemes)
+    const memes = LZString.decompressFromUTF16(
+      localStorage.getItem('UsedMemes')
+    )
     if (!memes) return
     setMemeChoices(
       memes.split('/').map((src) => ({
@@ -55,7 +55,9 @@ const GameManager = () => {
   }
 
   const refreshMemes = () => {
-    let availableMemes = LZString.decompressFromUTF16(cookies.UnusedMemes)
+    let availableMemes = LZString.decompressFromUTF16(
+      localStorage.getItem('UnusedMemes')
+    )
 
     if (!availableMemes) availableMemes = MemesList.map(({ src }) => src)
     else availableMemes = availableMemes.split('/')
@@ -82,12 +84,8 @@ const GameManager = () => {
     const compressedMemeList = LZString.compressToUTF16(restMemes.join('/'))
 
     setMemeChoices(memeObjects)
-    setCookies('UnusedMemes', compressedMemeList, {
-      path: '/',
-    })
-    setCookies('UsedMemes', LZString.compressToUTF16(memes.join('/')), {
-      path: '/',
-    })
+    localStorage.setItem('UnusedMemes', compressedMemeList)
+    localStorage.setItem('UsedMemes', LZString.compressToUTF16(memes.join('/')))
   }
 
   const set = ({ name: n, uuid: id, roomId: rmId }) => {
