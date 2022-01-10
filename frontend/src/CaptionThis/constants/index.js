@@ -26,4 +26,4 @@ export const STATES_TO_SCENES = {
   results: 'results',
 }
 
-export const MIN_PLAYERS_TO_START = 1
+export const MIN_PLAYERS_TO_START = 3
