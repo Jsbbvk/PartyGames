@@ -11,6 +11,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useState, useEffect } from 'react'
 import { SwitchTransition, TransitionGroup } from 'react-transition-group'
 import shuffle from 'lodash/shuffle'
+import { useCardManager } from '../../Hooks'
 
 const CardRow = styled(Stack)(({ theme, selected }) => ({
   margin: '4px 0',
@@ -82,17 +83,14 @@ const INFO = {
   skips: 'Skips left: ',
 }
 
-const CARDS = [...new Array(10).keys()]
-
 const Cards = () => {
   const [info, setInfo] = useState(INFO.skips)
   const [selectedCard, setSelectedCard] = useState()
   const [cards, setCards] = useState([])
-
-  const dummyText = 'A sample string that represents a black card'
+  const [CARDS, ASIAN_CARDS] = useCardManager()
 
   useEffect(() => {
-    setCards(CARDS.slice(0, 7))
+    setCards(shuffle(ASIAN_CARDS.white).slice(0, 7))
   }, [])
 
   const onCardSelect = (id) => {
@@ -101,8 +99,10 @@ const Cards = () => {
   }
 
   const onSkipCard = (id) => {
-    const newCard = shuffle(CARDS).find((cId) => !cards.includes(cId))
-    setCards((p) => [...p.filter((cId) => id !== cId), newCard])
+    const newCard = shuffle(ASIAN_CARDS.black).find(
+      ({ id: cId }) => !cards.some((_id) => cId === _id)
+    )
+    setCards((p) => [...p.filter(({ id: cId }) => id !== cId), newCard])
   }
 
   const Card = (id, text) => (
@@ -114,7 +114,10 @@ const Cards = () => {
         alignItems="center"
         justifyContent="space-between"
       >
-        <Typography variant="body1">{text}</Typography>
+        <Typography
+          variant="body1"
+          dangerouslySetInnerHTML={{ __html: text }}
+        />
         <StyledIconButton
           disableRipple
           title="Skip"
@@ -129,9 +132,6 @@ const Cards = () => {
   return (
     <Stack sx={{ height: '55vh' }}>
       <Box>
-        {/* <button type="button" onClick={() => setInfo(INFO.results)}>
-          change
-        </button> */}
         <SwitchTransition mode="out-in">
           <Fade
             key={info}
@@ -154,7 +154,7 @@ const Cards = () => {
             alignItems: 'center',
           }}
         >
-          {cards.map((i) => Card(i, `${dummyText} ${i}`))}
+          {cards.map(({ id, text }) => Card(id, text))}
         </TransitionGroup>
       </CardWrapper>
     </Stack>

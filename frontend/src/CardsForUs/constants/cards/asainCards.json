@@ -1,5 +1,5 @@
 {
-  "blackCards": [
+  "black": [
     "My parents stop me from _ with the opposite sex.",
     "My white friends think that _ is sushi.",
     "My brain can fit so many _ in it.",
@@ -100,7 +100,7 @@
     "My parents go crazy when they see _.",
     "My mum thinks _ equals failure."
   ],
-  "whiteCards": [
+  "white": [
     "Poke bowls with no poke",
     "Using chopsticks by stabbing the food",
     "Birthday gifts that are SAT practice books",
