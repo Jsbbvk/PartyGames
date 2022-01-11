@@ -8,15 +8,15 @@ import {
   IconButton,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import CheckIcon from '@mui/icons-material/Check'
 import { useState, useEffect } from 'react'
 import { SwitchTransition, TransitionGroup } from 'react-transition-group'
-import shuffle from 'lodash/shuffle'
 import { useCardManager } from '../../Hooks'
 
 const CardRow = styled(Stack)(({ theme, selected }) => ({
   margin: '4px 0',
   padding: '10px 12px',
-  transition: 'color 250ms ease-in-out, background-color 250ms ease-in-out',
+  // transition: 'color 250ms ease-in-out, background-color 250ms ease-in-out',
   color: theme.palette.mode === 'light' ? '#ffffffde' : '#000000de',
   backgroundColor: (() => {
     const { mode } = theme?.palette
@@ -34,9 +34,12 @@ const CardRow = styled(Stack)(({ theme, selected }) => ({
   },
 }))
 
-const StyledIconButton = styled(IconButton)(({ theme }) => ({
-  color: theme.palette.mode === 'light' ? '#ffffff8a' : '#0000008a',
-  transition: 'color 250ms ease-in-out',
+const StyledIconButton = styled(IconButton)(({ theme, selected }) => ({
+  color: (() => {
+    if (selected) return '#66bb6a'
+    return theme.palette.mode === 'light' ? '#ffffff8a' : '#0000008a'
+  })(),
+  // transition: 'color 250ms ease-in-out',
   padding: 0,
 
   '& > svg': {
@@ -46,7 +49,10 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
 
   '&:hover': {
     backgroundColor: 'inherit',
-    color: theme.palette.mode === 'light' ? '#ffffffde' : '#000000de',
+    color: (() => {
+      if (selected) return '#66bb6a'
+      return theme.palette.mode === 'light' ? '#ffffffde' : '#000000de'
+    })(),
   },
 }))
 
@@ -100,11 +106,15 @@ const Cards = () => {
     skipCard(id, 'white')
   }
 
+  const onConfirmCard = (id) => {}
+
   const Card = (id, text) => (
     <Collapse key={id} sx={{ width: '100%' }}>
       <CardRow
         selected={selectedCardId === id}
-        onClick={() => onCardSelect(id)}
+        onClick={(e) =>
+          typeof e.target.className === 'string' && onCardSelect(id)
+        }
         direction="row"
         alignItems="center"
         justifyContent="space-between"
@@ -114,18 +124,22 @@ const Cards = () => {
           dangerouslySetInnerHTML={{ __html: text }}
         />
         <StyledIconButton
+          className="card-icon-button"
           disableRipple
-          title="Skip"
-          onClick={() => onSkipCard(id)}
+          title={selectedCardId === id ? 'Select' : 'Skip'}
+          onClick={() =>
+            selectedCardId === id ? onConfirmCard(id) : onSkipCard(id)
+          }
+          selected={selectedCardId === id}
         >
-          <CloseIcon />
+          {selectedCardId === id ? <CheckIcon /> : <CloseIcon />}
         </StyledIconButton>
       </CardRow>
     </Collapse>
   )
 
   return (
-    <Stack sx={{ height: '55vh' }}>
+    <Stack sx={{ height: '60vh' }}>
       <Box>
         <SwitchTransition mode="out-in">
           <Fade

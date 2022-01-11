@@ -4,14 +4,17 @@ import { ThemeContext } from '../../../../App'
 
 const Czar = () => {
   const { toggleColorMode } = useContext(ThemeContext)
-  const dummyText = 'A sample string that represents a black card'
+  const dummyText =
+    'A sample string that represents a black card but unnecessarily long so that it will wrap around to the next line.'
 
   return (
-    <Box sx={{ height: '40vh', pt: 10, px: 2 }}>
-      <Typography variant="body1">{dummyText}</Typography>
-      <button type="button" onClick={toggleColorMode}>
+    <Box sx={{ height: '35vh', pt: 10, px: 2 }}>
+      <Typography variant="body1" onClick={toggleColorMode}>
+        {dummyText}
+      </Typography>
+      {/* <button type="button" onClick={toggleColorMode}>
         Toggle!
-      </button>
+      </button> */}
     </Box>
   )
 }
