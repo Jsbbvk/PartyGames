@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const options = {
-  collection: 'players',
+  collection: 'captionthis:players',
 }
 
 export const defaultPlayer = {
@@ -52,6 +52,6 @@ const playerSchema = mongoose.Schema(
 
 playerSchema.index({ socketId: 1 })
 
-const Player = mongoose.model('Player', playerSchema)
+const Player = mongoose.model('CaptionThisPlayer', playerSchema)
 
 export default Player

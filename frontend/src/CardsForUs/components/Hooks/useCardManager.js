@@ -131,7 +131,7 @@ const CardManager = () => {
     refreshCards('white')
   }, [])
 
-  return [cards, skipCard, setMaxCards, setCardPack]
+  return { cards, skipCard, setMaxCards, setCardPack }
 }
 
 export default CardManager

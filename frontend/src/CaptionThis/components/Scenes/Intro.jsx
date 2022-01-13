@@ -34,20 +34,28 @@ const StyledFab = styled(Fab)({
 
 const StyledButton = styled(Fab)({
   textTransform: 'none',
-  boxShadow: 'none',
-  color: '#ffffffDE',
-  backgroundColor: '#363636',
-  transition: 'transform 100ms',
+  margin: '0 25px',
+  color: '#ffffffde',
   fontSize: '1.5rem',
-  padding: '40px 72px',
-  borderRadius: '40px',
-
+  position: 'relative',
+  borderRadius: '50%',
+  maxWidth: 125,
+  maxHeight: 125,
+  width: '30vw',
+  height: '30vw',
+  background: '#f00000',
+  boxShadow: '0 11px 0 0 #8C0606',
+  border: 'none',
+  top: '2%',
+  transition: 'all .2s ease',
   '&:hover': {
-    background: '#474747',
+    background: '#f00000',
+    boxShadow: '0 11px 0 0 #8C0606',
   },
+
   '&:active': {
-    boxShadow: 'none',
-    transform: 'scale(.96)',
+    boxShadow: '0 1px 1px 1px #8C0606',
+    top: '10%',
   },
 })
 
@@ -74,13 +82,7 @@ const Intro = () => {
         <i>How dank are you?</i>
       </Typography>
 
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        alignItems="center"
-        justifyContent="center"
-        spacing={{ xs: 4, md: 10 }}
-        mt={{ xs: 3, md: 10 }}
-      >
+      <Box sx={{ mt: { xs: 3, md: 10 }, height: '150px' }}>
         <StyledButton
           disableRipple
           variant="extended"
@@ -95,7 +97,7 @@ const Intro = () => {
         >
           Join
         </StyledButton>
-      </Stack>
+      </Box>
 
       <Stack alignItems="center" mt={{ xs: 3, md: 7 }}>
         <img

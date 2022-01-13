@@ -16,7 +16,7 @@ import { ThemeContext } from '../../../App'
 
 const ENDPOINT = process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
 
-const s = io(ENDPOINT, {
+const s = io(`${ENDPOINT}/cardsforus`, {
   transports: ['websocket', 'polling', 'flashsocket'],
   closeOnBeforeunload: false,
 })

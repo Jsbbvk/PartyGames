@@ -13,28 +13,34 @@ import { useState, useEffect } from 'react'
 import { SwitchTransition, TransitionGroup } from 'react-transition-group'
 import { useCardManager } from '../../Hooks'
 
-const CardRow = styled(Stack)(({ theme, selected }) => ({
+const CardRow = styled(Stack, {
+  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'confirmed',
+})(({ theme, selected, confirmed }) => ({
   margin: '4px 0',
   padding: '10px 12px',
-  // transition: 'color 250ms ease-in-out, background-color 250ms ease-in-out',
+  cursor: confirmed ? 'auto' : 'pointer',
   color: theme.palette.mode === 'light' ? '#ffffffde' : '#000000de',
+  // transition: 'color 250ms ease-in-out, background-color 250ms ease-in-out',
   backgroundColor: (() => {
     const { mode } = theme?.palette
     if (mode === 'light') {
       return selected ? '#3e3e3e' : '#121212'
     }
-    return selected ? '#fff' : '#bebebe'
+    return confirmed || selected ? '#fff' : '#bebebe'
   })(),
-  cursor: 'pointer',
 
   '@media(hover: hover) and (pointer: fine)': {
     '&:hover': {
-      backgroundColor: theme.palette.mode === 'light' ? '#3e3e3e' : '#fff',
+      ...(!confirmed && {
+        backgroundColor: theme.palette.mode === 'light' ? '#3e3e3e' : '#fff',
+      }),
     },
   },
 }))
 
-const StyledIconButton = styled(IconButton)(({ theme, selected }) => ({
+const StyledIconButton = styled(IconButton, {
+  shouldForwardProp: (prop) => prop !== 'selected',
+})(({ theme, selected }) => ({
   color: (() => {
     if (selected) return '#66bb6a'
     return theme.palette.mode === 'light' ? '#ffffff8a' : '#0000008a'
@@ -92,9 +98,14 @@ const INFO = {
 const Cards = () => {
   const [info, setInfo] = useState(INFO.skips)
   const [selectedCardId, setSelectedCardId] = useState()
-  const [cards, skipCard] = useCardManager()
+  const { cards: playerCards, skipCard } = useCardManager()
+  const [cards, setCards] = useState({})
+  const [isCzar, setIsCzar] = useState(false)
+  const [confirmedCardId, setConfirmedCardId] = useState()
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    setCards(playerCards)
+  }, [playerCards])
 
   const onCardSelect = (id) => {
     if (id === selectedCardId) setSelectedCardId(null)
@@ -106,14 +117,24 @@ const Cards = () => {
     skipCard(id, 'white')
   }
 
-  const onConfirmCard = (id) => {}
+  const onConfirmCard = (id) => {
+    setConfirmedCardId(id)
+    setCards((p) => ({
+      ...p,
+      white: p.white.filter(({ id: _id }) => _id === id),
+    }))
+    // todo emit and listen for player confirm
+  }
 
   const Card = (id, text) => (
     <Collapse key={id} sx={{ width: '100%' }}>
       <CardRow
-        selected={selectedCardId === id}
+        selected={confirmedCardId == null && selectedCardId === id}
+        confirmed={confirmedCardId != null}
         onClick={(e) =>
-          typeof e.target.className === 'string' && onCardSelect(id)
+          confirmedCardId == null &&
+          typeof e.target.className === 'string' &&
+          onCardSelect(id)
         }
         direction="row"
         alignItems="center"
@@ -123,17 +144,19 @@ const Cards = () => {
           variant="body1"
           dangerouslySetInnerHTML={{ __html: text }}
         />
-        <StyledIconButton
-          className="card-icon-button"
-          disableRipple
-          title={selectedCardId === id ? 'Select' : 'Skip'}
-          onClick={() =>
-            selectedCardId === id ? onConfirmCard(id) : onSkipCard(id)
-          }
-          selected={selectedCardId === id}
-        >
-          {selectedCardId === id ? <CheckIcon /> : <CloseIcon />}
-        </StyledIconButton>
+        {confirmedCardId == null && (
+          <StyledIconButton
+            className="card-icon-button"
+            disableRipple
+            title={selectedCardId === id ? 'Select' : 'Skip'}
+            onClick={() =>
+              selectedCardId === id ? onConfirmCard(id) : onSkipCard(id)
+            }
+            selected={selectedCardId === id}
+          >
+            {selectedCardId === id ? <CheckIcon /> : <CloseIcon />}
+          </StyledIconButton>
+        )}
       </CardRow>
     </Collapse>
   )
@@ -163,7 +186,7 @@ const Cards = () => {
             alignItems: 'center',
           }}
         >
-          {cards.white.map(({ id, text }) => Card(id, text))}
+          {cards?.white?.map(({ id, text }) => Card(id, text))}
         </TransitionGroup>
       </CardWrapper>
     </Stack>

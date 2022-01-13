@@ -17,7 +17,7 @@ import { NUMBER_OF_MEME_CHOICES } from '../../constants'
 // https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
 const ENDPOINT = process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
 
-const s = io(ENDPOINT, {
+const s = io(`${ENDPOINT}/captionthis`, {
   transports: ['websocket', 'polling', 'flashsocket'],
   closeOnBeforeunload: false,
 })

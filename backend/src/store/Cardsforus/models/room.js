@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import { STATES } from '../constants'
 
 const options = {
-  collection: 'captionthis:rooms',
+  collection: 'cardsforus:rooms',
   timestamps: true,
 }
 
@@ -16,7 +16,7 @@ const roomSchema = mongoose.Schema(
     players: [
       {
         type: mongoose.Schema.Types.ObjectID,
-        ref: 'CaptionThisPlayer',
+        ref: 'CardForUsPlayer',
       },
     ],
     state: {
@@ -24,16 +24,12 @@ const roomSchema = mongoose.Schema(
       enum: Object.values(STATES),
       default: STATES.WAITING,
     },
-    memeChoices: {
-      type: Number,
-      default: 10,
-    },
   },
   options
 )
 
 roomSchema.index({ roomId: 1 })
 
-const Room = mongoose.model('Room', roomSchema)
+const Room = mongoose.model('CardsForUsRoom', roomSchema)
 
 export default Room
