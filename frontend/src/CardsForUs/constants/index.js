@@ -18,18 +18,41 @@ export const STATES = {
   results: 'results',
 }
 
+export const GAME_STATES = {
+  choosing_card: 'choosing card',
+}
+
+export const INFO = {
+  czar: 'You are the Card Czar',
+  waiting: 'Waiting for Card Czar',
+  waiting_czar: 'Waiting for players',
+  results: 'Results',
+  empty: '',
+  skips: {
+    text: 'Skips left: ',
+    key: 'skips',
+  },
+  waitingForPlayers: (numP = 0, totalP = 1) => ({
+    text: `Waiting for players... ${numP}/${totalP}`,
+    key: 'waiting',
+  }),
+}
+
 export const MIN_PLAYERS_TO_START = 3
 
 export const CAF_CARDS = {
-  white: Object.values(CARDS_JSON.white).map((c, i) => ({ text: c, id: i })),
+  white: Object.values(CARDS_JSON.white).map((c, i) => ({
+    text: c,
+    id: i + 1,
+  })),
   black: Object.values(CARDS_JSON.black).flatMap((c, i) =>
-    c.pick === 1 ? [{ text: c.text, id: i }] : []
+    c.pick === 1 ? [{ text: c.text, id: i + 1 }] : []
   ),
 }
 
 export const AFA_CARDS = {
-  white: ASIAN_CARDS_JSON.white.map((c, i) => ({ text: c, id: i })),
-  black: ASIAN_CARDS_JSON.black.map((c, i) => ({ text: c, id: i })),
+  white: ASIAN_CARDS_JSON.white.map((c, i) => ({ text: c, id: i + 1 })),
+  black: ASIAN_CARDS_JSON.black.map((c, i) => ({ text: c, id: i + 1 })),
 }
 
 export const PACKS = {

@@ -14,7 +14,7 @@ import { SceneManager } from '.'
 import { NUMBER_OF_CARD_CHOICES } from '../../constants'
 import { ThemeContext } from '../../../App'
 
-const ENDPOINT = process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
+const ENDPOINT = 'http://localhost:4001' // process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
 
 const s = io(`${ENDPOINT}/cardsforus`, {
   transports: ['websocket', 'polling', 'flashsocket'],
@@ -49,7 +49,37 @@ const GameManager = () => {
     setRoomId(rmId)
   }
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    s.emit(
+      'create room',
+      { roomId: '11111', name: 'joe' },
+      ({ uuid: playerId, error: err }) => {
+        if (err) {
+          console.log(err)
+          if (err === 'Duplicate room') {
+            s.emit(
+              'join room',
+              { roomId: '11111', name: 'joe' },
+              ({ uuid: pid, error }) => {
+                if (error) {
+                  console.log(error)
+                }
+                console.log('joined!')
+                setUUID(pid)
+                setRoomId('11111')
+                setName('joe')
+              }
+            )
+            return
+          }
+        }
+        console.log('created!')
+        setUUID(playerId)
+        setRoomId('11111')
+        setName('joe')
+      }
+    )
+  }, [])
 
   // useEffect(() => {
   //   s.on('connect', () => {

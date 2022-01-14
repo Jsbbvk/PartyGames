@@ -23,10 +23,21 @@ const playerSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-
-    // ready: {
-
-    // },
+    chosenCard: Number,
+    ready: {
+      chooseCard: {
+        type: Boolean,
+        default: false,
+      },
+      chooseCzarCard: {
+        type: Boolean,
+        default: false,
+      },
+      nextRound: {
+        type: Boolean,
+        default: false,
+      },
+    },
   },
   options
 )

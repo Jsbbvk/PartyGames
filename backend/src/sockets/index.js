@@ -10,6 +10,6 @@ export default async () => {
     // },
   })
 
-  initCaptionThisSocket(io)
-  // initCardsforusSocket(io)
+  await initCaptionThisSocket(io)
+  await initCardsforusSocket(io)
 }

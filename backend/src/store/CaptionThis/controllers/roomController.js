@@ -50,9 +50,13 @@ export const getRoom = async (roomId, lean = false) => {
   return { room }
 }
 
-export const getPlayers = async (roomId) => {
+export const getPlayers = async (roomId, includeMemeUrl = false) => {
   const [err, room] = await to(
-    Room.findOne({ roomId }).select('players').populate('players').lean()
+    Room.findOne({ roomId })
+      .select('players')
+      .populate('players')
+      .select({ memeUrl: includeMemeUrl })
+      .lean()
   )
   if (err) {
     if (process.env.NODE_ENV === 'development') console.log(err)

@@ -12,6 +12,14 @@ import CheckIcon from '@mui/icons-material/Check'
 import { useState, useEffect } from 'react'
 import { SwitchTransition, TransitionGroup } from 'react-transition-group'
 import { useCardManager } from '../../Hooks'
+import {
+  useEmitter,
+  useListener,
+  useGameContext,
+} from '../../Managers/GameManager'
+// eslint-disable-next-line import/no-cycle
+import { useGameplayContext } from './index'
+import { GAME_STATES, INFO } from '../../../constants'
 
 const CardRow = styled(Stack, {
   shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'confirmed',
@@ -86,22 +94,49 @@ const CardWrapper = styled(Box)({
   },
 })
 
-const INFO = {
-  czar: 'You are the Card Czar',
-  waiting: 'Waiting for Card Czar',
-  waiting_czar: 'Waiting for players',
-  results: 'Results',
-  empty: '',
-  skips: 'Skips left: ',
-}
-
 const Cards = () => {
+  const { roomId, uuid } = useGameContext()
+  const { gameState, setGameState } = useGameplayContext()
+
   const [info, setInfo] = useState(INFO.skips)
   const [selectedCardId, setSelectedCardId] = useState()
   const { cards: playerCards, skipCard } = useCardManager()
   const [cards, setCards] = useState({})
   const [isCzar, setIsCzar] = useState(false)
   const [confirmedCardId, setConfirmedCardId] = useState()
+  const [players, setPlayers] = useState([])
+
+  const emit = useEmitter()
+
+  const getPlayers = () => {
+    if (!roomId || !confirmedCardId) return
+    emit('get players', { roomId }, (data) => {
+      const { players: roomPlayers, error } = data
+
+      if (error) {
+        if (process.env.REACT_APP_NODE_ENV === 'development') console.log(error)
+        return
+      }
+
+      setPlayers(roomPlayers)
+    })
+  }
+
+  useListener('update players', getPlayers)
+
+  useEffect(() => {
+    if (!players.length) return
+    console.log(players)
+
+    if (gameState === GAME_STATES.choosing_card) {
+      const numReady = players.reduce(
+        (accum, curr) => accum + (curr.ready.chooseCard ? 1 : 0),
+        0
+      )
+
+      setInfo(INFO.waitingForPlayers(numReady, players.length))
+    }
+  }, [players])
 
   useEffect(() => {
     setCards(playerCards)
@@ -123,16 +158,18 @@ const Cards = () => {
       ...p,
       white: p.white.filter(({ id: _id }) => _id === id),
     }))
-    // todo emit and listen for player confirm
+    setInfo(INFO.waitingForPlayers())
+
+    emit('set card', { roomId, uuid, cardId: id, isCzar })
   }
 
   const Card = (id, text) => (
     <Collapse key={id} sx={{ width: '100%' }}>
       <CardRow
-        selected={confirmedCardId == null && selectedCardId === id}
-        confirmed={confirmedCardId != null}
+        selected={!confirmedCardId && selectedCardId === id}
+        confirmed={confirmedCardId}
         onClick={(e) =>
-          confirmedCardId == null &&
+          !confirmedCardId &&
           typeof e.target.className === 'string' &&
           onCardSelect(id)
         }
@@ -144,7 +181,7 @@ const Cards = () => {
           variant="body1"
           dangerouslySetInnerHTML={{ __html: text }}
         />
-        {confirmedCardId == null && (
+        {!confirmedCardId && (
           <StyledIconButton
             className="card-icon-button"
             disableRipple
@@ -166,14 +203,14 @@ const Cards = () => {
       <Box>
         <SwitchTransition mode="out-in">
           <Fade
-            key={info}
+            key={info.key}
             addEndListener={(node, done) =>
               node.addEventListener('transitionend', done, false)
             }
             timeout={250}
           >
             <Typography variant="body2" sx={{ textAlign: 'center' }}>
-              {info}
+              {info.text}
             </Typography>
           </Fade>
         </SwitchTransition>

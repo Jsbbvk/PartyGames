@@ -16,7 +16,7 @@ const roomSchema = mongoose.Schema(
     players: [
       {
         type: mongoose.Schema.Types.ObjectID,
-        ref: 'CardForUsPlayer',
+        ref: 'CardsForUsPlayer',
       },
     ],
     state: {

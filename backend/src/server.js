@@ -10,7 +10,7 @@ const init = async () => {
   const [err] = await to(MongoConnection())
   if (err && process.env.NODE_ENV === 'development') console.log(err)
 
-  initSockets()
+  await initSockets()
 
   console.log(`server listening on port ${process.env.PORT || 4001}`)
 }
