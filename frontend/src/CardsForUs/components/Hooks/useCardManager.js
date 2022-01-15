@@ -48,7 +48,7 @@ const CardManager = () => {
   )
 
   const hydrateCards = (ids, type) => {
-    return ids.map((id) => cardPack.pack[type][id])
+    return ids.map((id) => cardPack.pack[type][id - 1])
   }
 
   const refreshCards = useCallback(
@@ -131,7 +131,7 @@ const CardManager = () => {
     refreshCards('white')
   }, [])
 
-  return { cards, skipCard, setMaxCards, setCardPack }
+  return { cards, skipCard, setMaxCards, setCardPack, hydrateCards }
 }
 
 export default CardManager

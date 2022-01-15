@@ -10,6 +10,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import CheckIcon from '@mui/icons-material/Check'
 import { useState, useEffect } from 'react'
+import shuffle from 'lodash/shuffle'
 import { SwitchTransition, TransitionGroup } from 'react-transition-group'
 import { useCardManager } from '../../Hooks'
 import {
@@ -100,7 +101,7 @@ const Cards = () => {
 
   const [info, setInfo] = useState(INFO.skips)
   const [selectedCardId, setSelectedCardId] = useState()
-  const { cards: playerCards, skipCard } = useCardManager()
+  const { cards: playerCards, skipCard, hydrateCards } = useCardManager()
   const [cards, setCards] = useState({})
   const [isCzar, setIsCzar] = useState(false)
   const [confirmedCardId, setConfirmedCardId] = useState()
@@ -126,17 +127,49 @@ const Cards = () => {
 
   useEffect(() => {
     if (!players.length) return
-    console.log(players)
 
-    if (gameState === GAME_STATES.choosing_card) {
+    setIsCzar(players.some((p) => p._id === uuid && p.isCzar))
+
+    if (gameState === GAME_STATES.choosing_card_czar) {
+      console.log('')
+    } else if (gameState === GAME_STATES.choosing_card) {
       const numReady = players.reduce(
         (accum, curr) => accum + (curr.ready.chooseCard ? 1 : 0),
         0
       )
 
-      setInfo(INFO.waitingForPlayers(numReady, players.length))
+      setInfo(INFO.waitingForPlayers(numReady, players.length - 1))
+
+      if (numReady === players.length - 1) {
+        emit('set room gameplay state', {
+          state: GAME_STATES.choosing_winning_card,
+          roomId,
+        })
+      }
+    } else if (gameState === GAME_STATES.choosing_winning_card) {
+      // display all cards
+      const newCards = shuffle(
+        players.flatMap((p) => (p.isCzar ? [] : [p.chosenCard]))
+      )
+      if (!isCzar)
+        newCards.unshift(players.find((p) => p._id === uuid)?.chosenCard)
+
+      setCards((prevCards) => {
+        if (prevCards.white.length <= 1) {
+          return { ...prevCards, white: hydrateCards(newCards, 'white') }
+        }
+
+        return {
+          ...prevCards,
+          white: prevCards.white.filter(({ id }) =>
+            newCards.some(({ id: _id }) => id === _id)
+          ),
+        }
+      })
+
+      setInfo(INFO.waitingForCzar)
     }
-  }, [players])
+  }, [players, gameState])
 
   useEffect(() => {
     setCards(playerCards)

@@ -24,6 +24,10 @@ const playerSchema = mongoose.Schema(
       default: 0,
     },
     chosenCard: Number,
+    isCzar: {
+      type: Boolean,
+      default: false,
+    },
     ready: {
       chooseCard: {
         type: Boolean,

@@ -3,7 +3,11 @@ export const STATES = {
   gameplay: 'gameplay',
 }
 
-export const GAMEPLAY_STATES = {}
+export const GAMEPLAY_STATES = {
+  choosing_card_czar: 'choosing card czar',
+  choosing_card: 'choosing card',
+  choosing_winning_card: 'choosing winning card',
+}
 
 export const ERRORS = {
   ROOM_NOT_EXIST: 'Room not found',

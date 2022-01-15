@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { STATES } from '../constants'
+import { GAMEPLAY_STATES, STATES } from '../constants'
 
 const options = {
   collection: 'cardsforus:rooms',
@@ -23,6 +23,10 @@ const roomSchema = mongoose.Schema(
       type: String,
       enum: Object.values(STATES),
       default: STATES.WAITING,
+    },
+    gameplayState: {
+      type: String,
+      enum: Object.values(GAMEPLAY_STATES),
     },
   },
   options

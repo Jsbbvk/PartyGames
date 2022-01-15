@@ -19,22 +19,27 @@ export const STATES = {
 }
 
 export const GAME_STATES = {
+  choosing_card_czar: 'choosing card czar',
   choosing_card: 'choosing card',
+  choosing_winning_card: 'choosing winning card',
 }
 
 export const INFO = {
   czar: 'You are the Card Czar',
   waiting: 'Waiting for Card Czar',
-  waiting_czar: 'Waiting for players',
   results: 'Results',
   empty: '',
+  waitingForCzar: {
+    text: 'Waiting for Card Czar...',
+    key: 'waiting for czar',
+  },
   skips: {
     text: 'Skips left: ',
     key: 'skips',
   },
   waitingForPlayers: (numP = 0, totalP = 1) => ({
     text: `Waiting for players... ${numP}/${totalP}`,
-    key: 'waiting',
+    key: 'waiting for players',
   }),
 }
 

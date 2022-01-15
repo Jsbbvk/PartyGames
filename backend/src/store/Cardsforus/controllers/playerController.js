@@ -23,7 +23,7 @@ export const getPlayer = async (uuid, lean = false) => {
   return { player }
 }
 
-export const createPlayer = async (name, roomId, socketId) => {
+export const createPlayer = async (name, roomId, socketId, options) => {
   const [err, room] = await to(Room.findOne({ roomId }))
   if (err) {
     if (process.env.NODE_ENV === 'development') console.log(err)
@@ -37,7 +37,7 @@ export const createPlayer = async (name, roomId, socketId) => {
   }
 
   const [playerErr, player] = await to(
-    Player.create({ name, roomId, socketId })
+    Player.create({ name, roomId, socketId, ...options })
   )
   if (playerErr) {
     if (process.env.NODE_ENV === 'development') console.log(playerErr)

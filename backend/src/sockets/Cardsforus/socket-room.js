@@ -49,7 +49,8 @@ const createAndJoinRoom = (io, socket) => async (data, cb) => {
   const { uuid, error: errorCreate } = await createPlayer(
     name,
     roomId,
-    socket.id
+    socket.id,
+    { isCzar: true } // TODO remove
   )
   if (errorCreate) {
     if (cb) cb({ error: errorCreate })
@@ -114,6 +115,20 @@ const setRoomState = (io) => async (data, cb) => {
   if (cb) cb({ roomId })
 }
 
+const setRoomGameplayState = (io) => async (data, cb) => {
+  if (!data) return
+  const { roomId, state } = data
+  const { error } = await updateRoom(roomId, { $set: { gameplayState: state } })
+  if (error) {
+    if (cb) cb({ error })
+    return
+  }
+
+  io.to(roomId).emit('room gameplay state change', { state })
+
+  if (cb) cb({ roomId })
+}
+
 const restartGame = (io) => async (data, cb) => {
   if (!data) return
   const { roomId } = data
@@ -151,6 +166,7 @@ export default async (io, socket) => {
   socket.on('join room', joinRoom(io, socket))
   socket.on('get players', getRoomPlayers)
   socket.on('set room state', setRoomState(io))
+  socket.on('set room gameplay state', setRoomGameplayState(io))
   socket.on('restart game', restartGame(io))
   socket.on('continue game', continueGame(io))
   socket.on('get room', getRoom)
