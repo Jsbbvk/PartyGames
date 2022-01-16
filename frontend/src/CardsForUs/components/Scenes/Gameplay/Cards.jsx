@@ -97,42 +97,24 @@ const CardWrapper = styled(Box)({
 
 const Cards = () => {
   const { roomId, uuid } = useGameContext()
-  const { gameState, setGameState } = useGameplayContext()
+  const { gameState, setGameState, players, isCzar } = useGameplayContext()
+  const { cards: playerCards, skipCard, hydrateCards } = useCardManager()
 
   const [info, setInfo] = useState(INFO.skips)
   const [selectedCardId, setSelectedCardId] = useState()
-  const { cards: playerCards, skipCard, hydrateCards } = useCardManager()
-  const [cards, setCards] = useState({})
-  const [isCzar, setIsCzar] = useState(false)
+  const [cards, setCards] = useState([])
   const [confirmedCardId, setConfirmedCardId] = useState()
-  const [players, setPlayers] = useState([])
 
   const emit = useEmitter()
-
-  const getPlayers = () => {
-    if (!roomId || !confirmedCardId) return
-    emit('get players', { roomId }, (data) => {
-      const { players: roomPlayers, error } = data
-
-      if (error) {
-        if (process.env.REACT_APP_NODE_ENV === 'development') console.log(error)
-        return
-      }
-
-      setPlayers(roomPlayers)
-    })
-  }
-
-  useListener('update players', getPlayers)
 
   useEffect(() => {
     if (!players.length) return
 
-    setIsCzar(players.some((p) => p._id === uuid && p.isCzar))
-
     if (gameState === GAME_STATES.choosing_card_czar) {
-      console.log('')
+      setInfo(isCzar ? INFO.czarChooseCard : INFO.skips)
     } else if (gameState === GAME_STATES.choosing_card) {
+      if (!confirmedCardId) return
+
       const numReady = players.reduce(
         (accum, curr) => accum + (curr.ready.chooseCard ? 1 : 0),
         0
@@ -148,34 +130,36 @@ const Cards = () => {
       }
     } else if (gameState === GAME_STATES.choosing_winning_card) {
       // display all cards
+      console.log(players)
       const newCards = shuffle(
-        players.flatMap((p) => (p.isCzar ? [] : [p.chosenCard]))
+        players.flatMap((p) =>
+          p.isCzar || p._id === uuid ? [] : [p.chosenCard]
+        )
       )
       if (!isCzar)
         newCards.unshift(players.find((p) => p._id === uuid)?.chosenCard)
 
       setCards((prevCards) => {
-        if (prevCards.white.length <= 1) {
-          return { ...prevCards, white: hydrateCards(newCards, 'white') }
+        if (prevCards.length <= 1) {
+          return hydrateCards(newCards, 'white')
         }
 
-        return {
-          ...prevCards,
-          white: prevCards.white.filter(({ id }) =>
-            newCards.some(({ id: _id }) => id === _id)
-          ),
-        }
+        return prevCards.filter(({ id }) =>
+          newCards.some(({ id: _id }) => id === _id)
+        )
       })
 
-      setInfo(INFO.waitingForCzar)
+      setInfo(isCzar ? INFO.czarChooseWinningCard : INFO.waitingForCzar)
     }
-  }, [players, gameState])
+  }, [players, gameState, isCzar])
 
   useEffect(() => {
-    setCards(playerCards)
-  }, [playerCards])
+    setCards(playerCards[isCzar ? 'black' : 'white'])
+  }, [playerCards, isCzar])
 
   const onCardSelect = (id) => {
+    if (confirmedCardId || (!isCzar && gameState !== GAME_STATES.choosing_card))
+      return
     if (id === selectedCardId) setSelectedCardId(null)
     else setSelectedCardId(id)
   }
@@ -187,10 +171,10 @@ const Cards = () => {
 
   const onConfirmCard = (id) => {
     setConfirmedCardId(id)
-    setCards((p) => ({
-      ...p,
-      white: p.white.filter(({ id: _id }) => _id === id),
-    }))
+
+    if (!isCzar) setCards((p) => p.filter(({ id: _id }) => _id === id))
+    else setCards([])
+
     setInfo(INFO.waitingForPlayers())
 
     emit('set card', { roomId, uuid, cardId: id, isCzar })
@@ -202,9 +186,7 @@ const Cards = () => {
         selected={!confirmedCardId && selectedCardId === id}
         confirmed={confirmedCardId}
         onClick={(e) =>
-          !confirmedCardId &&
-          typeof e.target.className === 'string' &&
-          onCardSelect(id)
+          typeof e.target.className === 'string' && onCardSelect(id)
         }
         direction="row"
         alignItems="center"
@@ -256,7 +238,7 @@ const Cards = () => {
             alignItems: 'center',
           }}
         >
-          {cards?.white?.map(({ id, text }) => Card(id, text))}
+          {cards?.map(({ id, text }) => Card(id, text))}
         </TransitionGroup>
       </CardWrapper>
     </Stack>

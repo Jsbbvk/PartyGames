@@ -25,10 +25,14 @@ export const GAME_STATES = {
 }
 
 export const INFO = {
-  czar: 'You are the Card Czar',
-  waiting: 'Waiting for Card Czar',
-  results: 'Results',
-  empty: '',
+  czarChooseCard: {
+    text: 'Choose a card',
+    key: 'choose czar card',
+  },
+  czarChooseWinningCard: {
+    text: 'Choose the best card',
+    key: 'choose winning card',
+  },
   waitingForCzar: {
     text: 'Waiting for Card Czar...',
     key: 'waiting for czar',
@@ -50,9 +54,9 @@ export const CAF_CARDS = {
     text: c,
     id: i + 1,
   })),
-  black: Object.values(CARDS_JSON.black).flatMap((c, i) =>
-    c.pick === 1 ? [{ text: c.text, id: i + 1 }] : []
-  ),
+  black: Object.values(CARDS_JSON.black)
+    .flatMap((c, i) => (c.pick === 1 ? [{ text: c.text }] : []))
+    .map((c, i) => ({ ...c, id: i + 1 })),
 }
 
 export const AFA_CARDS = {

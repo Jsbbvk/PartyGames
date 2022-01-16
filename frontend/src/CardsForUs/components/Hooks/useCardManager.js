@@ -3,14 +3,6 @@ import LZString from 'lz-string'
 import shuffle from 'lodash/shuffle'
 import { AFA_CARDS, PACKS, CAF_CARDS } from '../../constants'
 
-const generateStorage = () =>
-  Object.values(PACKS).flatMap((packName) => [
-    `Current-${packName}-Cards-black`,
-    `Unused-${packName}-Cards-black`,
-    `Current-${packName}-Cards-white`,
-    `Unused-${packName}-Cards-white`,
-  ])
-
 const CardManager = () => {
   const [cards, setCards] = useState({
     black: [],
@@ -47,9 +39,10 @@ const CardManager = () => {
     [cardPack]
   )
 
-  const hydrateCards = (ids, type) => {
-    return ids.map((id) => cardPack.pack[type][id - 1])
-  }
+  const hydrateCards = useCallback(
+    (ids, type) => ids.map((id) => cardPack.pack[type][id - 1]),
+    [cardPack]
+  )
 
   const refreshCards = useCallback(
     (type) => {

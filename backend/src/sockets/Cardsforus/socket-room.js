@@ -115,7 +115,7 @@ const setRoomState = (io) => async (data, cb) => {
   if (cb) cb({ roomId })
 }
 
-const setRoomGameplayState = (io) => async (data, cb) => {
+export const setRoomGameplayState = (io) => async (data, cb) => {
   if (!data) return
   const { roomId, state } = data
   const { error } = await updateRoom(roomId, { $set: { gameplayState: state } })

@@ -1,5 +1,6 @@
 import { GAMEPLAY_STATES } from '../../store/Cardsforus/constants'
 import { getPlayers, updatePlayer } from '../../store/Cardsforus/controllers'
+import { setRoomGameplayState } from './socket-room'
 
 const setCard = (io) => async (data, cb) => {
   if (!data) return
@@ -18,6 +19,8 @@ const setCard = (io) => async (data, cb) => {
   }
 
   if (cb) cb({ uuid })
+  if (isCzar)
+    setRoomGameplayState(io)({ roomId, state: GAMEPLAY_STATES.choosing_card })
   io.to(roomId).emit('update players')
 }
 

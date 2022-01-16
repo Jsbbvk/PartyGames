@@ -21,8 +21,10 @@ function App() {
 
   const bodyTheme = useMemo(
     () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'))
+      toggleColorMode: (newMode) => {
+        setMode(
+          (prevMode) => newMode || (prevMode === 'light' ? 'dark' : 'light')
+        )
       },
       setBodyTransition: (shouldTransition) =>
         setTransitionBody(shouldTransition),
