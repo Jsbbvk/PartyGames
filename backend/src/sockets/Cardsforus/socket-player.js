@@ -20,10 +20,53 @@ const setCard = (io) => async (data, cb) => {
 
   if (cb) cb({ uuid })
   if (isCzar)
-    setRoomGameplayState(io)({ roomId, state: GAMEPLAY_STATES.choosing_card })
+    await setRoomGameplayState(io)({
+      roomId,
+      state: GAMEPLAY_STATES.choosing_card,
+    })
+
   io.to(roomId).emit('update players')
+
+  const { players } = await getPlayers(roomId)
+  if (!players) return
+
+  const numReady = players.reduce(
+    (accum, curr) => accum + (curr.ready.chooseCard ? 1 : 0),
+    0
+  )
+
+  if (numReady === players.length - 1) {
+    await setRoomGameplayState(io)({
+      roomId,
+      state: GAMEPLAY_STATES.choosing_winning_card,
+    })
+  }
+}
+
+const setWinningCard = (io) => async (data, cb) => {
+  if (!data) return
+  const { roomId, uuid, id } = data
+
+  const { error } = await updatePlayer(uuid, {
+    $set: {
+      chosenWinner: id,
+    },
+  })
+
+  if (error) {
+    if (cb) cb({ error })
+    return
+  }
+
+  if (cb) cb({ uuid })
+
+  await setRoomGameplayState(io)({
+    roomId,
+    state: GAMEPLAY_STATES.results,
+  })
 }
 
 export default async (io, socket) => {
   socket.on('set card', setCard(io))
+  socket.on('set winning card', setWinningCard(io))
 }

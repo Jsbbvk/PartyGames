@@ -885,7 +885,6 @@
     "Rectangles.",
     "Rehab.",
     "Repression.",
-    "reputation,\\nreputation,\\nreputation",
     "Reverse gentrification.",
     "Rich people.",
     "Riding off into the sunset.",
@@ -1670,7 +1669,7 @@
     "Death by teddy bear.",
     "deformities floundering in seas of blood and blue paint",
     "Demons and shit.",
-    "Dinner at a fine restaurant with candlelight, small portions, tablecloths, and a remote-controlled bullet in your partner.*",
+    "Dinner at a fine restaurant with candlelight, small portions, tablecloths, and a remote-controlled bullet in your partner.",
     "Doritos and a Fruit Roll-Up.",
     "Drinking my bro's pee-pee right out of his peen.",
     "Drinking the tears of cancer patients.",
@@ -1765,7 +1764,6 @@
     "The boogeyman.",
     "The day the Mutant Ninja Turtles become adults",
     "The Flying Spaghetti Monster.",
-    "the four,\\nor the three,\\nor the two",
     "The gun lobby",
     "The harsh light of day.",
     "The harsh reality that all horses are people in horse costumes.",
@@ -2429,7 +2427,6 @@
     "My secret butt.",
     "My son's dipshit friends.",
     "My son's husband's huge cock.",
-    "My wife.\\n(in Borat voice)",
     "Naked Dad.",
     "Netflix.",
     "New DNA evidence exonerating OJ Simpson.",
@@ -3116,7 +3113,7 @@
     "September 11th.",
     "Slowly evaporating.",
     "Social media evangelization.",
-    "Sub drop.*",
+    "Sub drop.",
     "The ability known as \"retardation.\"",
     "The bastard seagull who stole my chips.",
     "The black lung.",
@@ -3341,7 +3338,7 @@
     "A positive male role model.",
     "A sober Irishman.",
     "A thousand shitty wedding planning websites.",
-    "A Violet Wand with multiple attachments.*",
+    "A Violet Wand with multiple attachments.",
     "A white, straight, cis male.",
     "an arm thrust forth from the grass over a grave",
     "An EO violation.",
@@ -3384,7 +3381,7 @@
     "The Blue Bulls rugby team.",
     "The entire cast of Downtown Abbey.",
     "The Friend Zone",
-    "The Hitachi Magic Wand.*",
+    "The Hitachi Magic Wand.",
     "The honourable member, shut up.",
     "The Northern Lights",
     "The Phantom of the Opera.",
@@ -4010,7 +4007,6 @@
     "Munkustrap.",
     "Old Deuteronomy.",
     "Peter, Augustus, Alonzo, or James.",
-    "Practical cats,\\ndramatical cats,\\noratical cats,\\nsceptical cats,\\nromantical cats,\\nparasitical cats,\\nstatistical cats,\\npolitical cats,\\nhypocritical cats,\\nclerical cats,\\ncynical cats,\\nrabbinical cats.",
     "Rum Tum Tugger.",
     "Shimbleshanks.",
     "Sir Andrew Lloyd Webber.",
@@ -4102,10 +4098,8 @@
     "Collapsing into singularity. Twenty minutes fo foreplay, three minutes of coitus, five minutes of rest, back to the yards for some croquet.",
     "Computers.",
     "Cum, but it's ranch.",
-    "Fashion... \\nheard of if?",
     "Getting my mind boggled by a gang of mind bogglers.",
     "Letting these hoes know.",
-    "Meatballs,\\nmeatballs,\\nmeatballs!",
     "Passing fart and making toilet.",
     "Running afoul of the Sultan's Janissaries.",
     "Sheboygan, Wisconsin.",
@@ -4114,7 +4108,6 @@
     "The tiny man who only eats coffee beans and diarrheas into my thermos every morning.",
     "Using electric eels to solve the world's energy crisis.",
     "Why, a hot air balloon of course!",
-    "You there!\\nFrench boy!",
     "A back-alley abortion from a Mexican cyborg doctor.",
     "A father and son fighting each other over the last scrap of bread.",
     "A gnawing sense of dread.",
@@ -4223,7 +4216,6 @@
     "Propping up Ruth Bader Ginsburg's corpse and moving her jaw up and down.",
     "Pseudointellectual centrist bullshit.",
     "Rising to power on a wave of ethnic nationalism.",
-    "Sean Spicer, Reince Priebus, Steve Bannon, Sebastian Gorka, Omarosa, Anthony Scaramucci, James Comey, Mike Flynn, Rex Tillerson, Ty Cobb, Andrew McCabe, K. T. McFarland, H. R. McMaster, Gary Cohn, Hope Hicks, Rob Porter, Scott Pruitt, and Tom Price.",
     "Totally ineffective political satire.",
     "An orgasm so powerful you travel back in time and jizz in Hitler's face.",
     "Being open to new perspectives on the Holocaust.",
@@ -4451,10 +4443,6 @@
       "pick": 1
     },
     { "text": "Arby's: We Have _.", "pick": 1 },
-    {
-      "text": "Are you thinking what I'm thinking, B1?\\n\\nI think I am, B2: it's _ time!",
-      "pick": 1
-    },
     { "text": "As my New Year's resolution, I vow to give up _.", "pick": 1 },
     {
       "text": "As the mom of five rambunctious boys, I'm no stranger to _.",
@@ -4570,10 +4558,6 @@
       "pick": 1
     },
     { "text": "Having problems with _? Try _!", "pick": 2 },
-    {
-      "text": "Here is the church\\nHere is the steeple\\nOpen the doors\\nAnd there is _.",
-      "pick": 1
-    },
     {
       "text": "Hey guys, welcome to Boston Pizza! Would you like to start the night off right with _?",
       "pick": 1
@@ -4845,7 +4829,6 @@
       "pick": 1
     },
     { "text": "Sorry everyone, I just _.", "pick": 1 },
-    { "text": "Step 1: _.\\nStep 2: _.\\nStep 3: Profit.", "pick": 2 },
     {
       "text": "Studies show that lab rats navigate mazes 50% faster after being exposed to _.",
       "pick": 1
@@ -4896,10 +4879,6 @@
     {
       "text": "They said we were crazy. They said we couldn't put _ inside of _. They were wrong.",
       "pick": 2
-    },
-    {
-      "text": "This is the way the world ends\\nThis is the way the world ends\\nNot with a bang but with _.",
-      "pick": 1
     },
     { "text": "This is your pilot speaking. Please prepare for _.", "pick": 1 },
     {
@@ -5144,7 +5123,6 @@
       "text": "Isn't this great, honey? Just you, me, the kids, and _.",
       "pick": 1
     },
-    { "text": "It's BIG.\\nIt's SCARY.\\nIt's _!", "pick": 1 },
     { "text": "James Bond will return in \"No Time for _.\"", "pick": 1 },
     { "text": "Joey, look out behind you! It's _!", "pick": 1 },
     {
@@ -5287,10 +5265,6 @@
     },
     { "text": "Dear Substitute Teacher, could you please stop _?", "pick": 1 },
     {
-      "text": "DOCTOR:\\nWhat seems to be the problem?\\n\\nYOU: \\n_.",
-      "pick": 1
-    },
-    {
       "text": "During high school I never really fit in until I found _ club.",
       "pick": 1
     },
@@ -5403,10 +5377,6 @@
     {
       "text": "Tonight on Police 10 7 we're chasing _, rumoured to be responsible for _.",
       "pick": 2
-    },
-    {
-      "text": "Twas the night before Christmas, and all through the house,\\n\\nnot a creature was stirring, not even _.",
-      "pick": 1
     },
     {
       "text": "Welcome to Senor Frog's! Would you like to try our signature cocktail, \"_ on the Beach\"?",
@@ -5747,10 +5717,6 @@
     },
     { "text": "LSD + _ = really bad time.", "pick": 1 },
     {
-      "text": "Mom's to-do list:\\n * Buy Groceries\\n * Clean up _.\\n * Soccer Practice.",
-      "pick": 1
-    },
-    {
       "text": "Most Americans would not vote for a candidate who is openly _.",
       "pick": 1
     },
@@ -5783,10 +5749,6 @@
     },
     {
       "text": "Summer lovin', had me a blast. _, happened so fast.",
-      "pick": 1
-    },
-    {
-      "text": "The top Google auto-complete results for \"Barack Obama\":\\nBarack Obama Height.\\nBarack Obama net worth.\\nBarack Obama _.",
       "pick": 1
     },
     {
@@ -5837,27 +5799,16 @@
       "text": "Duuuuuuude. You have got to go to space. _ is awesome in space.",
       "pick": 1
     },
-    { "text": "Five,\\nfour,\\nthree,\\ntwo,\\none....\\n_!", "pick": 1 },
     {
       "text": "For hunting in the King's forest, I hereby sentence you to death by _.",
       "pick": 1
     },
     { "text": "Give me ten good men and 48 hours. I'll get you _.", "pick": 1 },
-    { "text": "Goldfinger!\\nHe's the man,\\nthe man with _.", "pick": 1 },
     { "text": "Goodbye, _, hello _!", "pick": 2 },
     {
       "text": "Here's a little something I learned in business school: The customer is always _.",
       "pick": 1
     },
-    {
-      "text": "Hey, honey.\\nFor the bedroom, were you thinking, \"Robin's Egg Blue\" or _Pink?\"",
-      "pick": 1
-    },
-    {
-      "text": "I hate this job.\\nI hate this place.\\nMost of all, I hate _.\\nI quit.",
-      "pick": 1
-    },
-    { "text": "I have solved politics.\\nMy solution is _.", "pick": 1 },
     { "text": "I so drunk I _.", "pick": 1 },
     {
       "text": "I swear to God I'm gonna murder my husband if he doesn't shut the fuck up about _.",
@@ -5877,10 +5828,6 @@
       "pick": 1
     },
     {
-      "text": "It's the 21st century.\\nA woman shouldn't have to apologize for _.",
-      "pick": 1
-    },
-    {
       "text": "Ladies and gentlemen, I propose a two-pronged plan. The first prong will be _, and the second prong will be _.",
       "pick": 2
     },
@@ -5892,7 +5839,6 @@
       "text": "New at TGI Fridays! It's what you've been waiting for: The _ Burger.",
       "pick": 1
     },
-    { "text": "Oh no!\\nHere it comes!\\nOhhhhh god!\\nIt's _.", "pick": 1 },
     {
       "text": "Oh you haaaaaaave to see this new documentary on Netflix. I don't want to give anything away, but let's just say it will change the way you look at _.",
       "pick": 1
@@ -5936,16 +5882,8 @@
       "text": "What's secretly a Russian plot to destabilize the West?",
       "pick": 1
     },
-    {
-      "text": "What's up, YouTube?\\nUser DanTheMan wanted to see _, so here we go.",
-      "pick": 1
-    },
     { "text": "Why did the chicken cross the road?", "pick": 1 },
     { "text": "Why my mustache smell so bad?", "pick": 1 },
-    {
-      "text": "Yeah that's so hot.\\nI'm so close.\\nTalk about _ again!\\nOH I'M CUMMING!",
-      "pick": 1
-    },
     {
       "text": "You can call me David Copperfield, because I'm about to make _ disappear.",
       "pick": 1
@@ -6233,10 +6171,6 @@
       "pick": 1
     },
     {
-      "text": "Forget Fifty Shades of Grey...\\n\\nGive me Fifty Shades of _!",
-      "pick": 1
-    },
-    {
       "text": "Honey, I have good news, and bad news.  The good news is that I'm _.  The bad news is that I'm _.",
       "pick": 2
     },
@@ -6262,10 +6196,6 @@
     },
     { "text": "Other parents worry about _ but I stress over _.", "pick": 2 },
     { "text": "The Juice is loose.  And by Juice I mean _.", "pick": 1 },
-    {
-      "text": "This year's trendiest card game:\\n\\n\"_ Against _.\"",
-      "pick": 2
-    },
     { "text": "We played baseball with _.", "pick": 1 },
     {
       "text": "Wes Anderson's new movie is a whimsical look at _ starring _.",
@@ -6477,10 +6407,6 @@
     },
     { "text": "Next season on Celebrity Apprentice: _.", "pick": 1 },
     {
-      "text": "O say, does _ yet wave\\n\\no'er the land of the fre and the home of the brave?",
-      "pick": 1
-    },
-    {
       "text": "The Royal Ontario Museum has just opened an interactive exhibit on _.",
       "pick": 1
     },
@@ -6518,7 +6444,6 @@
       "text": "But wait, there's more! If you order _ in the next 15 minutes, we'll throw in _ absolutely free!",
       "pick": 2
     },
-    { "text": "GREETINGS HUMANS\\nI AM _ BOT\\nEXECUTING PROGRAM.", "pick": 1 },
     { "text": "Heroin: a proud supporter of _.", "pick": 1 },
     {
       "text": "I really hope my grandma doesn't ask me to explain _ again.",
@@ -6569,18 +6494,6 @@
       "pick": 1
     },
     { "text": "Sure, sex is great, but have you tried _?", "pick": 1 },
-    {
-      "text": "Coming up on Turner Classic Movies:\\nSean Connery and Alec Baldwin star in \"The Hunt for _.\"",
-      "pick": 1
-    },
-    {
-      "text": "FW: re:\\nFBI WARNING!!! VIOLENT GANGS USING _ TO RECRUIT CHILDREN!",
-      "pick": 1
-    },
-    {
-      "text": "Hey, kids.\\nI'm Connor's dad, but you can call me Mr. _.",
-      "pick": 1
-    },
     {
       "text": "So apparently Dad was searching Pornhub for \"hot milf _.\"",
       "pick": 1
@@ -6697,10 +6610,6 @@
       "text": "Donna, pick up my dry cleaning and get my wife something for Christmas. I think she likes _.",
       "pick": 1
     },
-    {
-      "text": "Here's what you can expect for the new year.\\nOut: _.\\nIn: _.",
-      "pick": 2
-    },
     { "text": "It's beginning to look a lot like _.", "pick": 1 },
     {
       "text": "Jesus performed the miracle of _ but it was never recorded.",
@@ -6714,18 +6623,10 @@
       "text": "What's the one thing that makes an elf instantly ejaculate?",
       "pick": 1
     },
-    {
-      "text": "Alright everybody, HOLD!\\nKelly, why is there _ on my stage?",
-      "pick": 1
-    },
     { "text": "Comedy = Tragedy + _.", "pick": 1 },
     {
       "text": "Let's take it from the top, and remember, you are _. Show me  _(SAME CARD AGAIN)_.",
       "pick": 3
-    },
-    {
-      "text": "Match-maker,\\nmatch-maker,\\nmake me a match.\\nFind me _.",
-      "pick": 1
     },
     {
       "text": "This season at Manhattan Theatre Club: \"Who's afraid of _?\"",
@@ -6810,10 +6711,6 @@
     },
     {
       "text": "Bitch, you look nasty. You look disgusting. You look like you're _. Go home, butch.",
-      "pick": 1
-    },
-    {
-      "text": "So this family circus act comes in to see a talent agent in Hoboken, and the agent askes what they do. The father of the act jumps up and starts to furiously beat off into a towel while his wife whips her hair back and forth to that famous song - originally sung by one of Will Smith's kids, \"I Whipe My Hair Bcak And Forth\" - which her twin daughters are singing while they braid each other's pubes, all while the twin BROTHERS are creating a real-estate bubble by purchasing houses and flipping them for needless profit, and all THIS is happening while the grandmother is peeing into a Smuckers jar and slapping her ass. The whole thing ends with the family spitting into each other's assholes. The talent agent can't believe it. He looks at the sweaty father who has just spit into his mother's asshole and says. \"WOW. This is great. Whaddya call yourselves?\" And the guy looks at him and says, \"We're _.\"",
       "pick": 1
     },
     { "text": "Donald Trump has nominated _ for his VP.", "pick": 1 },
@@ -6977,7 +6874,6 @@
       "text": "I'm Bobby Flay, and if you can't stand _, get out of the kitchen!",
       "pick": 1
     },
-    { "text": "It's not delivery.\\nIt's _.", "pick": 1 },
     { "text": "Aw babe, your burps smell like _!", "pick": 1 },
     {
       "text": "Don't miss Rachel Ray's hit new show, Cooking with _.",

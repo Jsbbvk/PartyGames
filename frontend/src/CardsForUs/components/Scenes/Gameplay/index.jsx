@@ -35,7 +35,6 @@ const Gameplay = () => {
         if (process.env.REACT_APP_NODE_ENV === 'development') console.log(error)
         return
       }
-
       setPlayers(roomPlayers)
     })
   }

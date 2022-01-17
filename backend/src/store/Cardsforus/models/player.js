@@ -24,6 +24,10 @@ const playerSchema = mongoose.Schema(
       default: 0,
     },
     chosenCard: Number,
+    chosenWinner: {
+      type: mongoose.Schema.Types.ObjectID,
+      ref: 'CardsForUsPlayer',
+    },
     isCzar: {
       type: Boolean,
       default: false,

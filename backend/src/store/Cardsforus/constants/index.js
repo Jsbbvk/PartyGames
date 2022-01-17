@@ -7,6 +7,7 @@ export const GAMEPLAY_STATES = {
   choosing_card_czar: 'choosing card czar',
   choosing_card: 'choosing card',
   choosing_winning_card: 'choosing winning card',
+  results: 'results',
 }
 
 export const ERRORS = {

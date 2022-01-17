@@ -90,9 +90,9 @@ const joinRoom = (io, socket) => async (data, cb) => {
 
 const getRoomPlayers = async (data, cb) => {
   if (!data) return
-  const { roomId, includeMemeUrl } = data
+  const { roomId } = data
 
-  const { players, error } = await getPlayers(roomId, includeMemeUrl)
+  const { players, error } = await getPlayers(roomId)
   if (error) {
     if (cb) cb({ error })
     return
