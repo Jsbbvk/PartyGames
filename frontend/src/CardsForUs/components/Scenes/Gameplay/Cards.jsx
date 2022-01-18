@@ -168,7 +168,32 @@ const Cards = () => {
         setCanSkip(false)
       }
     } else if (gameState === GAME_STATES.results) {
-      //
+      const czar = players.find((p) => p.isCzar)
+      if (!czar || !czar.chosenWinner) return
+
+      const newCards = players.flatMap((p) =>
+        p.isCzar || p._id === czar.chosenWinner
+          ? []
+          : [
+              {
+                playerId: p._id,
+                id: p.chosenCard,
+              },
+            ]
+      )
+      newCards.unshift({
+        playerId: czar.chosenWinner,
+        id: players.find((p) => p._id === czar.chosenWinner)?.chosenCard,
+      })
+
+      setCards(
+        hydrateCards(
+          newCards.map(({ id }) => id),
+          'white'
+        ).map((c, i) => ({ ...c, ...newCards[i] }))
+      )
+
+      setInfo(INFO.results)
     }
   }, [players, gameState, isCzar])
 

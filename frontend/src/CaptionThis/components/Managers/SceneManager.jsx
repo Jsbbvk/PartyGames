@@ -92,8 +92,17 @@ const SceneManager = () => {
     try {
       const roomData = JSON.parse(sessionStorage.getItem('captionthis:data'))
       if (!roomData?.roomId || !roomData?.uuid || !roomData?.name) return
-      setReconnectRoomData(roomData)
-      setOpenModal(true)
+
+      emit(
+        'is room active',
+        { roomId: roomData.roomId },
+        ({ error, roomActive }) => {
+          if (error || !roomActive) return
+
+          setReconnectRoomData(roomData)
+          setOpenModal(true)
+        }
+      )
     } catch (e) {
       if (process.env.REACT_APP_NODE_ENV === 'development') console.log(e)
     }

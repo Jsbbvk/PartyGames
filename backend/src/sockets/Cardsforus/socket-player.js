@@ -60,6 +60,8 @@ const setWinningCard = (io) => async (data, cb) => {
 
   if (cb) cb({ uuid })
 
+  io.to(roomId).emit('update players')
+
   await setRoomGameplayState(io)({
     roomId,
     state: GAMEPLAY_STATES.results,

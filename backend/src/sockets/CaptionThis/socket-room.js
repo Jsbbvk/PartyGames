@@ -30,6 +30,30 @@ const deleteRoomIfInactive = async (io, roomId) => {
   return {}
 }
 
+const isRoomActive = async (data, cb) => {
+  if (!data) return
+  const { roomId } = data
+  const { room, error } = await getRm(roomId, true)
+  if (error) {
+    if (cb) cb({ error })
+    return
+  }
+
+  if (!room) {
+    if (cb) cb({ roomActive: false })
+    return
+  }
+
+  const { updatedAt } = room
+
+  if (new Date() - updatedAt > ROOM_INACTIVE_TIMEOUT) {
+    if (cb) cb({ roomActive: false })
+    return
+  }
+
+  if (cb) cb({ roomActive: true })
+}
+
 const createAndJoinRoom = (io, socket) => async (data, cb) => {
   if (!data) return
   const { roomId, name } = data
@@ -186,4 +210,5 @@ export default async (io, socket) => {
   socket.on('continue game', continueGame(io))
   socket.on('get room', getRoom)
   socket.on('set number meme choices', updateNumberMemes(io))
+  socket.on('is room active', isRoomActive)
 }

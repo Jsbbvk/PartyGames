@@ -46,6 +46,10 @@ export const INFO = {
     text: `Waiting for players... ${numP}/${totalP}`,
     key: 'waiting for players',
   }),
+  results: {
+    text: 'Winner',
+    key: 'winner',
+  },
 }
 
 export const MIN_PLAYERS_TO_START = 3
