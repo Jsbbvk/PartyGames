@@ -23,11 +23,12 @@ import { useGameplayContext } from './index'
 import { GAME_STATES, INFO } from '../../../constants'
 
 const CardRow = styled(Stack, {
-  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'confirmed',
-})(({ theme, selected, confirmed }) => ({
+  shouldForwardProp: (prop) =>
+    prop !== 'selected' && prop !== 'confirmed' && prop !== 'disabled',
+})(({ theme, selected, confirmed, disabled }) => ({
   margin: '4px 0',
   padding: '10px 12px',
-  cursor: confirmed ? 'auto' : 'pointer',
+  cursor: disabled || confirmed ? 'auto' : 'pointer',
   color: theme.palette.mode === 'light' ? '#ffffffde' : '#000000de',
   // transition: 'color 250ms ease-in-out, background-color 250ms ease-in-out',
   backgroundColor: (() => {
@@ -40,9 +41,10 @@ const CardRow = styled(Stack, {
 
   '@media(hover: hover) and (pointer: fine)': {
     '&:hover': {
-      ...(!confirmed && {
-        backgroundColor: theme.palette.mode === 'light' ? '#3e3e3e' : '#fff',
-      }),
+      ...(!confirmed &&
+        !disabled && {
+          backgroundColor: theme.palette.mode === 'light' ? '#3e3e3e' : '#fff',
+        }),
     },
   },
 }))
@@ -105,8 +107,96 @@ const Cards = () => {
   const [cards, setCards] = useState([])
   const [confirmedCardId, setConfirmedCardId] = useState()
   const [canSkip, setCanSkip] = useState(true)
+  const [winnerId, setWinnerId] = useState()
 
   const emit = useEmitter()
+
+  const handleChoosingState = () => {
+    if (!confirmedCardId) return
+
+    const numReady = players.reduce(
+      (accum, curr) => accum + (curr.ready.chooseCard ? 1 : 0),
+      0
+    )
+
+    setInfo(INFO.waitingForPlayers(numReady, players.length - 1))
+  }
+
+  const handleChoosingWinningState = () => {
+    // display all cards
+    if (
+      players.reduce((prev, curr) => (curr.chosenCard ? prev + 1 : prev), 0) !==
+      players.length
+    )
+      return
+
+    const newCards = shuffle(
+      players.flatMap((p) =>
+        p.isCzar || p._id === uuid
+          ? []
+          : [{ id: p.chosenCard, playerId: p._id }]
+      )
+    )
+
+    const currPlayer = players.find((p) => p._id === uuid)
+    if (!isCzar && currPlayer)
+      newCards.unshift({
+        id: currPlayer.chosenCard,
+        playerId: currPlayer._id,
+      })
+
+    setCards((prevCards) => {
+      if (prevCards.length <= 1) {
+        return hydrateCards(
+          newCards.map(({ id }) => id),
+          'white'
+        ).map((c, i) => ({ ...c, ...newCards[i] }))
+      }
+
+      return prevCards.filter(
+        ({ playerId }) =>
+          playerId && newCards.some(({ playerId: _id }) => playerId === _id)
+      )
+    })
+
+    setInfo(isCzar ? INFO.czarChooseWinningCard : INFO.waitingForCzar)
+    if (isCzar) {
+      setConfirmedCardId(null)
+      setSelectedCardId(null)
+      setCanSkip(false)
+    }
+  }
+
+  const handleResultState = () => {
+    const czar = players.find((p) => p.isCzar)
+    if (!czar || !czar.chosenWinner) return
+
+    const newCards = players.flatMap((p) =>
+      p.isCzar || p._id === czar.chosenWinner
+        ? []
+        : [
+            {
+              playerId: p._id,
+              id: p.chosenCard,
+            },
+          ]
+    )
+    newCards.unshift({
+      playerId: czar.chosenWinner,
+      id: players.find((p) => p._id === czar.chosenWinner)?.chosenCard,
+    })
+
+    setCards(
+      hydrateCards(
+        newCards.map(({ id }) => id),
+        'white'
+      ).map((c, i) => ({ ...c, ...newCards[i] }))
+    )
+
+    setInfo(INFO.results)
+    setWinnerId(czar.chosenWinner)
+    setConfirmedCardId(null)
+  }
 
   useEffect(() => {
     if (!players.length) return
@@ -114,86 +204,11 @@ const Cards = () => {
     if (gameState === GAME_STATES.choosing_card_czar) {
       setInfo(isCzar ? INFO.czarChooseCard : INFO.skips)
     } else if (gameState === GAME_STATES.choosing_card) {
-      if (!confirmedCardId) return
-
-      const numReady = players.reduce(
-        (accum, curr) => accum + (curr.ready.chooseCard ? 1 : 0),
-        0
-      )
-
-      setInfo(INFO.waitingForPlayers(numReady, players.length - 1))
+      handleChoosingState()
     } else if (gameState === GAME_STATES.choosing_winning_card) {
-      // display all cards
-      if (
-        players.reduce(
-          (prev, curr) => (curr.chosenCard ? prev + 1 : prev),
-          0
-        ) !== players.length
-      )
-        return
-
-      const newCards = shuffle(
-        players.flatMap((p) =>
-          p.isCzar || p._id === uuid
-            ? []
-            : [{ id: p.chosenCard, playerId: p._id }]
-        )
-      )
-
-      const currPlayer = players.find((p) => p._id === uuid)
-      if (!isCzar && currPlayer)
-        newCards.unshift({
-          id: currPlayer.chosenCard,
-          playerId: currPlayer._id,
-        })
-
-      setCards((prevCards) => {
-        if (prevCards.length <= 1) {
-          return hydrateCards(
-            newCards.map(({ id }) => id),
-            'white'
-          ).map((c, i) => ({ ...c, ...newCards[i] }))
-        }
-
-        return prevCards.filter(
-          ({ playerId }) =>
-            playerId && newCards.some(({ playerId: _id }) => playerId === _id)
-        )
-      })
-
-      setInfo(isCzar ? INFO.czarChooseWinningCard : INFO.waitingForCzar)
-      if (isCzar) {
-        setConfirmedCardId(null)
-        setSelectedCardId(null)
-        setCanSkip(false)
-      }
+      handleChoosingWinningState()
     } else if (gameState === GAME_STATES.results) {
-      const czar = players.find((p) => p.isCzar)
-      if (!czar || !czar.chosenWinner) return
-
-      const newCards = players.flatMap((p) =>
-        p.isCzar || p._id === czar.chosenWinner
-          ? []
-          : [
-              {
-                playerId: p._id,
-                id: p.chosenCard,
-              },
-            ]
-      )
-      newCards.unshift({
-        playerId: czar.chosenWinner,
-        id: players.find((p) => p._id === czar.chosenWinner)?.chosenCard,
-      })
-
-      setCards(
-        hydrateCards(
-          newCards.map(({ id }) => id),
-          'white'
-        ).map((c, i) => ({ ...c, ...newCards[i] }))
-      )
-
-      setInfo(INFO.results)
+      handleResultState()
     }
   }, [players, gameState, isCzar])
 
@@ -202,7 +217,11 @@ const Cards = () => {
   }, [playerCards, isCzar])
 
   const onCardSelect = (id) => {
-    if (confirmedCardId || (!isCzar && gameState !== GAME_STATES.choosing_card))
+    if (
+      confirmedCardId ||
+      (!isCzar && gameState !== GAME_STATES.choosing_card) ||
+      gameState === GAME_STATES.results
+    )
       return
     if (id === selectedCardId) setSelectedCardId(null)
     else setSelectedCardId(id)
@@ -229,44 +248,53 @@ const Cards = () => {
     emit('set card', { roomId, uuid, cardId: id, isCzar })
   }
 
-  const Card = (id, text) => (
-    <Collapse key={id} sx={{ width: '100%' }}>
-      <CardRow
-        selected={!confirmedCardId && selectedCardId === id}
-        confirmed={confirmedCardId}
-        onClick={(e) =>
-          typeof e.target.className === 'string' && onCardSelect(id)
-        }
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Typography
-          variant="body1"
-          dangerouslySetInnerHTML={{ __html: text }}
-        />
-        {!confirmedCardId && (
-          <StyledIconButton
-            className="card-icon-button"
-            disableRipple
-            title={selectedCardId === id ? 'Select' : 'Skip'}
-            onClick={() => {
-              if (selectedCardId === id) onConfirmCard(id)
-              else if (canSkip) onSkipCard(id)
-            }}
-            selected={selectedCardId === id}
-            canSkip={canSkip}
-          >
-            {(() => {
-              if (selectedCardId === id) return <CheckIcon />
-              if (canSkip) return <CloseIcon />
-              return <></>
-            })()}
-          </StyledIconButton>
-        )}
-      </CardRow>
-    </Collapse>
-  )
+  const Card = (id, text) => {
+    let player
+    if (gameState === GAME_STATES.results)
+      player = players.find((p) => p._id === id)
+    // TODO add in player name
+    return (
+      <Collapse key={id} sx={{ width: '100%' }}>
+        <CardRow
+          selected={
+            winnerId === id || (!confirmedCardId && selectedCardId === id)
+          }
+          confirmed={confirmedCardId}
+          onClick={(e) =>
+            typeof e.target.className === 'string' && onCardSelect(id)
+          }
+          disabled={gameState === GAME_STATES.results}
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Typography
+            variant="body1"
+            dangerouslySetInnerHTML={{ __html: text }}
+          />
+          {!confirmedCardId && gameState !== GAME_STATES.results && (
+            <StyledIconButton
+              className="card-icon-button"
+              disableRipple
+              title={selectedCardId === id ? 'Select' : 'Skip'}
+              onClick={() => {
+                if (selectedCardId === id) onConfirmCard(id)
+                else if (canSkip) onSkipCard(id)
+              }}
+              selected={selectedCardId === id}
+              canSkip={canSkip}
+            >
+              {(() => {
+                if (selectedCardId === id) return <CheckIcon />
+                if (canSkip) return <CloseIcon />
+                return <></>
+              })()}
+            </StyledIconButton>
+          )}
+        </CardRow>
+      </Collapse>
+    )
+  }
 
   return (
     <Stack sx={{ height: '60vh' }}>

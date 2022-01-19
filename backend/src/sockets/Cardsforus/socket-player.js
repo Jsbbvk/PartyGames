@@ -58,6 +58,17 @@ const setWinningCard = (io) => async (data, cb) => {
     return
   }
 
+  const { error: pointError } = await updatePlayer(id, {
+    $inc: {
+      points: 1,
+    },
+  })
+
+  if (pointError) {
+    if (cb) cb({ error: pointError })
+    return
+  }
+
   if (cb) cb({ uuid })
 
   io.to(roomId).emit('update players')
