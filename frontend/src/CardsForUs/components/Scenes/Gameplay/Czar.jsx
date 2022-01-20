@@ -15,7 +15,13 @@ const Czar = () => {
     if (gameState === GAME_STATES.choosing_card_czar) {
       if (isCzar)
         setCzarCard({ text: 'You are the Card Czar', id: 'you are czar' })
-      else setCzarCard({ text: 'Waiting for Card Czar...', id: 'waiting czar' })
+      else {
+        const czar = players.find((p) => p.isCzar)
+        setCzarCard({
+          text: `Waiting for Card Czar ${czar?.name}...`,
+          id: 'waiting czar',
+        })
+      }
     } else {
       console.log(players)
       const czar = players.find((p) => p.isCzar)?.chosenCard

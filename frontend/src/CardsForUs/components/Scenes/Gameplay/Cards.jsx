@@ -9,6 +9,7 @@ import {
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import CheckIcon from '@mui/icons-material/Check'
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import { useState, useEffect } from 'react'
 import shuffle from 'lodash/shuffle'
 import { SwitchTransition, TransitionGroup } from 'react-transition-group'
@@ -134,13 +135,14 @@ const Cards = () => {
       players.flatMap((p) =>
         p.isCzar || p._id === uuid
           ? []
-          : [{ id: p.chosenCard, playerId: p._id }]
+          : [{ key: `choosing-${p._id}`, id: p.chosenCard, playerId: p._id }]
       )
     )
 
     const currPlayer = players.find((p) => p._id === uuid)
     if (!isCzar && currPlayer)
       newCards.unshift({
+        key: `choosing-${currPlayer._id}`,
         id: currPlayer.chosenCard,
         playerId: currPlayer._id,
       })
@@ -176,12 +178,14 @@ const Cards = () => {
         ? []
         : [
             {
+              key: `results-${p._id}`,
               playerId: p._id,
               id: p.chosenCard,
             },
           ]
     )
     newCards.unshift({
+      key: `results-${czar.chosenWinner}`,
       playerId: czar.chosenWinner,
       id: players.find((p) => p._id === czar.chosenWinner)?.chosenCard,
     })
@@ -236,6 +240,7 @@ const Cards = () => {
     setConfirmedCardId(id)
 
     if (gameState === GAME_STATES.choosing_winning_card) {
+      setCards([])
       emit('set winning card', { roomId, id, uuid })
       return
     }
@@ -248,13 +253,12 @@ const Cards = () => {
     emit('set card', { roomId, uuid, cardId: id, isCzar })
   }
 
-  const Card = (id, text) => {
-    let player
-    if (gameState === GAME_STATES.results)
-      player = players.find((p) => p._id === id)
+  const Card = (key, id, text) => {
+    const player =
+      gameState === GAME_STATES.results && players.find((p) => p._id === id)
     // TODO add in player name
     return (
-      <Collapse key={id} sx={{ width: '100%' }}>
+      <Collapse key={key} sx={{ width: '100%' }}>
         <CardRow
           selected={
             winnerId === id || (!confirmedCardId && selectedCardId === id)
@@ -268,29 +272,47 @@ const Cards = () => {
           alignItems="center"
           justifyContent="space-between"
         >
-          <Typography
-            variant="body1"
-            dangerouslySetInnerHTML={{ __html: text }}
-          />
-          {!confirmedCardId && gameState !== GAME_STATES.results && (
-            <StyledIconButton
-              className="card-icon-button"
-              disableRipple
-              title={selectedCardId === id ? 'Select' : 'Skip'}
-              onClick={() => {
-                if (selectedCardId === id) onConfirmCard(id)
-                else if (canSkip) onSkipCard(id)
-              }}
-              selected={selectedCardId === id}
-              canSkip={canSkip}
-            >
-              {(() => {
-                if (selectedCardId === id) return <CheckIcon />
-                if (canSkip) return <CloseIcon />
-                return <></>
-              })()}
-            </StyledIconButton>
-          )}
+          <Box>
+            <Typography
+              variant="body1"
+              dangerouslySetInnerHTML={{ __html: text }}
+            />
+            {player && player.name && (
+              <Typography variant="caption">{`${player.name}${
+                player._id === uuid ? ' (You)' : ''
+              }`}</Typography>
+            )}
+          </Box>
+          {(() => {
+            if (confirmedCardId) return <></>
+            if (gameState === GAME_STATES.results)
+              return winnerId === id ? (
+                <WorkspacePremiumIcon
+                  sx={{ color: '#ffcc00', fontSize: '16px' }}
+                />
+              ) : (
+                <></>
+              )
+            return (
+              <StyledIconButton
+                className="card-icon-button"
+                disableRipple
+                title={selectedCardId === id ? 'Select' : 'Skip'}
+                onClick={() => {
+                  if (selectedCardId === id) onConfirmCard(id)
+                  else if (canSkip) onSkipCard(id)
+                }}
+                selected={selectedCardId === id}
+                canSkip={canSkip}
+              >
+                {(() => {
+                  if (selectedCardId === id) return <CheckIcon />
+                  if (canSkip) return <CloseIcon />
+                  return <></>
+                })()}
+              </StyledIconButton>
+            )
+          })()}
         </CardRow>
       </Collapse>
     )
@@ -321,7 +343,9 @@ const Cards = () => {
             alignItems: 'center',
           }}
         >
-          {cards?.map(({ id, text, playerId }) => Card(playerId ?? id, text))}
+          {cards?.map(({ key, id, text, playerId }) =>
+            Card(key ?? id, playerId ?? id, text)
+          )}
         </TransitionGroup>
       </CardWrapper>
     </Stack>
