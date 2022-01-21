@@ -174,7 +174,7 @@ const continueGame = (io) => async (data, cb) => {
     return
   }
 
-  await setRoomState(io)(data, cb)
+  await setRoomGameplayState(io)(data, cb)
 }
 
 const getRoom = async (data, cb) => {

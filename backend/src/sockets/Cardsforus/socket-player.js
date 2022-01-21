@@ -79,7 +79,25 @@ const setWinningCard = (io) => async (data, cb) => {
   })
 }
 
+const setPlayerReady = (io) => async (data, cb) => {
+  if (!data) return
+  const { uuid, roomId, ready, isReady } = data
+
+  const { error } = await updatePlayer(uuid, {
+    $set: { [ready]: isReady },
+  })
+
+  if (error) {
+    if (cb) cb({ error })
+    return
+  }
+
+  if (cb) cb({ uuid })
+  io.to(roomId).emit('update players')
+}
+
 export default async (io, socket) => {
   socket.on('set card', setCard(io))
   socket.on('set winning card', setWinningCard(io))
+  socket.on('set player ready', setPlayerReady(io))
 }

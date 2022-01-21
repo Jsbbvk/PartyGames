@@ -313,4 +313,5 @@ export default [
   new Meme('285.jpg', "Why Are You Booing Me? I'm Right"),
   new Meme('286.jpg', 'Dramatic Dmitry'),
   new Meme('287.jpg', 'Those Chickens Are up to Something'),
+  new Meme('288.jpg', 'Watcha Got There?'),
 ]

@@ -6,6 +6,7 @@ import {
   Fade,
   Collapse,
   IconButton,
+  Fab,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import CheckIcon from '@mui/icons-material/Check'
@@ -95,6 +96,23 @@ const CardWrapper = styled(Box)({
 
   '&::-webkit-scrollbar-thumb:hover': {
     background: '#919191',
+  },
+})
+
+const StyledButton = styled(Fab)({
+  textTransform: 'none',
+  boxShadow: 'none',
+  color: '#ffffffDE',
+  backgroundColor: '#363636',
+  transition: 'transform 100ms, background-color 250ms',
+  padding: '20px 28px',
+
+  '&:hover': {
+    background: '#474747',
+  },
+  '&:active': {
+    boxShadow: 'none',
+    transform: 'scale(.96)',
   },
 })
 
@@ -212,6 +230,7 @@ const Cards = () => {
     } else if (gameState === GAME_STATES.choosing_winning_card) {
       handleChoosingWinningState()
     } else if (gameState === GAME_STATES.results) {
+      // TODO don't update list after player presses "continue"
       handleResultState()
     }
   }, [players, gameState, isCzar])
@@ -251,6 +270,26 @@ const Cards = () => {
     setInfo(INFO.waitingForPlayers())
 
     emit('set card', { roomId, uuid, cardId: id, isCzar })
+  }
+
+  const resetStates = () => {
+    setWinnerId(null)
+    setSelectedCardId(null)
+    setConfirmedCardId(null)
+    setCards([])
+    // setCanSkip()
+  }
+
+  const onContinue = () => {
+    emit('set player ready', {
+      uuid,
+      roomId,
+      ready: 'ready.nextRound',
+      isReady: true,
+    })
+    // resetStates()
+    // if curr player is winner, update themselves to be card czar, and then emit continue game
+    // emit('continue game', { roomId, state: GAME_STATES.choosing_card })
   }
 
   const Card = (key, id, text) => {
@@ -319,36 +358,45 @@ const Cards = () => {
   }
 
   return (
-    <Stack sx={{ height: '60vh' }}>
-      <Box>
-        <SwitchTransition mode="out-in">
-          <Fade
-            key={info.key}
-            addEndListener={(node, done) =>
-              node.addEventListener('transitionend', done, false)
-            }
-            timeout={250}
+    <>
+      <Stack sx={{ height: '60vh' }}>
+        <Box>
+          <SwitchTransition mode="out-in">
+            <Fade
+              key={info.key}
+              addEndListener={(node, done) =>
+                node.addEventListener('transitionend', done, false)
+              }
+              timeout={250}
+            >
+              <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                {info.text}
+              </Typography>
+            </Fade>
+          </SwitchTransition>
+        </Box>
+        <CardWrapper mt={1}>
+          <TransitionGroup
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
           >
-            <Typography variant="body2" sx={{ textAlign: 'center' }}>
-              {info.text}
-            </Typography>
-          </Fade>
-        </SwitchTransition>
-      </Box>
-      <CardWrapper mt={1}>
-        <TransitionGroup
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          {cards?.map(({ key, id, text, playerId }) =>
-            Card(key ?? id, playerId ?? id, text)
-          )}
-        </TransitionGroup>
-      </CardWrapper>
-    </Stack>
+            {cards?.map(({ key, id, text, playerId }) =>
+              Card(key ?? id, playerId ?? id, text)
+            )}
+          </TransitionGroup>
+        </CardWrapper>
+        {gameState === GAME_STATES.results && (
+          <Stack alignItems="center" mt={2.5}>
+            <StyledButton variant="extended" disableRipple onClick={onContinue}>
+              Continue
+            </StyledButton>
+          </Stack>
+        )}
+      </Stack>
+    </>
   )
 }
 

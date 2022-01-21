@@ -5,7 +5,13 @@ const options = {
 }
 
 export const defaultPlayer = {
-  ready: {},
+  ready: {
+    chooseCard: false,
+    chooseCzarCard: false,
+    nextRound: false,
+  },
+  chosenCard: undefined,
+  chosenWinner: undefined,
 }
 
 const playerSchema = mongoose.Schema(
