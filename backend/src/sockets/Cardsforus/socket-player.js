@@ -94,6 +94,21 @@ const setPlayerReady = (io) => async (data, cb) => {
 
   if (cb) cb({ uuid })
   io.to(roomId).emit('update players')
+
+  const { players } = await getPlayers(roomId)
+  if (!players) return
+
+  const numReady = players.reduce(
+    (accum, curr) => accum + (curr.ready.nextRound ? 1 : 0),
+    0
+  )
+
+  if (numReady === players.length) {
+    await setRoomGameplayState(io)({
+      roomId,
+      state: GAMEPLAY_STATES.choosing_card_czar,
+    })
+  }
 }
 
 export default async (io, socket) => {

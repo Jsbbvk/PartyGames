@@ -22,8 +22,9 @@ const Gameplay = () => {
   const onGameplayStateChange = (data) => {
     if (!data) return
     const { state } = data
-
     console.log(state)
+    if (state === gameState) return
+    // TODO check if state is transitioning from end round to start round, and reset stuff
     setGameState(state)
   }
 

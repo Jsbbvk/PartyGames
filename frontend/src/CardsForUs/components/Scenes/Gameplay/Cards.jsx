@@ -7,11 +7,13 @@ import {
   Collapse,
   IconButton,
   Fab,
+  Slide,
+  LinearProgress,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import CheckIcon from '@mui/icons-material/Check'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import shuffle from 'lodash/shuffle'
 import { SwitchTransition, TransitionGroup } from 'react-transition-group'
 import { useCardManager } from '../../Hooks'
@@ -116,10 +118,18 @@ const StyledButton = styled(Fab)({
   },
 })
 
+/*
+  TODO list
+  - czar shouldn't be able to skip cards
+  - handle reconnection
+*/
+
 const Cards = () => {
   const { roomId, uuid } = useGameContext()
   const { gameState, setGameState, players, isCzar } = useGameplayContext()
   const { cards: playerCards, skipCard, hydrateCards } = useCardManager()
+
+  const readyWrapperRef = useRef(null)
 
   const [info, setInfo] = useState(INFO.skips)
   const [selectedCardId, setSelectedCardId] = useState()
@@ -127,6 +137,8 @@ const Cards = () => {
   const [confirmedCardId, setConfirmedCardId] = useState()
   const [canSkip, setCanSkip] = useState(true)
   const [winnerId, setWinnerId] = useState()
+  const [readyNextRound, setReadyNextRound] = useState(false)
+  const [playersReady, setPlayersReady] = useState([0, 1])
 
   const emit = useEmitter()
 
@@ -230,8 +242,20 @@ const Cards = () => {
     } else if (gameState === GAME_STATES.choosing_winning_card) {
       handleChoosingWinningState()
     } else if (gameState === GAME_STATES.results) {
-      // TODO don't update list after player presses "continue"
-      handleResultState()
+      if (!readyNextRound) {
+        handleResultState()
+        return
+      }
+
+      const numReady = players.reduce(
+        (accum, curr) => accum + (curr?.ready?.nextRound ? 1 : 0),
+        0
+      )
+      setPlayersReady([numReady, players.length])
+
+      if (numReady === players.length) {
+        // TODO emit change game state
+      }
     }
   }, [players, gameState, isCzar])
 
@@ -287,6 +311,7 @@ const Cards = () => {
       ready: 'ready.nextRound',
       isReady: true,
     })
+    setReadyNextRound(true)
     // resetStates()
     // if curr player is winner, update themselves to be card czar, and then emit continue game
     // emit('continue game', { roomId, state: GAME_STATES.choosing_card })
@@ -388,13 +413,65 @@ const Cards = () => {
             )}
           </TransitionGroup>
         </CardWrapper>
-        {gameState === GAME_STATES.results && (
-          <Stack alignItems="center" mt={2.5}>
-            <StyledButton variant="extended" disableRipple onClick={onContinue}>
-              Continue
-            </StyledButton>
-          </Stack>
-        )}
+
+        <Box ref={readyWrapperRef}>
+          {gameState === GAME_STATES.results && (
+            <SwitchTransition mode="out-in">
+              <Slide
+                key={readyNextRound}
+                direction="up"
+                addEndListener={(node, done) =>
+                  node.addEventListener('transitionend', done, false)
+                }
+                timeout={300}
+                container={readyWrapperRef.current}
+              >
+                <Stack alignItems="center" mt={2.5}>
+                  {readyNextRound ? (
+                    <Box
+                      sx={{
+                        padding: '15px 40px 25px 40px',
+                        bgcolor: '#363636',
+                        borderRadius: '4px',
+                        minWidth: '275px',
+                        color: () => {
+                          const percentage = playersReady[0] / playersReady[1]
+                          if (percentage < 0.5) return '#d32f2f'
+                          if (percentage < 1) return '#fbc02d'
+                          return '#66bb6a'
+                        },
+                      }}
+                    >
+                      <Box p={1}>
+                        <Typography
+                          variant="body1"
+                          sx={{ color: '#ffffffde', textAlign: 'center' }}
+                        >
+                          {playersReady[0] === playersReady[1]
+                            ? 'Everyone ready!'
+                            : `Waiting for players... ${playersReady[0]}/${playersReady[1]}`}
+                        </Typography>
+                      </Box>
+                      <LinearProgress
+                        variant="determinate"
+                        value={(playersReady[0] / playersReady[1]) * 100}
+                        color="inherit"
+                      />
+                    </Box>
+                  ) : (
+                    <StyledButton
+                      variant="extended"
+                      disableRipple
+                      onClick={onContinue}
+                    >
+                      Continue
+                    </StyledButton>
+                  )}
+                </Stack>
+              </Slide>
+            </SwitchTransition>
+          )}
+        </Box>
       </Stack>
     </>
   )
