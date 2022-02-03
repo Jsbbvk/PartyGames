@@ -191,7 +191,10 @@ const Cards = () => {
       )
     })
 
-    setInfo(isCzar ? INFO.czarChooseWinningCard : INFO.waitingForCzar)
+    const czar = players.find((p) => p.isCzar)
+    setInfo(
+      isCzar ? INFO.czarChooseWinningCard : INFO.waitingForCzar(czar?.name)
+    )
     if (isCzar) {
       setConfirmedCardId(null)
       setSelectedCardId(null)
@@ -236,13 +239,19 @@ const Cards = () => {
     if (!players.length) return
 
     if (gameState === GAME_STATES.choosing_card_czar) {
+      setCanSkip(!isCzar)
+      setCards(playerCards[isCzar ? 'black' : 'white'])
       setInfo(isCzar ? INFO.czarChooseCard : INFO.skips)
     } else if (gameState === GAME_STATES.choosing_card) {
       handleChoosingState()
     } else if (gameState === GAME_STATES.choosing_winning_card) {
+      setWinnerId(null)
+      setReadyNextRound(false)
       handleChoosingWinningState()
     } else if (gameState === GAME_STATES.results) {
       if (!readyNextRound) {
+        setReadyNextRound(false)
+        setCanSkip(true)
         handleResultState()
         return
       }
@@ -257,11 +266,7 @@ const Cards = () => {
         // TODO emit change game state
       }
     }
-  }, [players, gameState, isCzar])
-
-  useEffect(() => {
-    setCards(playerCards[isCzar ? 'black' : 'white'])
-  }, [playerCards, isCzar])
+  }, [players, gameState, isCzar, playerCards])
 
   const onCardSelect = (id) => {
     if (
@@ -297,11 +302,8 @@ const Cards = () => {
   }
 
   const resetStates = () => {
-    setWinnerId(null)
     setSelectedCardId(null)
     setConfirmedCardId(null)
-    setCards([])
-    // setCanSkip()
   }
 
   const onContinue = () => {
@@ -312,7 +314,7 @@ const Cards = () => {
       isReady: true,
     })
     setReadyNextRound(true)
-    // resetStates()
+    resetStates()
     // if curr player is winner, update themselves to be card czar, and then emit continue game
     // emit('continue game', { roomId, state: GAME_STATES.choosing_card })
   }
@@ -336,7 +338,7 @@ const Cards = () => {
           alignItems="center"
           justifyContent="space-between"
         >
-          <Box>
+          <Box sx={{ maxWidth: '90%' }}>
             <Typography
               variant="body1"
               dangerouslySetInnerHTML={{ __html: text }}
@@ -355,7 +357,9 @@ const Cards = () => {
                   sx={{ color: '#ffcc00', fontSize: '16px' }}
                 />
               ) : (
-                <></>
+                <Typography variant="caption">
+                  {canSkip ? '+5 skips' : ''}
+                </Typography>
               )
             return (
               <StyledIconButton

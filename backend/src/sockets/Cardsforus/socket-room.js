@@ -9,6 +9,7 @@ import {
   setRoomState as setRmState,
   resetPlayers,
   updateRoom,
+  updatePlayer,
 } from '../../store/Cardsforus/controllers'
 
 const deleteRoomIfInactive = async (io, roomId) => {
@@ -73,8 +74,7 @@ const createAndJoinRoom = (io, socket) => async (data, cb) => {
   const { uuid, error: errorCreate } = await createPlayer(
     name,
     roomId,
-    socket.id,
-    { isCzar: true } // TODO remove
+    socket.id
   )
   if (errorCreate) {
     if (cb) cb({ error: errorCreate })
@@ -161,6 +161,16 @@ const restartGame = (io) => async (data, cb) => {
     if (cb) cb({ error })
     return
   }
+
+  const { players, error: getPlayersError } = await getPlayers(roomId)
+  if (getPlayersError) {
+    if (cb) cb({ error: getPlayersError })
+    return
+  }
+
+  await updatePlayer(players[Math.floor(Math.random() * players.length)]._id, {
+    $set: { isCzar: true },
+  })
 
   await setRoomState(io)(data, cb)
 }

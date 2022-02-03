@@ -23,7 +23,6 @@ const Czar = () => {
         })
       }
     } else {
-      console.log(players)
       const czar = players.find((p) => p.isCzar)?.chosenCard
       if (czar) setCzarCard(hydrateCards([czar], 'black')[0])
     }

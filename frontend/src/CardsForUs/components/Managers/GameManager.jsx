@@ -49,38 +49,6 @@ const GameManager = () => {
     setRoomId(rmId)
   }
 
-  useEffect(() => {
-    s.emit(
-      'create room',
-      { roomId: '11111', name: 'joe' },
-      ({ uuid: playerId, error: err }) => {
-        if (err) {
-          console.log(err)
-          if (err === 'Duplicate room') {
-            s.emit(
-              'join room',
-              { roomId: '11111', name: 'joe' },
-              ({ uuid: pid, error }) => {
-                if (error) {
-                  console.log(error)
-                }
-                console.log('joined!')
-                setUUID(pid)
-                setRoomId('11111')
-                setName('joe')
-              }
-            )
-            return
-          }
-        }
-        console.log('created!')
-        setUUID(playerId)
-        setRoomId('11111')
-        setName('joe')
-      }
-    )
-  }, [])
-
   // useEffect(() => {
   //   s.on('connect', () => {
   //     if (roomId && uuid) s.emit('reconnect', { uuid, roomId })

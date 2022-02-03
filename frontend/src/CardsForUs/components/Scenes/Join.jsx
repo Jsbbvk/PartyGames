@@ -34,8 +34,8 @@ const Join = () => {
     setRoomId: setGameRoomId,
   } = useGameContext()
   const [error, setError] = useState('')
-  const [roomId, setRoomId] = useState('')
-  const [name, setName] = useState('')
+  const [roomId, setRoomId] = useState('11111')
+  const [name, setName] = useState('a')
   const [isLoading, setIsLoading] = useState(false)
   const buttonRef = useRef(null)
 

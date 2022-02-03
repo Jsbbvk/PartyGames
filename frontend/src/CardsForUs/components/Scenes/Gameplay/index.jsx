@@ -19,36 +19,47 @@ const Gameplay = () => {
 
   const emit = useEmitter()
 
-  const onGameplayStateChange = (data) => {
+  const getPlayers = () => {
+    // eslint-disable-next-line consistent-return
+    return new Promise((res, rej) => {
+      if (!roomId) return res()
+
+      emit('get players', { roomId }, (data) => {
+        const { players: roomPlayers, error } = data
+        if (error) {
+          if (process.env.REACT_APP_NODE_ENV === 'development')
+            console.log(error)
+          return
+        }
+        console.log('players', roomPlayers)
+        setIsCzar(roomPlayers.some((p) => p._id === uuid && p.isCzar))
+        setPlayers(roomPlayers)
+        res()
+      })
+    })
+  }
+
+  const onGameplayStateChange = async (data) => {
     if (!data) return
     const { state } = data
     console.log(state)
     if (state === gameState) return
     // TODO check if state is transitioning from end round to start round, and reset stuff
+    if (
+      state === GAME_STATES.choosing_card_czar &&
+      gameState === GAME_STATES.results
+    )
+      await getPlayers()
     setGameState(state)
   }
-
-  const getPlayers = () => {
-    if (!roomId) return
-    emit('get players', { roomId }, (data) => {
-      const { players: roomPlayers, error } = data
-      if (error) {
-        if (process.env.REACT_APP_NODE_ENV === 'development') console.log(error)
-        return
-      }
-      setPlayers(roomPlayers)
-    })
-  }
-
-  useEffect(() => {
-    if (!players.length) return
-
-    setIsCzar(players.some((p) => p._id === uuid && p.isCzar))
-  }, [players])
 
   useEffect(() => {
     toggleColorMode(isCzar ? 'dark' : 'light')
   }, [isCzar])
+
+  useEffect(() => {
+    getPlayers()
+  }, [])
 
   useListener('update players', getPlayers)
   useListener('room gameplay state change', onGameplayStateChange)

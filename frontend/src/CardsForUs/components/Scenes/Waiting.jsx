@@ -100,15 +100,7 @@ const StyledSlider = styled(Slider)({
 
 const Waiting = () => {
   const { switchToScene, setSceneProps, setShowMenu } = useSceneContext()
-  const {
-    name,
-    setName,
-    uuid,
-    roomId,
-    reset,
-    numMemeChoices,
-    setNumMemeChoices,
-  } = useGameContext()
+  const { name, setName, uuid, roomId, reset } = useGameContext()
   const [players, setPlayers] = useState([])
   const [isEditingName, setIsEditingName] = useState(false)
   const [userName, setUserName] = useState(name)
@@ -141,7 +133,6 @@ const Waiting = () => {
       const { error, room } = data
       if (error && process.env.REACT_APP_NODE_ENV === 'development')
         console.log(error)
-      setNumMemeChoices(room?.memeChoices)
     })
   }, [])
 
@@ -181,35 +172,12 @@ const Waiting = () => {
     })
 
   const startGame = () =>
-    emit('restart game', { roomId, state: STATES.captioning })
-
-  const emitMemeChange = useCallback(
-    debounce((numMemes) => {
-      emit('set number meme choices', { roomId, numMemes })
-    }, 250),
-    [emit, roomId]
-  )
-
-  const onMemeChoiceChange = (_, newVal) => {
-    setNumMemeChoices(newVal)
-    emitMemeChange(newVal)
-  }
+    emit('restart game', { roomId, state: STATES.gameplay })
 
   return (
     <Stack alignItems="center">
       <Typography variant="h5">Room ID: {roomId}</Typography>
-      <Box mt={3}>
-        <Typography variant="body2" sx={{ textAlign: 'center' }}>
-          Number of meme choices: <b>{numMemeChoices}</b>
-        </Typography>
-        <StyledSlider
-          value={numMemeChoices}
-          step={1}
-          min={1}
-          max={20}
-          onChange={onMemeChoiceChange}
-        />
-      </Box>
+
       <PlayerWrapper mt={2}>
         <TransitionGroup
           style={{

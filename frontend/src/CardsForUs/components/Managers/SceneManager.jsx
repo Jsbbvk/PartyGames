@@ -43,7 +43,7 @@ const SceneManager = () => {
     [SCENES.waiting]: <Waiting />,
   }
 
-  const [currScene, setCurrScene] = useState(SCENES.gameplay)
+  const [currScene, setCurrScene] = useState(SCENES.intro)
   const [sceneProps, setSceneProps] = useState({})
   const [players, setPlayers] = useState([])
   const [showMenu, setShowMenu] = useState(false)
@@ -61,6 +61,26 @@ const SceneManager = () => {
   }
 
   const setProps = (props) => setSceneProps(props)
+
+  useListener('room state change', ({ state, error }) => {
+    if (error) return
+    if (state === currScene) return
+
+    // if (STATES_TO_SCENES[state] === SCENES.selection) {
+    //   try {
+    //     sessionStorage.setItem(
+    //       'captionthis:data',
+    //       JSON.stringify({ name, uuid, roomId })
+    //     )
+    //   } catch (e) {
+    //     if (process.env.REACT_APP_NODE_ENV === 'development') console.log(e)
+    //   }
+    // } else if (STATES_TO_SCENES[state] === SCENES.waiting) {
+    //   sessionStorage.setItem('captionthis:data', '')
+    // }
+
+    switchToScene(state)
+  })
 
   return (
     <>

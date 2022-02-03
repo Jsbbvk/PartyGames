@@ -10,8 +10,8 @@ export const defaultPlayer = {
     chooseCzarCard: false,
     nextRound: false,
   },
-  chosenCard: undefined,
-  chosenWinner: undefined,
+  chosenCard: null,
+  chosenWinner: null,
 }
 
 const playerSchema = mongoose.Schema(

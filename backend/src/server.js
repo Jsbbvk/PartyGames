@@ -12,6 +12,7 @@ const init = async () => {
 
   await initSockets()
 
+  console.log(`node env: ${process.env.NODE_ENV}`)
   console.log(`server listening on port ${process.env.PORT || 4001}`)
 }
 

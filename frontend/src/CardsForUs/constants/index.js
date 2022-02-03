@@ -15,7 +15,6 @@ export const SCENES = {
 export const STATES = {
   waiting: 'waiting',
   gameplay: 'gameplay',
-  results: 'results',
 }
 
 export const GAME_STATES = {
@@ -34,10 +33,10 @@ export const INFO = {
     text: 'Choose the best card',
     key: 'choose winning card',
   },
-  waitingForCzar: {
-    text: 'Waiting for Card Czar...',
+  waitingForCzar: (czar) => ({
+    text: `Waiting for Card Czar ${czar}...`,
     key: 'waiting for czar',
-  },
+  }),
   skips: {
     text: 'Skips left: ',
     key: 'skips',
