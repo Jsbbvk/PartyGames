@@ -16,6 +16,7 @@ const Gameplay = () => {
   const [gameState, setGameState] = useState(GAME_STATES.choosing_card_czar)
   const [players, setPlayers] = useState([])
   const [isCzar, setIsCzar] = useState(false)
+  const [allowSkipping, setAllowSkipping] = useState(false) // allow skipping as a whole
 
   const emit = useEmitter()
 
@@ -44,7 +45,6 @@ const Gameplay = () => {
     const { state } = data
     console.log(state)
     if (state === gameState) return
-    // TODO check if state is transitioning from end round to start round, and reset stuff
     if (
       state === GAME_STATES.choosing_card_czar &&
       gameState === GAME_STATES.results
@@ -67,7 +67,7 @@ const Gameplay = () => {
   return (
     <Container maxWidth="sm" sx={{ p: 0 }}>
       <GameplayContext.Provider
-        value={{ gameState, setGameState, players, isCzar }}
+        value={{ gameState, setGameState, players, isCzar, allowSkipping }}
       >
         <Czar />
         <Cards />

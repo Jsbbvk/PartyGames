@@ -37,10 +37,10 @@ export const INFO = {
     text: `Waiting for Card Czar ${czar}...`,
     key: 'waiting for czar',
   }),
-  skips: {
-    text: 'Skips left: ',
+  skips: (skips) => ({
+    text: `Skips left: ${skips}`,
     key: 'skips',
-  },
+  }),
   waitingForPlayers: (numP = 0, totalP = 1) => ({
     text: `Waiting for players... ${numP}/${totalP}`,
     key: 'waiting for players',
@@ -48,6 +48,10 @@ export const INFO = {
   results: {
     text: 'Winner',
     key: 'winner',
+  },
+  none: {
+    text: '',
+    key: 'none',
   },
 }
 

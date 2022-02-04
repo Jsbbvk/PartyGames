@@ -126,7 +126,8 @@ const StyledButton = styled(Fab)({
 
 const Cards = () => {
   const { roomId, uuid } = useGameContext()
-  const { gameState, setGameState, players, isCzar } = useGameplayContext()
+  const { gameState, setGameState, players, isCzar, allowSkipping } =
+    useGameplayContext()
   const { cards: playerCards, skipCard, hydrateCards } = useCardManager()
 
   const readyWrapperRef = useRef(null)
@@ -136,6 +137,9 @@ const Cards = () => {
   const [cards, setCards] = useState([])
   const [confirmedCardId, setConfirmedCardId] = useState()
   const [canSkip, setCanSkip] = useState(true)
+  const [numSkips, setNumSkips] = useState(5)
+  const [addedSkip, setAddedSkip] = useState(false)
+
   const [winnerId, setWinnerId] = useState()
   const [readyNextRound, setReadyNextRound] = useState(false)
   const [playersReady, setPlayersReady] = useState([0, 1])
@@ -233,6 +237,11 @@ const Cards = () => {
     setInfo(INFO.results)
     setWinnerId(czar.chosenWinner)
     setConfirmedCardId(null)
+
+    if (czar.chosenWinner !== uuid && !isCzar && !addedSkip) {
+      setNumSkips((p) => p + 5)
+      setAddedSkip(true)
+    }
   }
 
   useEffect(() => {
@@ -241,12 +250,15 @@ const Cards = () => {
     if (gameState === GAME_STATES.choosing_card_czar) {
       setCanSkip(!isCzar)
       setCards(playerCards[isCzar ? 'black' : 'white'])
-      setInfo(isCzar ? INFO.czarChooseCard : INFO.skips)
+
+      if (isCzar) setInfo(INFO.czarChooseCard)
+      else setInfo(allowSkipping ? INFO.skips(numSkips) : INFO.none)
     } else if (gameState === GAME_STATES.choosing_card) {
       handleChoosingState()
     } else if (gameState === GAME_STATES.choosing_winning_card) {
       setWinnerId(null)
       setReadyNextRound(false)
+      setAddedSkip(false)
       handleChoosingWinningState()
     } else if (gameState === GAME_STATES.results) {
       if (!readyNextRound) {
@@ -261,10 +273,6 @@ const Cards = () => {
         0
       )
       setPlayersReady([numReady, players.length])
-
-      if (numReady === players.length) {
-        // TODO emit change game state
-      }
     }
   }, [players, gameState, isCzar, playerCards])
 
@@ -279,9 +287,22 @@ const Cards = () => {
     else setSelectedCardId(id)
   }
 
+  useEffect(() => {
+    if (
+      allowSkipping &&
+      !isCzar &&
+      (gameState === GAME_STATES.choosing_card ||
+        gameState === GAME_STATES.choosing_card_czar)
+    )
+      setInfo(INFO.skips(numSkips))
+  }, [numSkips, isCzar, gameState, allowSkipping])
+
   const onSkipCard = (id) => {
+    if (numSkips <= 0) return
     if (selectedCardId === id) setSelectedCardId(null)
-    skipCard(id, 'white')
+    const newCards = skipCard(id, 'white')
+    setCards(newCards)
+    setNumSkips((p) => p - 1)
   }
 
   const onConfirmCard = (id) => {
@@ -322,7 +343,6 @@ const Cards = () => {
   const Card = (key, id, text) => {
     const player =
       gameState === GAME_STATES.results && players.find((p) => p._id === id)
-    // TODO add in player name
     return (
       <Collapse key={key} sx={{ width: '100%' }}>
         <CardRow
@@ -333,7 +353,10 @@ const Cards = () => {
           onClick={(e) =>
             typeof e.target.className === 'string' && onCardSelect(id)
           }
-          disabled={gameState === GAME_STATES.results}
+          disabled={
+            gameState === GAME_STATES.results ||
+            (!isCzar && gameState === GAME_STATES.choosing_card_czar)
+          }
           direction="row"
           alignItems="center"
           justifyContent="space-between"
@@ -358,7 +381,7 @@ const Cards = () => {
                 />
               ) : (
                 <Typography variant="caption">
-                  {canSkip ? '+5 skips' : ''}
+                  {allowSkipping ? '+5 skips' : ''}
                 </Typography>
               )
             return (
@@ -368,14 +391,16 @@ const Cards = () => {
                 title={selectedCardId === id ? 'Select' : 'Skip'}
                 onClick={() => {
                   if (selectedCardId === id) onConfirmCard(id)
-                  else if (canSkip) onSkipCard(id)
+                  else if (allowSkipping && canSkip && numSkips > 0)
+                    onSkipCard(id)
                 }}
                 selected={selectedCardId === id}
-                canSkip={canSkip}
+                canSkip={allowSkipping && canSkip && numSkips > 0}
               >
                 {(() => {
                   if (selectedCardId === id) return <CheckIcon />
-                  if (canSkip) return <CloseIcon />
+                  if (allowSkipping && canSkip && numSkips > 0)
+                    return <CloseIcon />
                   return <></>
                 })()}
               </StyledIconButton>

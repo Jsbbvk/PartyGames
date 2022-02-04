@@ -115,6 +115,8 @@ const CardManager = () => {
         `Current-${cardPack.name}-Cards-${type}`,
         LZString.compressToUTF16(newCards.map(({ id }) => id).join('/'))
       )
+
+      return newCards
     },
     [cards, cardPack]
   )

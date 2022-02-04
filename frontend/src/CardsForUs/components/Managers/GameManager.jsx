@@ -14,7 +14,7 @@ import { SceneManager } from '.'
 import { NUMBER_OF_CARD_CHOICES } from '../../constants'
 import { ThemeContext } from '../../../App'
 
-const ENDPOINT = 'http://10.168.0.121:4001' // process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
+const ENDPOINT = 'http://localhost:4001' // process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
 
 const s = io(`${ENDPOINT}/cardsforus`, {
   transports: ['websocket', 'polling', 'flashsocket'],
