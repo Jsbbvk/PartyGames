@@ -9,6 +9,13 @@ import {
   Typography,
   Collapse,
   Slider,
+  Switch,
+  FormGroup,
+  FormControlLabel,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
@@ -24,7 +31,7 @@ import {
   useSceneContext,
 } from '../Managers'
 import Button from '../widgets/Button'
-import { MIN_PLAYERS_TO_START, SCENES, STATES } from '../../constants'
+import { MIN_PLAYERS_TO_START, PACKS, SCENES, STATES } from '../../constants'
 
 const PlayerWrapper = styled(Box)({
   overflowY: 'auto',
@@ -104,6 +111,8 @@ const Waiting = () => {
   const [players, setPlayers] = useState([])
   const [isEditingName, setIsEditingName] = useState(false)
   const [userName, setUserName] = useState(name)
+  const [allowSkipping, setAllowSkipping] = useState(true)
+  const [cardPack, setCardPack] = useState(PACKS.CAH_PACK)
 
   const inputRef = useRef(null)
 
@@ -174,10 +183,72 @@ const Waiting = () => {
   const startGame = () =>
     emit('restart game', { roomId, state: STATES.gameplay })
 
-  return (
-    <Stack alignItems="center">
-      <Typography variant="h5">Room ID: {roomId}</Typography>
+  const emitCardPackChange = useCallback(
+    debounce((pack) => {
+      emit('set card pack', { roomId, cardPack: pack })
+    }, 250),
+    [emit, roomId]
+  )
 
+  const onCardPackChange = (e) => {
+    setCardPack(e.target.value)
+    emitCardPackChange(e.target.value)
+  }
+
+  const emitSkipChange = useCallback(
+    debounce((skipping) => {
+      emit('set allow skipping', { roomId, allowSkipping: skipping })
+    }, 250),
+    [emit, roomId]
+  )
+
+  const onSkipChange = (e) => {
+    setAllowSkipping(e.target?.checked)
+    emitSkipChange(e.target?.checked)
+  }
+
+  useListener('update allow skipping', (data) => {
+    if (!data) return
+    const { allowSkipping: skipping } = data
+    setAllowSkipping(skipping)
+  })
+
+  useListener('update card pack', (data) => {
+    if (!data) return
+    const { cardPack: pack } = data
+    setCardPack(pack)
+  })
+
+  return (
+    <Stack alignItems="center" py={10}>
+      <Typography variant="h5">Room ID: {roomId}</Typography>
+      <Box mt={3}>
+        <FormGroup sx={{ alignItems: 'center' }}>
+          <FormControlLabel
+            control={<Switch onChange={onSkipChange} checked={allowSkipping} />}
+            label="Allow Skips"
+            size="small"
+            componentsProps={{ typography: { sx: { fontSize: '0.9rem' } } }}
+          />
+          <FormControl variant="outlined" sx={{ mt: 2.5, minWidth: 250 }}>
+            <InputLabel id="card-pack">Card Pack</InputLabel>
+            <Select
+              labelId="card-pack"
+              id="card-pack-select"
+              value={cardPack}
+              onChange={onCardPackChange}
+              label="Card Pack"
+            >
+              {Object.values(PACKS).map((packName) => (
+                <MenuItem key={packName} value={packName}>
+                  {packName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </FormGroup>
+      </Box>
+      <Box mt={2} />
       <PlayerWrapper mt={2}>
         <TransitionGroup
           style={{

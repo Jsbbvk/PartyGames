@@ -59,6 +59,14 @@ const Gameplay = () => {
 
   useEffect(() => {
     getPlayers()
+    emit('get room', { roomId }, (data) => {
+      if (!data) return
+      const { room } = data
+      console.log(room)
+
+      setAllowSkipping(room.allowSkipping)
+      // TODO update card pack
+    })
   }, [])
 
   useListener('update players', getPlayers)

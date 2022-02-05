@@ -28,6 +28,14 @@ const roomSchema = mongoose.Schema(
       type: String,
       enum: Object.values(GAMEPLAY_STATES),
     },
+    allowSkipping: {
+      type: Boolean,
+      default: true,
+    },
+    cardPack: {
+      type: String,
+      default: 'Cards Against Humanity',
+    },
   },
   options
 )

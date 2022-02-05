@@ -195,6 +195,44 @@ const getRoom = async (data, cb) => {
   if (cb) cb(res)
 }
 
+const updateAllowSkipping = (io) =>
+  debounce(async (data, cb) => {
+    if (!data) return
+    const { roomId, allowSkipping } = data
+    const { error } = await updateRoom(roomId, {
+      $set: {
+        allowSkipping,
+      },
+    })
+
+    if (error) {
+      if (cb) cb({ error })
+      return
+    }
+
+    io.to(roomId).emit('update allow skipping', { allowSkipping })
+    if (cb) cb({ roomId })
+  }, 250)
+
+const updateCardPack = (io) =>
+  debounce(async (data, cb) => {
+    if (!data) return
+    const { roomId, cardPack } = data
+    const { error } = await updateRoom(roomId, {
+      $set: {
+        cardPack,
+      },
+    })
+
+    if (error) {
+      if (cb) cb({ error })
+      return
+    }
+
+    io.to(roomId).emit('update card pack', { cardPack })
+    if (cb) cb({ roomId })
+  }, 250)
+
 export default async (io, socket) => {
   socket.on('create room', createAndJoinRoom(io, socket))
   socket.on('join room', joinRoom(io, socket))
@@ -205,4 +243,6 @@ export default async (io, socket) => {
   socket.on('continue game', continueGame(io))
   socket.on('get room', getRoom)
   socket.on('is room active', isRoomActive)
+  socket.on('set allow skipping', updateAllowSkipping(io))
+  socket.on('set card pack', updateCardPack(io))
 }
