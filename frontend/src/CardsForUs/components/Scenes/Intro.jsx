@@ -67,7 +67,7 @@ const Intro = () => {
   }, [])
 
   return (
-    <Box textAlign="center">
+    <Box textAlign="center" py={10}>
       <Typography variant="h3">Caption This!</Typography>
 
       <Typography variant="body1" sx={{ mt: 1 }}>

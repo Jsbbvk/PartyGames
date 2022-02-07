@@ -49,7 +49,8 @@ const CardManager = () => {
   )
 
   const refreshCards = useCallback(
-    (type, pack) => {
+    (type, p) => {
+      const pack = p ?? cardPack
       let unusedCards = LZString.decompressFromUTF16(
         localStorage.getItem(`Unused-${pack.name}-Cards-${type}`)
       )
@@ -88,7 +89,7 @@ const CardManager = () => {
         LZString.compressToUTF16(newCards.join('/'))
       )
     },
-    [maxCards]
+    [maxCards, cardPack]
   )
 
   const skipCard = useCallback(
@@ -133,6 +134,7 @@ const CardManager = () => {
     setMaxCards,
     setCardPack,
     hydrateCards,
+    refreshCards,
   }
 }
 

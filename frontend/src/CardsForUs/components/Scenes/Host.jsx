@@ -64,7 +64,7 @@ const Host = () => {
   const enableHost = roomId.length === 5 && name.length > 0 && !isLoading
 
   return (
-    <Box>
+    <Box py={10}>
       <Typography variant="h3" sx={{ textAlign: 'center' }}>
         Host Room
       </Typography>

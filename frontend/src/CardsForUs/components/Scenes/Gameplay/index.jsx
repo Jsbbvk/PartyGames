@@ -4,7 +4,12 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { ThemeContext } from '../../../../App'
 import { GAME_STATES } from '../../../constants'
 import { useCardManager } from '../../Hooks'
-import { useEmitter, useGameContext, useListener } from '../../Managers'
+import {
+  useEmitter,
+  useGameContext,
+  useListener,
+  useSceneContext,
+} from '../../Managers'
 import Cards from './Cards'
 import Czar from './Czar'
 
@@ -14,11 +19,14 @@ export const useGameplayContext = () => useContext(GameplayContext)
 const Gameplay = () => {
   const { roomId, uuid } = useGameContext()
   const { toggleColorMode } = useContext(ThemeContext)
+  const { setShowMenu } = useSceneContext()
+
   const {
     cards: playerCards,
     skipCard,
     hydrateCards,
     setCardPack,
+    refreshCards,
   } = useCardManager()
   const [gameState, setGameState] = useState(GAME_STATES.choosing_card_czar)
   const [players, setPlayers] = useState([])
@@ -62,10 +70,15 @@ const Gameplay = () => {
 
   useEffect(() => {
     toggleColorMode(isCzar ? 'dark' : 'light')
+
+    return () => {
+      toggleColorMode('light')
+    }
   }, [isCzar])
 
   useEffect(() => {
     getPlayers()
+    setShowMenu(true)
     emit('get room', { roomId }, (data) => {
       if (!data) return
       const { room } = data
@@ -89,6 +102,7 @@ const Gameplay = () => {
           hydrateCards,
           playerCards,
           skipCard,
+          refreshCards,
         }}
       >
         <Czar />

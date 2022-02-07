@@ -3,7 +3,7 @@ import { defaultPlayer, Player, Room } from '../models'
 import { ERRORS } from '../constants'
 import { Error } from '../util'
 
-export const resetPlayers = async (roomId, resetPoints = true) => {
+export const resetPlayers = async (roomId, resetAll = true) => {
   const [err, room] = await to(
     Room.findOne({ roomId }).select('players').lean()
   )
@@ -19,7 +19,7 @@ export const resetPlayers = async (roomId, resetPoints = true) => {
 
   const resetValues = {
     ...defaultPlayer,
-    ...(resetPoints && { points: 0 }),
+    ...(resetAll && { points: 0, isCzar: false }),
   }
 
   const [error] = await to(

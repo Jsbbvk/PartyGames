@@ -140,6 +140,7 @@ const Waiting = () => {
     emit('get room', { roomId }, (data) => {
       if (!data) return
       const { error, room } = data
+      if (!room) return
       if (error && process.env.REACT_APP_NODE_ENV === 'development')
         console.log(error)
 

@@ -62,9 +62,27 @@ const SceneManager = () => {
 
   const setProps = (props) => setSceneProps(props)
 
+  useEffect(() => {
+    // if (!isMobile || !sessionStorage.getItem('captionthis:data')) return
+    // try {
+    //   const roomData = JSON.parse(sessionStorage.getItem('captionthis:data'))
+    //   if (!roomData?.roomId || !roomData?.uuid || !roomData?.name) return
+    //   emit(
+    //     'is room active',
+    //     { roomId: roomData.roomId },
+    //     ({ error, roomActive }) => {
+    //       if (error || !roomActive) return
+    //       setReconnectRoomData(roomData)
+    //       setOpenModal(true)
+    //     }
+    //   )
+    // } catch (e) {
+    //   if (process.env.REACT_APP_NODE_ENV === 'development') console.log(e)
+    // }
+  }, [])
+
   useListener('room state change', ({ state, error }) => {
-    if (error) return
-    if (state === currScene) return
+    if (error || state === currScene) return
 
     // if (STATES_TO_SCENES[state] === SCENES.selection) {
     //   try {
@@ -82,6 +100,102 @@ const SceneManager = () => {
     switchToScene(state)
   })
 
+  const getPlayers = () => {
+    if (!roomId) return
+    emit('get players', { roomId }, (data) => {
+      const { players: roomPlayers, error } = data
+      if (error) {
+        if (process.env.REACT_APP_NODE_ENV === 'development') console.log(error)
+        if (
+          error === 'Room not found' &&
+          (currScene === SCENES.waiting || currScene === SCENES.gameplay)
+        ) {
+          // room inactive, so kick them out
+          reset()
+          switchToScene(SCENES.intro)
+        }
+        return
+      }
+
+      const inRoom = roomPlayers.some(({ _id: playerId }) => uuid === playerId)
+      if (!inRoom) {
+        // handle getting kicked
+        reset()
+        switchToScene(SCENES.intro)
+        return
+      }
+
+      if (
+        roomPlayers.length < MIN_PLAYERS_TO_START &&
+        currScene === SCENES.gameplay
+      )
+        emit('set room state', { roomId, state: STATES.waiting })
+
+      setPlayers(roomPlayers)
+    })
+  }
+
+  useListener('update players', getPlayers)
+
+  const reconnect = () => {
+    set(reconnectRoomData)
+    setOpenModal(false)
+    emit('reconnect', {
+      uuid: reconnectRoomData.uuid,
+      roomId: reconnectRoomData.roomId,
+    })
+  }
+
+  const cancelReconnect = () => {
+    setOpenModal(false)
+    sessionStorage.setItem('cardsforus:data', '')
+    emit('remove player', {
+      uuid: reconnectRoomData.uuid,
+      roomId: reconnectRoomData.roomId,
+    })
+  }
+
+  const ReconnectModal = (
+    <Modal
+      open={openModal}
+      onClose={() => {}}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      disableEscapeKeyDown
+      disableAutoFocus
+    >
+      <Fade in={openModal}>
+        <StyledModalBox>
+          <Typography id="modal-modal-title" variant="h5">
+            Reconnect?
+          </Typography>
+          <Typography variant="body1" sx={{ mt: 1 }}>
+            RoomID: <b>{reconnectRoomData?.roomId}</b>
+          </Typography>
+          <Typography variant="body1">
+            Name: <b>{reconnectRoomData?.name}</b>
+          </Typography>
+
+          <Stack
+            mt={5}
+            spacing={2}
+            direction="row"
+            alignItems="center"
+            justifyContent="space-around"
+          >
+            <Button variant="extended" disableRipple onClick={cancelReconnect}>
+              No
+            </Button>
+            <Button variant="extended" disableRipple onClick={reconnect}>
+              Reconnect
+              <ConnectWithoutContactIcon sx={{ ml: 1 }} />
+            </Button>
+          </Stack>
+        </StyledModalBox>
+      </Fade>
+    </Modal>
+  )
+
   return (
     <>
       <SceneContext.Provider
@@ -92,6 +206,8 @@ const SceneManager = () => {
           setShowMenu,
         }}
       >
+        {/* {ReconnectModal} */}
+        <Menu show={showMenu} players={players} getPlayers={getPlayers} />
         <SwitchTransition mode="out-in">
           <Fade key={currScene} in unmountOnExit>
             <Container sx={{ pb: 10 }}>{scenes[currScene]}</Container>

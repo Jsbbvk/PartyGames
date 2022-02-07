@@ -4,6 +4,7 @@ import {
 } from '../../store/Cardsforus/controllers'
 import initRoomSocket from './socket-room'
 import initPlayerSocket from './socket-player'
+import initConnectionSocket from './socket-connection'
 
 export default async (io) => {
   await dropPlayerCollection()
@@ -17,5 +18,6 @@ export default async (io) => {
 
     initRoomSocket(cardsforusNamespace, socket)
     initPlayerSocket(cardsforusNamespace, socket)
+    initConnectionSocket(cardsforusNamespace, socket)
   })
 }

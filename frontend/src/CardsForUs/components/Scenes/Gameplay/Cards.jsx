@@ -134,13 +134,8 @@ const Cards = () => {
     playerCards,
     skipCard,
     hydrateCards,
+    refreshCards,
   } = useGameplayContext()
-  // const {
-  //   cards: playerCards,
-  //   skipCard,
-  //   hydrateCards,
-  //   setCardPack,
-  // } = useCardManager()
 
   const readyWrapperRef = useRef(null)
 
@@ -157,15 +152,6 @@ const Cards = () => {
   const [playersReady, setPlayersReady] = useState([0, 1])
 
   const emit = useEmitter()
-
-  // useEffect(() => {
-  //   emit('get room', { roomId }, (data) => {
-  //     if (!data) return
-  //     const { room } = data
-  //     setAllowSkipping(room.allowSkipping)
-  //     setCardPack(room.cardPack)
-  //   })
-  // }, [])
 
   const handleChoosingState = () => {
     if (!confirmedCardId) return
@@ -270,7 +256,7 @@ const Cards = () => {
 
     if (gameState === GAME_STATES.choosing_card_czar) {
       setCanSkip(!isCzar)
-      setCards(playerCards[isCzar ? 'black' : 'white'])
+      if (!confirmedCardId) setCards(playerCards[isCzar ? 'black' : 'white'])
 
       if (isCzar) setInfo(INFO.czarChooseCard)
       else setInfo(allowSkipping ? INFO.skips(numSkips) : INFO.none)
@@ -295,7 +281,7 @@ const Cards = () => {
       )
       setPlayersReady([numReady, players.length])
     }
-  }, [players, gameState, isCzar, playerCards])
+  }, [players, gameState, isCzar, playerCards, confirmedCardId])
 
   const onCardSelect = (id) => {
     if (
@@ -328,6 +314,9 @@ const Cards = () => {
 
   const onConfirmCard = (id) => {
     setConfirmedCardId(id)
+
+    if (!isCzar) skipCard(id, 'white')
+    else refreshCards('black')
 
     if (gameState === GAME_STATES.choosing_winning_card) {
       setCards([])
