@@ -142,6 +142,9 @@ const Waiting = () => {
       const { error, room } = data
       if (error && process.env.REACT_APP_NODE_ENV === 'development')
         console.log(error)
+
+      setCardPack(room.cardPack)
+      setAllowSkipping(room.allowSkipping)
     })
   }, [])
 

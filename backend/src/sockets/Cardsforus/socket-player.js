@@ -168,30 +168,10 @@ const removePlayer = (io) => async (data, cb) => {
   }
 }
 
-const addPointToPlayer = (io) => async (data, cb) => {
-  if (!data) return
-  const { roomId, uuid } = data
-
-  const { error } = await updatePlayer(uuid, {
-    $inc: {
-      points: 1,
-    },
-  })
-
-  if (error) {
-    if (cb) cb({ error })
-    return
-  }
-
-  if (cb) cb({ uuid })
-  io.to(roomId).emit('update players')
-}
-
 export default async (io, socket) => {
   socket.on('set card', setCard(io))
   socket.on('set winning card', setWinningCard(io))
   socket.on('set player ready', setPlayerReady(io))
   socket.on('set player name', setPlayerName(io))
   socket.on('remove player', removePlayer(io))
-  socket.on('add point to player', addPointToPlayer(io))
 }

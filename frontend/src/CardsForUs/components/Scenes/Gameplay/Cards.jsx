@@ -120,15 +120,27 @@ const StyledButton = styled(Fab)({
 
 /*
   TODO list
-  - czar shouldn't be able to skip cards
   - handle reconnection
 */
 
 const Cards = () => {
   const { roomId, uuid } = useGameContext()
-  const { gameState, setGameState, players, isCzar, allowSkipping } =
-    useGameplayContext()
-  const { cards: playerCards, skipCard, hydrateCards } = useCardManager()
+  const {
+    gameState,
+    setGameState,
+    players,
+    isCzar,
+    allowSkipping,
+    playerCards,
+    skipCard,
+    hydrateCards,
+  } = useGameplayContext()
+  // const {
+  //   cards: playerCards,
+  //   skipCard,
+  //   hydrateCards,
+  //   setCardPack,
+  // } = useCardManager()
 
   const readyWrapperRef = useRef(null)
 
@@ -145,6 +157,15 @@ const Cards = () => {
   const [playersReady, setPlayersReady] = useState([0, 1])
 
   const emit = useEmitter()
+
+  // useEffect(() => {
+  //   emit('get room', { roomId }, (data) => {
+  //     if (!data) return
+  //     const { room } = data
+  //     setAllowSkipping(room.allowSkipping)
+  //     setCardPack(room.cardPack)
+  //   })
+  // }, [])
 
   const handleChoosingState = () => {
     if (!confirmedCardId) return

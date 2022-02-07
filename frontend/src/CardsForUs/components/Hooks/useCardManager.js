@@ -15,17 +15,21 @@ const CardManager = () => {
   })
 
   const setCardPack = (pack) => {
+    let packObj
     switch (pack) {
       case PACKS.CAH_PACK: {
-        setCP({ name: PACKS.CAH_PACK, pack: CAF_CARDS })
+        packObj = { name: PACKS.CAH_PACK, pack: CAF_CARDS }
         break
       }
       case PACKS.AFA_PACK: {
-        setCP({ name: PACKS.AFA_PACK, pack: AFA_CARDS })
+        packObj = { name: PACKS.AFA_PACK, pack: AFA_CARDS }
         break
       }
       default:
     }
+    setCP(packObj)
+    refreshCards('white', packObj)
+    refreshCards('black', packObj)
   }
 
   const getCurrentCards = useCallback(
@@ -40,18 +44,17 @@ const CardManager = () => {
   )
 
   const hydrateCards = useCallback(
-    (ids, type) => ids.map((id) => cardPack.pack[type][id - 1]),
+    (ids, type, pack) => ids.map((id) => (pack ?? cardPack).pack[type][id - 1]),
     [cardPack]
   )
 
   const refreshCards = useCallback(
-    (type) => {
+    (type, pack) => {
       let unusedCards = LZString.decompressFromUTF16(
-        localStorage.getItem(`Unused-${cardPack.name}-Cards-${type}`)
+        localStorage.getItem(`Unused-${pack.name}-Cards-${type}`)
       )
-
       if (unusedCards) unusedCards = unusedCards.split('/')
-      else unusedCards = shuffle(cardPack.pack[type].map(({ id }) => id))
+      else unusedCards = shuffle(pack.pack[type].map(({ id }) => id))
 
       let newCards = unusedCards.slice(0, maxCards)
       let restCards = unusedCards.slice(maxCards)
@@ -59,7 +62,7 @@ const CardManager = () => {
       if (newCards.length < maxCards) {
         // add more cards
         const shuffledCards = shuffle(
-          cardPack.pack[type].flatMap(({ id }) =>
+          pack.pack[type].flatMap(({ id }) =>
             !newCards.find((_id) => id === _id) ? [id] : []
           )
         )
@@ -71,18 +74,21 @@ const CardManager = () => {
         ]
       }
 
-      setCards((prev) => ({ ...prev, [type]: hydrateCards(newCards, type) }))
+      setCards((prev) => ({
+        ...prev,
+        [type]: hydrateCards(newCards, type, pack),
+      }))
 
       localStorage.setItem(
-        `Unused-${cardPack.name}-Cards-${type}`,
+        `Unused-${pack.name}-Cards-${type}`,
         LZString.compressToUTF16(restCards.join('/'))
       )
       localStorage.setItem(
-        `Current-${cardPack.name}-Cards-${type}`,
+        `Current-${pack.name}-Cards-${type}`,
         LZString.compressToUTF16(newCards.join('/'))
       )
     },
-    [cardPack, maxCards]
+    [maxCards]
   )
 
   const skipCard = useCallback(
@@ -121,12 +127,13 @@ const CardManager = () => {
     [cards, cardPack]
   )
 
-  useEffect(() => {
-    refreshCards('black')
-    refreshCards('white')
-  }, [])
-
-  return { cards, skipCard, setMaxCards, setCardPack, hydrateCards }
+  return {
+    cards,
+    skipCard,
+    setMaxCards,
+    setCardPack,
+    hydrateCards,
+  }
 }
 
 export default CardManager

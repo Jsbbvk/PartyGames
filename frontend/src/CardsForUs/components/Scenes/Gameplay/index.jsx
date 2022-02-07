@@ -3,6 +3,7 @@ import { Container } from '@mui/material'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { ThemeContext } from '../../../../App'
 import { GAME_STATES } from '../../../constants'
+import { useCardManager } from '../../Hooks'
 import { useEmitter, useGameContext, useListener } from '../../Managers'
 import Cards from './Cards'
 import Czar from './Czar'
@@ -13,6 +14,12 @@ export const useGameplayContext = () => useContext(GameplayContext)
 const Gameplay = () => {
   const { roomId, uuid } = useGameContext()
   const { toggleColorMode } = useContext(ThemeContext)
+  const {
+    cards: playerCards,
+    skipCard,
+    hydrateCards,
+    setCardPack,
+  } = useCardManager()
   const [gameState, setGameState] = useState(GAME_STATES.choosing_card_czar)
   const [players, setPlayers] = useState([])
   const [isCzar, setIsCzar] = useState(false)
@@ -62,10 +69,8 @@ const Gameplay = () => {
     emit('get room', { roomId }, (data) => {
       if (!data) return
       const { room } = data
-      console.log(room)
-
       setAllowSkipping(room.allowSkipping)
-      // TODO update card pack
+      setCardPack(room.cardPack)
     })
   }, [])
 
@@ -75,7 +80,16 @@ const Gameplay = () => {
   return (
     <Container maxWidth="sm" sx={{ p: 0 }}>
       <GameplayContext.Provider
-        value={{ gameState, setGameState, players, isCzar, allowSkipping }}
+        value={{
+          gameState,
+          setGameState,
+          players,
+          isCzar,
+          allowSkipping,
+          hydrateCards,
+          playerCards,
+          skipCard,
+        }}
       >
         <Czar />
         <Cards />

@@ -7,8 +7,8 @@ import { GAME_STATES } from '../../../constants'
 import { useCardManager } from '../../Hooks'
 
 const Czar = () => {
-  const { gameState, setGameState, players, isCzar } = useGameplayContext()
-  const { hydrateCards } = useCardManager()
+  const { gameState, setGameState, players, isCzar, hydrateCards } =
+    useGameplayContext()
   const [czarCard, setCzarCard] = useState({})
 
   useEffect(() => {

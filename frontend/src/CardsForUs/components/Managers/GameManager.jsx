@@ -49,25 +49,25 @@ const GameManager = () => {
     setRoomId(rmId)
   }
 
-  // useEffect(() => {
-  //   s.on('connect', () => {
-  //     if (roomId && uuid) s.emit('reconnect', { uuid, roomId })
-  //   })
+  useEffect(() => {
+    // s.on('connect', () => {
+    //   if (roomId && uuid) s.emit('reconnect', { uuid, roomId })
+    // })
 
-  //   // handle leaving room upon refresh for desktop
-  //   if (isMobile) return
+    // handle leaving room upon refresh for desktop
+    if (isMobile) return
 
-  //   const unload = () => {
-  //     s.emit('remove player', { roomId, uuid })
-  //   }
+    const unload = () => {
+      s.emit('remove player', { roomId, uuid })
+    }
 
-  //   window.addEventListener('beforeunload', unload)
+    window.addEventListener('beforeunload', unload)
 
-  //   // eslint-disable-next-line consistent-return
-  //   return () => {
-  //     window.removeEventListener('beforeunload', unload)
-  //   }
-  // }, [roomId, uuid])
+    // eslint-disable-next-line consistent-return
+    return () => {
+      window.removeEventListener('beforeunload', unload)
+    }
+  }, [roomId, uuid])
 
   return (
     <GameContext.Provider
