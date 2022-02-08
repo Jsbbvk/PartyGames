@@ -139,19 +139,22 @@ const setRoomState = (io) => async (data, cb) => {
   if (cb) cb({ roomId })
 }
 
-export const setRoomGameplayState = (io) => async (data, cb) => {
-  if (!data) return
-  const { roomId, state } = data
-  const { error } = await updateRoom(roomId, { $set: { gameplayState: state } })
-  if (error) {
-    if (cb) cb({ error })
-    return
-  }
+export const setRoomGameplayState = (io) =>
+  debounce(async (data, cb) => {
+    if (!data) return
+    const { roomId, state } = data
+    const { error } = await updateRoom(roomId, {
+      $set: { gameplayState: state },
+    })
+    if (error) {
+      if (cb) cb({ error })
+      return
+    }
 
-  io.to(roomId).emit('room gameplay state change', { state })
+    io.to(roomId).emit('room gameplay state change', { state })
 
-  if (cb) cb({ roomId })
-}
+    if (cb) cb({ roomId })
+  }, 250)
 
 const restartGame = (io) => async (data, cb) => {
   if (!data) return

@@ -46,7 +46,6 @@ export const getRoom = async (roomId, lean = false) => {
     if (process.env.NODE_ENV === 'development') console.log(err)
     return Error(ERRORS.UNEXPECTED_ERROR)
   }
-
   return { room }
 }
 

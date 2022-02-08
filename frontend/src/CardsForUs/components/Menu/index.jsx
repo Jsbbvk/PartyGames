@@ -155,8 +155,6 @@ const Menu = ({ show, players, getPlayers }) => {
     emit('remove player', { roomId, uuid }, ({ error }) => {
       if (error && process.env.REACT_APP_NODE_ENV === 'development')
         console.log(error)
-      // reset()
-      // switchToScene(SCENES.intro)
     })
   }
 

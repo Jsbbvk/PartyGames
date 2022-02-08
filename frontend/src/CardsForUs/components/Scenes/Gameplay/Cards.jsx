@@ -121,6 +121,7 @@ const StyledButton = styled(Fab)({
 /*
   TODO list
   - handle reconnection
+  - set menu player order to be curr player first
 */
 
 const Cards = () => {
@@ -145,7 +146,8 @@ const Cards = () => {
   const [confirmedCardId, setConfirmedCardId] = useState()
   const [canSkip, setCanSkip] = useState(true)
   const [numSkips, setNumSkips] = useState(5)
-  const [addedSkip, setAddedSkip] = useState(false)
+  const [initialResultDisplay, setInitialResultDisplay] = useState(false)
+  const [emittingWinner, setEmittingWinner] = useState(false)
 
   const [winnerId, setWinnerId] = useState()
   const [readyNextRound, setReadyNextRound] = useState(false)
@@ -165,6 +167,7 @@ const Cards = () => {
   }
 
   const handleChoosingWinningState = () => {
+    if (emittingWinner) return
     // display all cards
     if (
       players.reduce((prev, curr) => (curr.chosenCard ? prev + 1 : prev), 0) !==
@@ -188,14 +191,18 @@ const Cards = () => {
         playerId: currPlayer._id,
       })
 
+    console.log(newCards)
+
     setCards((prevCards) => {
       if (prevCards.length <= 1) {
+        console.log('new cards')
         return hydrateCards(
           newCards.map(({ id }) => id),
           'white'
         ).map((c, i) => ({ ...c, ...newCards[i] }))
       }
 
+      console.log('old cards', prevCards)
       return prevCards.filter(
         ({ playerId }) =>
           playerId && newCards.some(({ playerId: _id }) => playerId === _id)
@@ -214,6 +221,7 @@ const Cards = () => {
   }
 
   const handleResultState = () => {
+    if (initialResultDisplay) return
     const czar = players.find((p) => p.isCzar)
     if (!czar || !czar.chosenWinner) return
 
@@ -225,6 +233,7 @@ const Cards = () => {
               key: `results-${p._id}`,
               playerId: p._id,
               id: p.chosenCard,
+              name: p.name,
             },
           ]
     )
@@ -232,6 +241,7 @@ const Cards = () => {
       key: `results-${czar.chosenWinner}`,
       playerId: czar.chosenWinner,
       id: players.find((p) => p._id === czar.chosenWinner)?.chosenCard,
+      name: czar.name,
     })
 
     setCards(
@@ -245,10 +255,11 @@ const Cards = () => {
     setWinnerId(czar.chosenWinner)
     setConfirmedCardId(null)
 
-    if (czar.chosenWinner !== uuid && !isCzar && !addedSkip) {
+    if (czar.chosenWinner !== uuid && !isCzar) {
       setNumSkips((p) => p + 5)
-      setAddedSkip(true)
     }
+
+    setInitialResultDisplay(true)
   }
 
   useEffect(() => {
@@ -265,11 +276,12 @@ const Cards = () => {
     } else if (gameState === GAME_STATES.choosing_winning_card) {
       setWinnerId(null)
       setReadyNextRound(false)
-      setAddedSkip(false)
+      setInitialResultDisplay(false)
       handleChoosingWinningState()
     } else if (gameState === GAME_STATES.results) {
       if (!readyNextRound) {
         setReadyNextRound(false)
+        setEmittingWinner(false)
         setCanSkip(true)
         handleResultState()
         return
@@ -318,8 +330,9 @@ const Cards = () => {
     if (!isCzar) skipCard(id, 'white')
     else refreshCards('black')
 
-    if (gameState === GAME_STATES.choosing_winning_card) {
+    if (isCzar && gameState === GAME_STATES.choosing_winning_card) {
       setCards([])
+      setEmittingWinner(true)
       emit('set winning card', { roomId, id, uuid })
       return
     }
@@ -350,9 +363,7 @@ const Cards = () => {
     // emit('continue game', { roomId, state: GAME_STATES.choosing_card })
   }
 
-  const Card = (key, id, text) => {
-    const player =
-      gameState === GAME_STATES.results && players.find((p) => p._id === id)
+  const Card = (key, id, text, name) => {
     return (
       <Collapse key={key} sx={{ width: '100%' }}>
         <CardRow
@@ -376,9 +387,9 @@ const Cards = () => {
               variant="body1"
               dangerouslySetInnerHTML={{ __html: text }}
             />
-            {player && player.name && (
-              <Typography variant="caption">{`${player.name}${
-                player._id === uuid ? ' (You)' : ''
+            {name && (
+              <Typography variant="caption">{`${name}${
+                id === uuid ? ' (You)' : ''
               }`}</Typography>
             )}
           </Box>
@@ -447,8 +458,8 @@ const Cards = () => {
               alignItems: 'center',
             }}
           >
-            {cards?.map(({ key, id, text, playerId }) =>
-              Card(key ?? id, playerId ?? id, text)
+            {cards?.map(({ key, id, text, playerId, name }) =>
+              Card(key ?? id, playerId ?? id, text, name)
             )}
           </TransitionGroup>
         </CardWrapper>

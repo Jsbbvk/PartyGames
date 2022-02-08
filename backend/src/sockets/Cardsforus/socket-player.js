@@ -3,11 +3,68 @@ import {
   deletePlayer,
   deleteRoom,
   getPlayers,
+  getRoom,
   leaveRoom,
   resetPlayers,
   updatePlayer,
 } from '../../store/Cardsforus/controllers'
 import { setRoomGameplayState } from './socket-room'
+
+export const checkGameStateReady = async (io, roomId, gameState) => {
+  const stateToReady = {
+    [GAMEPLAY_STATES.choosing_card]: 'chooseCard',
+    [GAMEPLAY_STATES.choosing_card_czar]: 'chooseCzarCard',
+    [GAMEPLAY_STATES.results]: 'nextRound',
+  }
+
+  let state = gameState
+  if (!gameState) {
+    const { room } = await getRoom(roomId, true)
+    if (!room) return false
+    state = room.gameplayState
+  }
+
+  const { players } = await getPlayers(roomId)
+  if (!players) return false
+
+  const numReady = players.reduce(
+    (accum, curr) => accum + (curr.ready[stateToReady[state]] ? 1 : 0),
+    0
+  )
+
+  if (state === GAMEPLAY_STATES.results) {
+    if (numReady === players.length) {
+      const czar = players.find((p) => p.isCzar)
+
+      // TODO handle case when czar or czar.chosenWinner is undefined
+
+      await updatePlayer(czar._id, {
+        $set: { isCzar: false },
+      })
+
+      await updatePlayer(czar.chosenWinner, {
+        $set: { isCzar: true },
+      })
+
+      await resetPlayers(roomId, false)
+      await setRoomGameplayState(io)({
+        roomId,
+        state: GAMEPLAY_STATES.choosing_card_czar,
+      })
+      return true
+    }
+  } else if (state === GAMEPLAY_STATES.choosing_card) {
+    if (numReady === players.length - 1) {
+      await setRoomGameplayState(io)({
+        roomId,
+        state: GAMEPLAY_STATES.choosing_winning_card,
+      })
+      return true
+    }
+  }
+
+  return false
+}
 
 const setCard = (io) => async (data, cb) => {
   if (!data) return
@@ -31,22 +88,13 @@ const setCard = (io) => async (data, cb) => {
       roomId,
       state: GAMEPLAY_STATES.choosing_card,
     })
-
-  io.to(roomId).emit('update players')
-
-  const { players } = await getPlayers(roomId)
-  if (!players) return
-
-  const numReady = players.reduce(
-    (accum, curr) => accum + (curr.ready.chooseCard ? 1 : 0),
-    0
-  )
-
-  if (numReady === players.length - 1) {
-    await setRoomGameplayState(io)({
+  else {
+    const readyNext = await checkGameStateReady(
+      io,
       roomId,
-      state: GAMEPLAY_STATES.choosing_winning_card,
-    })
+      GAMEPLAY_STATES.choosing_card
+    )
+    if (!readyNext) io.to(roomId).emit('update players')
   }
 }
 
@@ -101,30 +149,12 @@ const setPlayerReady = (io) => async (data, cb) => {
 
   if (cb) cb({ uuid })
 
-  const { players } = await getPlayers(roomId)
-  if (!players) return
-
-  const numReady = players.reduce(
-    (accum, curr) => accum + (curr.ready.nextRound ? 1 : 0),
-    0
+  const readyNextRound = await checkGameStateReady(
+    io,
+    roomId,
+    GAMEPLAY_STATES.results
   )
-
-  if (numReady === players.length) {
-    const czar = players.find((p) => p.isCzar)
-    await updatePlayer(czar._id, {
-      $set: { isCzar: false },
-    })
-
-    await updatePlayer(czar.chosenWinner, {
-      $set: { isCzar: true },
-    })
-
-    await resetPlayers(roomId, false)
-    await setRoomGameplayState(io)({
-      roomId,
-      state: GAMEPLAY_STATES.choosing_card_czar,
-    })
-  } else io.to(roomId).emit('update players')
+  if (!readyNextRound) io.to(roomId).emit('update players')
 }
 
 const setPlayerName = (io) => async (data, cb) => {
@@ -165,6 +195,7 @@ const removePlayer = (io) => async (data, cb) => {
   if (room && room.players.length === 0) await deleteRoom(roomId)
   else {
     io.to(roomId).emit('update players')
+    await checkGameStateReady(io, roomId)
   }
 }
 

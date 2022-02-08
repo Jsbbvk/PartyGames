@@ -58,11 +58,14 @@ const Gameplay = () => {
   const onGameplayStateChange = async (data) => {
     if (!data) return
     const { state } = data
-    console.log(state)
+
     if (state === gameState) return
+    console.log(state)
     if (
-      state === GAME_STATES.choosing_card_czar &&
-      gameState === GAME_STATES.results
+      (state === GAME_STATES.choosing_card_czar &&
+        gameState === GAME_STATES.results) ||
+      (state === GAME_STATES.choosing_winning_card &&
+        gameState === GAME_STATES.choosing_card)
     )
       await getPlayers()
     setGameState(state)
