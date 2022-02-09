@@ -7,6 +7,7 @@ import {
   leaveRoom,
   resetPlayers,
   updatePlayer,
+  updateRoom,
 } from '../../store/Cardsforus/controllers'
 import { setRoomGameplayState } from './socket-room'
 
@@ -17,12 +18,10 @@ export const checkGameStateReady = async (io, roomId, gameState) => {
     [GAMEPLAY_STATES.results]: 'nextRound',
   }
 
-  let state = gameState
-  if (!gameState) {
-    const { room } = await getRoom(roomId, true)
-    if (!room) return false
-    state = room.gameplayState
-  }
+  const { room } = await getRoom(roomId, true)
+  if (!room) return false
+
+  const state = gameState || room.gameplayState
 
   const { players } = await getPlayers(roomId)
   if (!players) return false
@@ -36,15 +35,29 @@ export const checkGameStateReady = async (io, roomId, gameState) => {
     if (numReady === players.length) {
       const czar = players.find((p) => p.isCzar)
 
-      // TODO handle case when czar or czar.chosenWinner is undefined
+      if (czar)
+        await updatePlayer(czar._id, {
+          $set: { isCzar: false, chosenWinner: null },
+        })
 
-      await updatePlayer(czar._id, {
-        $set: { isCzar: false },
-      })
-
-      await updatePlayer(czar.chosenWinner, {
+      const { player: newCzar } = await updatePlayer(room.czar, {
         $set: { isCzar: true },
       })
+
+      if (!newCzar) {
+        const maxPoints = Math.max(...players.map((p) => p.points))
+        let mostPoints = players.filter((p) => p.points === maxPoints)
+        if (mostPoints.length > 1)
+          mostPoints = mostPoints.filter((p) => !p.isCzar)
+
+        const newCzarId =
+          mostPoints[Math.floor(Math.random() * mostPoints.length)]._id
+
+        await updatePlayer(newCzarId, {
+          $set: { isCzar: true, chosenWinner: null },
+        })
+        await updateRoom(roomId, { $set: { czar: newCzarId } })
+      }
 
       await resetPlayers(roomId, false)
       await setRoomGameplayState(io)({
@@ -123,6 +136,8 @@ const setWinningCard = (io) => async (data, cb) => {
     if (cb) cb({ error: pointError })
     return
   }
+
+  await updateRoom(roomId, { $set: { czar: id } })
 
   if (cb) cb({ uuid })
 

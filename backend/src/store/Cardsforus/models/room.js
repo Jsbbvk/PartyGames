@@ -36,6 +36,10 @@ const roomSchema = mongoose.Schema(
       type: String,
       default: 'Cards Against Humanity',
     },
+    czar: {
+      type: mongoose.Schema.Types.ObjectID,
+      ref: 'CardsForUsPlayer',
+    },
   },
   options
 )

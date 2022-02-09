@@ -171,8 +171,14 @@ const restartGame = (io) => async (data, cb) => {
     return
   }
 
-  await updatePlayer(players[Math.floor(Math.random() * players.length)]._id, {
+  const czar = players[Math.floor(Math.random() * players.length)]._id
+
+  await updatePlayer(czar, {
     $set: { isCzar: true },
+  })
+
+  await updateRoom(roomId, {
+    $set: { czar },
   })
 
   await setRoomState(io)(data, cb)
