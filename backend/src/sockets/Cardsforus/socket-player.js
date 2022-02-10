@@ -66,7 +66,31 @@ export const checkGameStateReady = async (io, roomId, gameState) => {
       })
       return true
     }
-  } else if (state === GAMEPLAY_STATES.choosing_card) {
+    return false
+  }
+
+  const czar = players.find((p) => p.isCzar)
+  if (!czar) {
+    const maxPoints = Math.max(...players.map((p) => p.points))
+    const mostPoints = players.filter((p) => p.points === maxPoints)
+
+    const newCzarId =
+      mostPoints[Math.floor(Math.random() * mostPoints.length)]._id
+
+    await updatePlayer(newCzarId, {
+      $set: { isCzar: true, chosenWinner: null },
+    })
+    await updateRoom(roomId, { $set: { czar: newCzarId } })
+    await resetPlayers(roomId, false)
+    await setRoomGameplayState(io)({
+      roomId,
+      state: GAMEPLAY_STATES.choosing_card_czar,
+      reset: true,
+    })
+    return false
+  }
+
+  if (state === GAMEPLAY_STATES.choosing_card) {
     if (numReady === players.length - 1) {
       await setRoomGameplayState(io)({
         roomId,

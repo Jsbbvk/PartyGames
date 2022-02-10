@@ -142,7 +142,7 @@ const setRoomState = (io) => async (data, cb) => {
 export const setRoomGameplayState = (io) =>
   debounce(async (data, cb) => {
     if (!data) return
-    const { roomId, state } = data
+    const { roomId, state, reset } = data
     const { error } = await updateRoom(roomId, {
       $set: { gameplayState: state },
     })
@@ -151,7 +151,7 @@ export const setRoomGameplayState = (io) =>
       return
     }
 
-    io.to(roomId).emit('room gameplay state change', { state })
+    io.to(roomId).emit('room gameplay state change', { state, reset })
 
     if (cb) cb({ roomId })
   }, 250)

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { Container } from '@mui/material'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { useRef, createContext, useContext, useEffect, useState } from 'react'
 import { ThemeContext } from '../../../../App'
 import { GAME_STATES } from '../../../constants'
 import { useCardManager } from '../../Hooks'
@@ -20,7 +20,6 @@ const Gameplay = () => {
   const { roomId, uuid } = useGameContext()
   const { toggleColorMode } = useContext(ThemeContext)
   const { setShowMenu } = useSceneContext()
-
   const {
     cards: playerCards,
     skipCard,
@@ -28,6 +27,9 @@ const Gameplay = () => {
     setCardPack,
     refreshCards,
   } = useCardManager()
+
+  const cardsRef = useRef(null)
+
   const [gameState, setGameState] = useState(GAME_STATES.choosing_card_czar)
   const [players, setPlayers] = useState([])
   const [isCzar, setIsCzar] = useState(false)
@@ -57,17 +59,19 @@ const Gameplay = () => {
 
   const onGameplayStateChange = async (data) => {
     if (!data) return
-    const { state } = data
+    const { state, reset } = data
 
-    if (state === gameState) return
+    if (state === gameState && !reset) return
+
     console.log(state)
-    if (
-      (state === GAME_STATES.choosing_card_czar &&
-        gameState === GAME_STATES.results) ||
-      (state === GAME_STATES.choosing_winning_card &&
-        gameState === GAME_STATES.choosing_card)
-    )
-      await getPlayers()
+
+    if (reset) {
+      refreshCards('white')
+      refreshCards('black')
+      cardsRef?.current?.resetStates()
+    }
+
+    await getPlayers()
     setGameState(state)
   }
 
@@ -82,6 +86,8 @@ const Gameplay = () => {
   useEffect(() => {
     getPlayers()
     setShowMenu(true)
+    refreshCards('white')
+    refreshCards('black')
     emit('get room', { roomId }, (data) => {
       if (!data) return
       const { room } = data
@@ -109,7 +115,7 @@ const Gameplay = () => {
         }}
       >
         <Czar />
-        <Cards />
+        <Cards ref={cardsRef} />
       </GameplayContext.Provider>
     </Container>
   )

@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { SwitchTransition } from 'react-transition-group'
 import { useGameplayContext } from '.'
 import { GAME_STATES } from '../../../constants'
-import { useCardManager } from '../../Hooks'
 
 const Czar = () => {
   const { gameState, setGameState, players, isCzar, hydrateCards } =
@@ -17,10 +16,17 @@ const Czar = () => {
         setCzarCard({ text: 'You are the Card Czar', id: 'you are czar' })
       else {
         const czar = players.find((p) => p.isCzar)
-        setCzarCard({
-          text: `Waiting for Card Czar ${czar?.name}...`,
-          id: 'waiting czar',
-        })
+        setCzarCard(
+          czar && czar.name
+            ? {
+                text: `Waiting for Card Czar ${czar?.name}...`,
+                id: 'waiting czar',
+              }
+            : {
+                text: '',
+                id: 'none',
+              }
+        )
       }
     } else {
       const czar = players.find((p) => p.isCzar)?.chosenCard

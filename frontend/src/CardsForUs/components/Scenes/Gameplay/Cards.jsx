@@ -13,15 +13,17 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import CheckIcon from '@mui/icons-material/Check'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
-import { useState, useEffect, useRef } from 'react'
+import {
+  useState,
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  useCallback,
+  forwardRef,
+} from 'react'
 import shuffle from 'lodash/shuffle'
 import { SwitchTransition, TransitionGroup } from 'react-transition-group'
-import { useCardManager } from '../../Hooks'
-import {
-  useEmitter,
-  useListener,
-  useGameContext,
-} from '../../Managers/GameManager'
+import { useEmitter, useGameContext } from '../../Managers/GameManager'
 // eslint-disable-next-line import/no-cycle
 import { useGameplayContext } from './index'
 import { GAME_STATES, INFO } from '../../../constants'
@@ -124,7 +126,7 @@ const StyledButton = styled(Fab)({
   - set menu player order to be curr player first
 */
 
-const Cards = () => {
+const Cards = (props, ref) => {
   const { roomId, uuid } = useGameContext()
   const {
     gameState,
@@ -140,7 +142,7 @@ const Cards = () => {
 
   const readyWrapperRef = useRef(null)
 
-  const [info, setInfo] = useState(INFO.skips)
+  const [info, setInfo] = useState(INFO.none)
   const [selectedCardId, setSelectedCardId] = useState()
   const [cards, setCards] = useState([])
   const [confirmedCardId, setConfirmedCardId] = useState()
@@ -154,6 +156,10 @@ const Cards = () => {
   const [playersReady, setPlayersReady] = useState([0, 1])
 
   const emit = useEmitter()
+
+  useImperativeHandle(ref, () => ({
+    resetStates,
+  }))
 
   const handleChoosingState = () => {
     if (!confirmedCardId) return
@@ -191,18 +197,14 @@ const Cards = () => {
         playerId: currPlayer._id,
       })
 
-    console.log(newCards)
-
     setCards((prevCards) => {
       if (prevCards.length <= 1) {
-        console.log('new cards')
         return hydrateCards(
           newCards.map(({ id }) => id),
           'white'
         ).map((c, i) => ({ ...c, ...newCards[i] }))
       }
 
-      console.log('old cards', prevCards)
       return prevCards.filter(
         ({ playerId }) =>
           playerId && newCards.some(({ playerId: _id }) => playerId === _id)
@@ -210,13 +212,14 @@ const Cards = () => {
     })
 
     const czar = players.find((p) => p.isCzar)
-    setInfo(
-      isCzar ? INFO.czarChooseWinningCard : INFO.waitingForCzar(czar?.name)
-    )
+
     if (isCzar) {
+      setInfo(INFO.czarChooseWinningCard)
       setConfirmedCardId(null)
       setSelectedCardId(null)
       setCanSkip(false)
+    } else {
+      setInfo(czar && czar.name ? INFO.waitingForCzar(czar?.name) : INFO.none)
     }
   }
 
@@ -270,7 +273,10 @@ const Cards = () => {
       if (!confirmedCardId) setCards(playerCards[isCzar ? 'black' : 'white'])
 
       if (isCzar) setInfo(INFO.czarChooseCard)
-      else setInfo(allowSkipping ? INFO.skips(numSkips) : INFO.none)
+      else
+        setInfo(
+          allowSkipping && numSkips != null ? INFO.skips(numSkips) : INFO.none
+        )
     } else if (gameState === GAME_STATES.choosing_card) {
       handleChoosingState()
     } else if (gameState === GAME_STATES.choosing_winning_card) {
@@ -345,10 +351,10 @@ const Cards = () => {
     emit('set card', { roomId, uuid, cardId: id, isCzar })
   }
 
-  const resetStates = () => {
+  const resetStates = useCallback(() => {
     setSelectedCardId(null)
     setConfirmedCardId(null)
-  }
+  }, [])
 
   const onContinue = () => {
     emit('set player ready', {
@@ -527,4 +533,4 @@ const Cards = () => {
   )
 }
 
-export default Cards
+export default forwardRef(Cards)
