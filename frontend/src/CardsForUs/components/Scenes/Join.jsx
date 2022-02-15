@@ -1,5 +1,5 @@
 import { Box, Fab, Stack, styled, TextField, Typography } from '@mui/material'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useContext } from 'react'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import {
   useListener,
@@ -8,6 +8,8 @@ import {
   useGameContext,
 } from '../Managers'
 import { SCENES } from '../../constants'
+
+import { ThemeContext } from '../../../App'
 
 const StyledButton = styled(Fab)({
   textTransform: 'none',
@@ -33,9 +35,11 @@ const Join = () => {
     setUUID,
     setRoomId: setGameRoomId,
   } = useGameContext()
+  const { toggleColorMode } = useContext(ThemeContext)
+
   const [error, setError] = useState('')
-  const [roomId, setRoomId] = useState('11111')
-  const [name, setName] = useState('a')
+  const [roomId, setRoomId] = useState('')
+  const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const buttonRef = useRef(null)
 
@@ -43,6 +47,7 @@ const Join = () => {
 
   useEffect(() => {
     setShowMenu(false)
+    toggleColorMode('dark')
   }, [])
 
   const onJoinRoom = () => {
@@ -131,14 +136,6 @@ const Join = () => {
         >
           <Typography variant="h6">Join!</Typography>
         </StyledButton>
-      </Stack>
-
-      <Stack alignItems="center" mt={10}>
-        <img
-          src="/images/captionthis/join.jpg"
-          width={250}
-          alt="joining a room"
-        />
       </Stack>
     </Box>
   )

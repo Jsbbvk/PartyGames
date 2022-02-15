@@ -106,8 +106,7 @@ const Main = () => {
             src: '/images/partygames/cardsforus-cover.png',
             title: 'Cards For Us',
             description: 'Cards Against Humanity clone',
-            navigateTo: '/',
-            disabled: true,
+            navigateTo: '/cardsforus',
           })}
         </Stack>
 

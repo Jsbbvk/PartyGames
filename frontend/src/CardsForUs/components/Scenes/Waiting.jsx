@@ -17,7 +17,7 @@ import {
   Select,
   MenuItem,
 } from '@mui/material'
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useRef, useCallback, useContext } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
 import CheckIcon from '@mui/icons-material/Check'
@@ -32,6 +32,7 @@ import {
 } from '../Managers'
 import Button from '../widgets/Button'
 import { MIN_PLAYERS_TO_START, PACKS, SCENES, STATES } from '../../constants'
+import { ThemeContext } from '../../../App'
 
 const PlayerWrapper = styled(Box)({
   overflowY: 'auto',
@@ -108,6 +109,7 @@ const StyledSlider = styled(Slider)({
 const Waiting = () => {
   const { switchToScene, setSceneProps, setShowMenu } = useSceneContext()
   const { name, setName, uuid, roomId, reset } = useGameContext()
+  const { toggleColorMode } = useContext(ThemeContext)
   const [players, setPlayers] = useState([])
   const [isEditingName, setIsEditingName] = useState(false)
   const [userName, setUserName] = useState(name)
@@ -134,6 +136,9 @@ const Waiting = () => {
   useListener('update players', getPlayers)
 
   useEffect(() => {
+    toggleColorMode('light')
+    // TODO allow toggle light/dark mode
+
     setShowMenu(false)
     getPlayers()
 
@@ -296,7 +301,11 @@ const Waiting = () => {
                   >
                     <CloseIcon />
                   </StyledIconButton>
-                  <StyledIconButton disableRipple onClick={confirmName}>
+                  <StyledIconButton
+                    disableRipple
+                    onClick={confirmName}
+                    disabled={userName.trim() === ''}
+                  >
                     <CheckIcon />
                   </StyledIconButton>
                 </Stack>

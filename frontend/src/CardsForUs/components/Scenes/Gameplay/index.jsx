@@ -77,10 +77,6 @@ const Gameplay = () => {
 
   useEffect(() => {
     toggleColorMode(isCzar ? 'dark' : 'light')
-
-    return () => {
-      toggleColorMode('light')
-    }
   }, [isCzar])
 
   useEffect(() => {

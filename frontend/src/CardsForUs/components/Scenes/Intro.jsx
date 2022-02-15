@@ -4,17 +4,19 @@ import {
   IconButton,
   Stack,
   styled,
-  Tooltip,
   Typography,
+  Zoom,
+  useMediaQuery,
 } from '@mui/material'
-import { useEffect } from 'react'
+import { useEffect, useContext } from 'react'
 import GitHubIcon from '@mui/icons-material/GitHub'
-import DevicesIcon from '@mui/icons-material/Devices'
-import BallotIcon from '@mui/icons-material/Ballot'
-import CelebrationIcon from '@mui/icons-material/Celebration'
+import { isMobile } from 'react-device-detect'
 import { useNavigate } from 'react-router-dom'
 import { useSceneContext } from '../Managers'
 import { SCENES } from '../../constants'
+import { useWindowDimensions } from '../Hooks'
+
+import { ThemeContext } from '../../../App'
 
 const StyledFab = styled(Fab)({
   textTransform: 'none',
@@ -39,7 +41,7 @@ const StyledButton = styled(Fab)({
   backgroundColor: '#363636',
   transition: 'transform 100ms',
   fontSize: '1.5rem',
-  padding: '40px 72px',
+  padding: '35px 72px',
   borderRadius: '40px',
 
   '&:hover': {
@@ -56,110 +58,103 @@ const StyledIconButton = styled(IconButton)({
   color: '#000000de',
 })
 
+const Card = styled(Box)({
+  width: '100%',
+  height: '100%',
+  border: '2px solid #000000a2',
+  borderRadius: '14px',
+  position: 'absolute',
+  backgroundColor: '#fff',
+  cursor: 'pointer',
+  padding: '40px 30px',
+  transition: 'transform 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+})
+
 const Intro = () => {
   const { switchToScene, sceneProps, setSceneProps, setShowMenu } =
     useSceneContext()
+  const { toggleColorMode } = useContext(ThemeContext)
+  const { width, height } = useWindowDimensions()
 
-  const navigate = useNavigate()
+  const xs = useMediaQuery((theme) => theme.breakpoints.down('xs'))
 
   useEffect(() => {
     setShowMenu(false)
+    toggleColorMode('light')
   }, [])
 
   return (
     <Box textAlign="center" py={10}>
-      <Typography variant="h3">Caption This!</Typography>
+      <Typography variant="h3">Cards For Us</Typography>
 
       <Typography variant="body1" sx={{ mt: 1 }}>
-        <i>How dank are you?</i>
+        <i>(not) Cards Against Humanity</i>
       </Typography>
 
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        alignItems="center"
-        justifyContent="center"
-        spacing={{ xs: 4, md: 10 }}
-        mt={{ xs: 3, md: 10 }}
-      >
-        <StyledButton
-          disableRipple
-          variant="extended"
-          onClick={() => switchToScene(SCENES.host)}
-        >
-          Host
-        </StyledButton>
-        <StyledButton
-          disableRipple
-          variant="extended"
-          onClick={() => switchToScene(SCENES.join)}
-        >
-          Join
-        </StyledButton>
-      </Stack>
+      <Zoom in timeout={700}>
+        <Stack alignItems="center">
+          <Box
+            sx={{
+              mt: { xs: 7, md: 10 },
+              mb: { xs: 10, sm: 12, md: 7.5 },
+              position: 'relative',
+              height: 0.3 * width * 1.4,
+              width: 0.3 * width,
+              maxHeight: '420px',
+              maxWidth: '300px',
+              minWidth: '160px',
+              minHeight: '220px',
+            }}
+          >
+            <Card
+              sx={{
+                left: '50%',
+                transform: 'translate(-25%, 15px) rotate(10deg)',
+                backgroundColor: '#000',
+                color: '#fff',
+                '&:hover': {
+                  transform: 'translate(-10%, -5px) rotate(5deg) scale(1.1)',
+                },
+              }}
+              onClick={() => switchToScene(SCENES.join)}
+            >
+              <Typography
+                sx={{
+                  fontSize: { xs: '2rem', sm: '3rem' },
+                }}
+              >
+                Join
+              </Typography>
+            </Card>
 
-      <Stack alignItems="center" mt={{ xs: 3, md: 7 }}>
-        <img
-          src="/images/captionthis/struggle.jpg"
-          alt="struggle"
-          width="200"
-        />
-      </Stack>
+            <Card
+              sx={{
+                left: '50%',
+                transform: ' translate(-85%, 5px) rotate(350deg)',
+                '&:hover': {
+                  transform: 'translate(-80%, -15px) rotate(355deg) scale(1.1)',
+                },
+              }}
+              onClick={() => switchToScene(SCENES.host)}
+            >
+              <Typography
+                sx={{
+                  fontSize: { xs: '2rem', sm: '3rem' },
+                }}
+              >
+                Host
+              </Typography>
+            </Card>
+          </Box>
+        </Stack>
+      </Zoom>
 
       <Box
         sx={{
           mt: { xs: 5, md: 8 },
         }}
       >
-        <Stack
-          spacing={2}
-          my={2}
-          direction="row"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Tooltip title="Demo" placement="top">
-            <StyledFab
-              disableRipple
-              size="small"
-              onClick={() => navigate('/captionthis/demo')}
-            >
-              <DevicesIcon sx={{ fontSize: 18 }} />
-            </StyledFab>
-          </Tooltip>
-          <Tooltip title="Memes List" placement="top">
-            <StyledFab
-              disableRipple
-              size="small"
-              onClick={() => navigate('/captionthis/memes')}
-            >
-              <BallotIcon sx={{ fontSize: 18 }} />
-            </StyledFab>
-          </Tooltip>
-          <Tooltip title="?" placement="top">
-            <StyledFab
-              disableRipple
-              size="small"
-              onClick={() =>
-                window.open(
-                  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                  '_blank'
-                )
-              }
-            >
-              <CelebrationIcon sx={{ fontSize: 18 }} />
-            </StyledFab>
-          </Tooltip>
-        </Stack>
-        <Typography variant="body2">
-          By Jacob Zhang{' '}
-          <a
-            href="/images/captionthis/credits.jpg"
-            target="_blank"
-            style={{ fontSize: '0.7em' }}
-          >
-            ...and friends
-          </a>
-        </Typography>
+        <Typography variant="body2">By Jacob Zhang</Typography>
         <StyledIconButton
           disableRipple
           title="Github Repo"

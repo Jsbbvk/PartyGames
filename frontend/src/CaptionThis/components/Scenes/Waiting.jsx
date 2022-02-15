@@ -253,7 +253,11 @@ const Waiting = () => {
                   >
                     <CloseIcon />
                   </StyledIconButton>
-                  <StyledIconButton disableRipple onClick={confirmName}>
+                  <StyledIconButton
+                    disableRipple
+                    onClick={confirmName}
+                    disabled={userName.trim() === ''}
+                  >
                     <CheckIcon />
                   </StyledIconButton>
                 </Stack>

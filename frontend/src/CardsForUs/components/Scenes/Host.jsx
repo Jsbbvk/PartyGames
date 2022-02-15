@@ -29,8 +29,8 @@ const Host = () => {
     setRoomId: setGameRoomId,
   } = useGameContext()
   const [error, setError] = useState('')
-  const [roomId, setRoomId] = useState('11111')
-  const [name, setName] = useState('a')
+  const [roomId, setRoomId] = useState('')
+  const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const emit = useEmitter()
@@ -126,14 +126,6 @@ const Host = () => {
         >
           <Typography variant="h6">Host!</Typography>
         </StyledButton>
-      </Stack>
-
-      <Stack alignItems="center" mt={10}>
-        <img
-          src="/images/captionthis/host.gif"
-          width={250}
-          alt="hosting a room"
-        />
       </Stack>
     </Box>
   )
