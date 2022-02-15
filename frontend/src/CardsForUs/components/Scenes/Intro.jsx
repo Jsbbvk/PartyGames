@@ -121,6 +121,8 @@ const Intro = () => {
               <Typography
                 sx={{
                   fontSize: { xs: '2rem', sm: '3rem' },
+                  '-webkit-touch-callout': 'none',
+                  userSelect: 'none',
                 }}
               >
                 Join
@@ -140,6 +142,8 @@ const Intro = () => {
               <Typography
                 sx={{
                   fontSize: { xs: '2rem', sm: '3rem' },
+                  '-webkit-touch-callout': 'none',
+                  userSelect: 'none',
                 }}
               >
                 Host
