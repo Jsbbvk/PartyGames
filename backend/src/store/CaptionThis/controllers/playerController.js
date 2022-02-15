@@ -68,7 +68,7 @@ export const updatePlayer = async (uuid, update) => {
 export const deletePlayer = async (uuid) => {
   const [err] = await to(Player.deleteOne({ _id: uuid }))
   if (err) {
-    console.log(err)
+    if (process.env.NODE_ENV === 'development') console.log(err)
     return Error(ERRORS.UNEXPECTED_ERROR)
   }
 

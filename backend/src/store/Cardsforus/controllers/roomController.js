@@ -75,7 +75,7 @@ export const createRoom = async (roomId) => {
   const [errCreate, newRoom] = await to(Room.create({ roomId }))
 
   if (errCreate) {
-    console.log(errCreate)
+    if (process.env.NODE_ENV === 'development') console.log(errCreate)
     if (errCreate.code === 11000) {
       return Error(ERRORS.DUPLICATE_ROOM)
     }

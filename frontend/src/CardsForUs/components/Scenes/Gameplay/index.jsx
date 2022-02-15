@@ -49,7 +49,6 @@ const Gameplay = () => {
             console.log(error)
           return
         }
-        console.log('players', roomPlayers)
         setIsCzar(roomPlayers.some((p) => p._id === uuid && p.isCzar))
         setPlayers(roomPlayers)
         res()
@@ -62,8 +61,6 @@ const Gameplay = () => {
     const { state, reset } = data
 
     if (state === gameState && !reset) return
-
-    console.log(state)
 
     if (reset) {
       refreshCards('white')
