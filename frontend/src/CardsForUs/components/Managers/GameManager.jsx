@@ -8,13 +8,10 @@ import {
 } from 'react'
 import { io } from 'socket.io-client'
 import { isMobile } from 'react-device-detect'
-import LZString from 'lz-string'
-import shuffle from 'lodash/shuffle'
 import { SceneManager } from '.'
-import { NUMBER_OF_CARD_CHOICES } from '../../constants'
 import { ThemeContext } from '../../../App'
 
-const ENDPOINT = process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
+const ENDPOINT = 'http://10.168.0.126:4001' // process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
 
 const s = io(`${ENDPOINT}/cardsforus`, {
   transports: ['websocket', 'polling', 'flashsocket'],
@@ -50,9 +47,9 @@ const GameManager = () => {
   }
 
   useEffect(() => {
-    // s.on('connect', () => {
-    //   if (roomId && uuid) s.emit('reconnect', { uuid, roomId })
-    // })
+    s.on('connect', () => {
+      if (roomId && uuid) s.emit('reconnect', { uuid, roomId })
+    })
 
     // handle leaving room upon refresh for desktop
     if (isMobile) return

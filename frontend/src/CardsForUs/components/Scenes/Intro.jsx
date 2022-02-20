@@ -10,48 +10,11 @@ import {
 } from '@mui/material'
 import { useEffect, useContext } from 'react'
 import GitHubIcon from '@mui/icons-material/GitHub'
-import { isMobile } from 'react-device-detect'
-import { useNavigate } from 'react-router-dom'
 import { useSceneContext } from '../Managers'
 import { SCENES } from '../../constants'
 import { useWindowDimensions } from '../Hooks'
 
 import { ThemeContext } from '../../../App'
-
-const StyledFab = styled(Fab)({
-  textTransform: 'none',
-  boxShadow: 'none',
-  color: '#ffffffDE',
-  backgroundColor: '#363636',
-  transition: 'transform 100ms',
-
-  '&:hover': {
-    background: '#474747',
-  },
-  '&:active': {
-    boxShadow: 'none',
-    transform: 'scale(.96)',
-  },
-})
-
-const StyledButton = styled(Fab)({
-  textTransform: 'none',
-  boxShadow: 'none',
-  color: '#ffffffDE',
-  backgroundColor: '#363636',
-  transition: 'transform 100ms',
-  fontSize: '1.5rem',
-  padding: '35px 72px',
-  borderRadius: '40px',
-
-  '&:hover': {
-    background: '#474747',
-  },
-  '&:active': {
-    boxShadow: 'none',
-    transform: 'scale(.96)',
-  },
-})
 
 const StyledIconButton = styled(IconButton)({
   padding: 0,
@@ -75,8 +38,6 @@ const Intro = () => {
     useSceneContext()
   const { toggleColorMode } = useContext(ThemeContext)
   const { width, height } = useWindowDimensions()
-
-  const xs = useMediaQuery((theme) => theme.breakpoints.down('xs'))
 
   useEffect(() => {
     setShowMenu(false)
@@ -121,7 +82,7 @@ const Intro = () => {
               <Typography
                 sx={{
                   fontSize: { xs: '2rem', sm: '3rem' },
-                  '-webkit-touch-callout': 'none',
+                  WebkitTouchCallout: 'none',
                   userSelect: 'none',
                 }}
               >
@@ -142,7 +103,7 @@ const Intro = () => {
               <Typography
                 sx={{
                   fontSize: { xs: '2rem', sm: '3rem' },
-                  '-webkit-touch-callout': 'none',
+                  WebkitTouchCallout: 'none',
                   userSelect: 'none',
                 }}
               >

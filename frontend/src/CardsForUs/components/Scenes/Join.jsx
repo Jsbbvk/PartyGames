@@ -38,8 +38,12 @@ const Join = () => {
   const { toggleColorMode } = useContext(ThemeContext)
 
   const [error, setError] = useState('')
-  const [roomId, setRoomId] = useState('')
-  const [name, setName] = useState('')
+  const [roomId, setRoomId] = useState(
+    process.env.REACT_APP_NODE_ENV === 'development' ? '11111' : ''
+  )
+  const [name, setName] = useState(
+    process.env.REACT_APP_NODE_ENV === 'development' ? 'a' : ''
+  )
   const [isLoading, setIsLoading] = useState(false)
   const buttonRef = useRef(null)
 

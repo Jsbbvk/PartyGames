@@ -1,5 +1,9 @@
 import debounce from 'lodash/debounce'
-import { ROOM_INACTIVE_TIMEOUT, STATES } from '../../store/Cardsforus/constants'
+import {
+  GAMEPLAY_STATES,
+  ROOM_INACTIVE_TIMEOUT,
+  STATES,
+} from '../../store/Cardsforus/constants'
 import {
   getRoom as getRm,
   createPlayer,
@@ -142,16 +146,20 @@ const setRoomState = (io) => async (data, cb) => {
 export const setRoomGameplayState = (io) =>
   debounce(async (data, cb) => {
     if (!data) return
-    const { roomId, state, reset } = data
-    const { error } = await updateRoom(roomId, {
+    const { roomId, state } = data
+    const { error, room } = await updateRoom(roomId, {
       $set: { gameplayState: state },
+      $inc: { round: state === GAMEPLAY_STATES.choosing_card_czar ? 1 : 0 },
     })
     if (error) {
       if (cb) cb({ error })
       return
     }
 
-    io.to(roomId).emit('room gameplay state change', { state, reset })
+    io.to(roomId).emit('room gameplay state change', {
+      state,
+      round: room.round,
+    })
 
     if (cb) cb({ roomId })
   }, 250)
@@ -178,9 +186,13 @@ const restartGame = (io) => async (data, cb) => {
   })
 
   await updateRoom(roomId, {
-    $set: { czar },
+    $set: { czar, round: 0 },
   })
 
+  await setRoomGameplayState(io)({
+    roomId,
+    state: GAMEPLAY_STATES.choosing_card_czar,
+  })
   await setRoomState(io)(data, cb)
 }
 

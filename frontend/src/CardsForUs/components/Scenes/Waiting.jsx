@@ -229,7 +229,7 @@ const Waiting = () => {
   })
 
   return (
-    <Stack alignItems="center" py={10}>
+    <Stack alignItems="center" py={{ xs: 4, sm: 10 }}>
       <Typography variant="h5">Room ID: {roomId}</Typography>
       <Box mt={3}>
         <FormGroup sx={{ alignItems: 'center' }}>

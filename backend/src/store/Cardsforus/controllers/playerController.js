@@ -55,7 +55,9 @@ export const createPlayer = async (name, roomId, socketId, options) => {
 }
 
 export const updatePlayer = async (uuid, update) => {
-  const [err, player] = await to(Player.findOneAndUpdate({ _id: uuid }, update))
+  const [err, player] = await to(
+    Player.findOneAndUpdate({ _id: uuid }, update, { new: true })
+  )
 
   if (err) {
     if (process.env.NODE_ENV === 'development') console.log(err)

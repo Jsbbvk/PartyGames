@@ -1,3 +1,4 @@
+import { STATES } from '../../store/Cardsforus/constants'
 import { getRoom, updatePlayer } from '../../store/Cardsforus/controllers'
 
 const reconnect = (io, socket) => async (data) => {
@@ -16,6 +17,11 @@ const reconnect = (io, socket) => async (data) => {
 
   io.to(socket.id).emit('update players')
   io.to(socket.id).emit('room state change', { state: room.state })
+  if (room.state === STATES.gameplay)
+    io.to(socket.id).emit('room gameplay state change', {
+      state: room.gameplayState,
+      round: room.round,
+    })
 }
 
 const leave = (socket) => async (data) => {

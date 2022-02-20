@@ -34,6 +34,7 @@ const Gameplay = () => {
   const [players, setPlayers] = useState([])
   const [isCzar, setIsCzar] = useState(false)
   const [allowSkipping, setAllowSkipping] = useState(false) // allow skipping as a whole
+  const [roundNumber, setRoundNumber] = useState(1)
 
   const emit = useEmitter()
 
@@ -58,16 +59,21 @@ const Gameplay = () => {
 
   const onGameplayStateChange = async (data) => {
     if (!data) return
-    const { state, reset } = data
+    const { state, round } = data
 
-    if (state === gameState && !reset) return
+    if (state === gameState && round === roundNumber) return
 
-    if (reset) {
+    if (
+      gameState !== GAME_STATES.results &&
+      state === GAME_STATES.choosing_card_czar &&
+      round !== roundNumber
+    ) {
       refreshCards('white')
       refreshCards('black')
       cardsRef?.current?.resetStates()
     }
 
+    setRoundNumber(round)
     await getPlayers()
     setGameState(state)
   }
@@ -84,6 +90,7 @@ const Gameplay = () => {
     emit('get room', { roomId }, (data) => {
       if (!data) return
       const { room } = data
+      setGameState(room.gameplayState)
       setAllowSkipping(room.allowSkipping)
       setCardPack(room.cardPack)
     })

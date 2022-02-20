@@ -40,6 +40,10 @@ const roomSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectID,
       ref: 'CardsForUsPlayer',
     },
+    round: {
+      type: Number,
+      default: 0,
+    },
   },
   options
 )

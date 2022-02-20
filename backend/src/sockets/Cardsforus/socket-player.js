@@ -71,6 +71,7 @@ export const checkGameStateReady = async (io, roomId, gameState) => {
 
   const czar = players.find((p) => p.isCzar)
   if (!czar) {
+    // setting new czar
     const maxPoints = Math.max(...players.map((p) => p.points))
     const mostPoints = players.filter((p) => p.points === maxPoints)
 
@@ -85,7 +86,6 @@ export const checkGameStateReady = async (io, roomId, gameState) => {
     await setRoomGameplayState(io)({
       roomId,
       state: GAMEPLAY_STATES.choosing_card_czar,
-      reset: true,
     })
     return false
   }

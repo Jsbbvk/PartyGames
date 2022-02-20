@@ -365,8 +365,6 @@ const Cards = (props, ref) => {
     })
     setReadyNextRound(true)
     resetStates()
-    // if curr player is winner, update themselves to be card czar, and then emit continue game
-    // emit('continue game', { roomId, state: GAME_STATES.choosing_card })
   }
 
   const Card = (key, id, text, name) => {
