@@ -63,11 +63,7 @@ const SceneManager = () => {
   const setProps = (props) => setSceneProps(props)
 
   useEffect(() => {
-    if (
-      //! isMobile ||
-      !sessionStorage.getItem('cardsforus:data')
-    )
-      return
+    if (!isMobile || !sessionStorage.getItem('cardsforus:data')) return
     try {
       const roomData = JSON.parse(sessionStorage.getItem('cardsforus:data'))
       if (
