@@ -50,7 +50,7 @@ const SceneManager = () => {
   const [openModal, setOpenModal] = useState(false)
   const [reconnectRoomData, setReconnectRoomData] = useState({})
 
-  const { roomId, uuid, name, set, reset } = useGameContext()
+  const { roomId, uuid, name, set, reset, roundNumber } = useGameContext()
   const emit = useEmitter()
 
   const switchToScene = (scene, props) => {
@@ -63,39 +63,50 @@ const SceneManager = () => {
   const setProps = (props) => setSceneProps(props)
 
   useEffect(() => {
-    // if (!isMobile || !sessionStorage.getItem('captionthis:data')) return
-    // try {
-    //   const roomData = JSON.parse(sessionStorage.getItem('captionthis:data'))
-    //   if (!roomData?.roomId || !roomData?.uuid || !roomData?.name) return
-    //   emit(
-    //     'is room active',
-    //     { roomId: roomData.roomId },
-    //     ({ error, roomActive }) => {
-    //       if (error || !roomActive) return
-    //       setReconnectRoomData(roomData)
-    //       setOpenModal(true)
-    //     }
-    //   )
-    // } catch (e) {
-    //   if (process.env.REACT_APP_NODE_ENV === 'development') console.log(e)
-    // }
+    if (
+      //! isMobile ||
+      !sessionStorage.getItem('cardsforus:data')
+    )
+      return
+    try {
+      const roomData = JSON.parse(sessionStorage.getItem('cardsforus:data'))
+      if (
+        !roomData?.roomId ||
+        !roomData?.uuid ||
+        !roomData?.name ||
+        !roomData?.roundNumber
+      )
+        return
+      emit(
+        'is room active',
+        { roomId: roomData.roomId },
+        ({ error, roomActive }) => {
+          if (error || !roomActive) return
+          setReconnectRoomData(roomData)
+          setOpenModal(true)
+        }
+      )
+    } catch (e) {
+      if (process.env.REACT_APP_NODE_ENV === 'development') console.log(e)
+    }
   }, [])
 
   useListener('room state change', ({ state, error }) => {
     if (error || state === currScene) return
 
-    // if (STATES_TO_SCENES[state] === SCENES.selection) {
-    //   try {
-    //     sessionStorage.setItem(
-    //       'captionthis:data',
-    //       JSON.stringify({ name, uuid, roomId })
-    //     )
-    //   } catch (e) {
-    //     if (process.env.REACT_APP_NODE_ENV === 'development') console.log(e)
-    //   }
-    // } else if (STATES_TO_SCENES[state] === SCENES.waiting) {
-    //   sessionStorage.setItem('captionthis:data', '')
-    // }
+    if (state === SCENES.gameplay) {
+      try {
+        sessionStorage.setItem(
+          'cardsforus:data',
+          JSON.stringify({ name, uuid, roomId, roundNumber })
+        )
+      } catch (e) {
+        if (process.env.REACT_APP_NODE_ENV === 'development') console.log(e)
+      }
+    } else if (state === SCENES.waiting) {
+      sessionStorage.setItem('cardsforus:data', '')
+      sessionStorage.setItem('cardsforus:skips', '')
+    }
 
     switchToScene(state)
   })
@@ -206,7 +217,7 @@ const SceneManager = () => {
           setShowMenu,
         }}
       >
-        {/* {ReconnectModal} */}
+        {ReconnectModal}
         <Menu show={showMenu} players={players} getPlayers={getPlayers} />
         <SwitchTransition mode="out-in">
           <Fade key={currScene} in unmountOnExit>

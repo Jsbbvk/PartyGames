@@ -17,7 +17,7 @@ const GameplayContext = createContext()
 export const useGameplayContext = () => useContext(GameplayContext)
 
 const Gameplay = () => {
-  const { roomId, uuid } = useGameContext()
+  const { name, roomId, uuid, roundNumber, setRoundNumber } = useGameContext()
   const { toggleColorMode } = useContext(ThemeContext)
   const { setShowMenu } = useSceneContext()
   const {
@@ -30,18 +30,17 @@ const Gameplay = () => {
 
   const cardsRef = useRef(null)
 
-  const [gameState, setGameState] = useState(GAME_STATES.choosing_card_czar)
+  const [gameState, setGameState] = useState(null)
   const [players, setPlayers] = useState([])
   const [isCzar, setIsCzar] = useState(false)
   const [allowSkipping, setAllowSkipping] = useState(false) // allow skipping as a whole
-  const [roundNumber, setRoundNumber] = useState(1)
 
   const emit = useEmitter()
 
   const getPlayers = () => {
     // eslint-disable-next-line consistent-return
     return new Promise((res, rej) => {
-      if (!roomId) return res()
+      if (!roomId) return res([])
 
       emit('get players', { roomId }, (data) => {
         const { players: roomPlayers, error } = data
@@ -52,7 +51,7 @@ const Gameplay = () => {
         }
         setIsCzar(roomPlayers.some((p) => p._id === uuid && p.isCzar))
         setPlayers(roomPlayers)
-        res()
+        res(roomPlayers)
       })
     })
   }
@@ -61,21 +60,29 @@ const Gameplay = () => {
     if (!data) return
     const { state, round } = data
 
-    if (state === gameState && round === roundNumber) return
-
-    if (
-      gameState !== GAME_STATES.results &&
-      state === GAME_STATES.choosing_card_czar &&
-      round !== roundNumber
-    ) {
-      refreshCards('white')
-      refreshCards('black')
-      cardsRef?.current?.resetStates()
+    try {
+      sessionStorage.setItem(
+        'cardsforus:data',
+        JSON.stringify({ name, uuid, roomId, roundNumber: round })
+      )
+    } catch (e) {
+      if (process.env.REACT_APP_NODE_ENV === 'development') console.log(e)
     }
 
     setRoundNumber(round)
     await getPlayers()
     setGameState(state)
+
+    if (
+      gameState &&
+      gameState !== GAME_STATES.results &&
+      state === GAME_STATES.choosing_card_czar &&
+      (round !== roundNumber || round === 1)
+    ) {
+      cardsRef?.current?.resetStates(true)
+      refreshCards('white')
+      refreshCards('black')
+    }
   }
 
   useEffect(() => {
@@ -83,16 +90,16 @@ const Gameplay = () => {
   }, [isCzar])
 
   useEffect(() => {
-    getPlayers()
     setShowMenu(true)
-    refreshCards('white')
-    refreshCards('black')
-    emit('get room', { roomId }, (data) => {
+
+    emit('get room', { roomId }, async (data) => {
       if (!data) return
       const { room } = data
       setGameState(room.gameplayState)
       setAllowSkipping(room.allowSkipping)
-      setCardPack(room.cardPack)
+      setCardPack(room.cardPack, room.round > 1)
+
+      await getPlayers()
     })
   }, [])
 

@@ -31,6 +31,7 @@ const GameManager = () => {
   const [name, setName] = useState()
   const [uuid, setUUID] = useState()
   const [roomId, setRoomId] = useState()
+  const [roundNumber, setRoundNumber] = useState(1)
 
   const reset = () => {
     s.emit('leave socket room', { roomId })
@@ -38,12 +39,14 @@ const GameManager = () => {
     setName(null)
     setUUID(null)
     setRoomId(null)
+    setRoundNumber(1)
   }
 
-  const set = ({ name: n, uuid: id, roomId: rmId }) => {
+  const set = ({ name: n, uuid: id, roomId: rmId, roundNumber: round }) => {
     setName(n)
     setUUID(id)
     setRoomId(rmId)
+    setRoundNumber(round)
   }
 
   useEffect(() => {
@@ -55,7 +58,7 @@ const GameManager = () => {
     if (isMobile) return
 
     const unload = () => {
-      s.emit('remove player', { roomId, uuid })
+      // s.emit('remove player', { roomId, uuid })
     }
 
     window.addEventListener('beforeunload', unload)
@@ -78,6 +81,8 @@ const GameManager = () => {
         setRoomId,
         reset,
         set,
+        roundNumber,
+        setRoundNumber,
       }}
     >
       <SceneManager />

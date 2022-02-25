@@ -81,7 +81,7 @@ export const checkGameStateReady = async (io, roomId, gameState) => {
     await updatePlayer(newCzarId, {
       $set: { isCzar: true, chosenWinner: null },
     })
-    await updateRoom(roomId, { $set: { czar: newCzarId } })
+    await updateRoom(roomId, { $set: { czar: newCzarId, round: 0 } })
     await resetPlayers(roomId, false)
     await setRoomGameplayState(io)({
       roomId,

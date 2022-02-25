@@ -14,7 +14,7 @@ const CardManager = () => {
     pack: CAF_CARDS,
   })
 
-  const setCardPack = (pack) => {
+  const setCardPack = (pack, useCurrentCards) => {
     let packObj
     switch (pack) {
       case PACKS.CAH_PACK: {
@@ -28,25 +28,35 @@ const CardManager = () => {
       default:
     }
     setCP(packObj)
-    refreshCards('white', packObj)
-    refreshCards('black', packObj)
+    if (useCurrentCards) {
+      const white = hydrateCards(
+        getCurrentCards('white', packObj),
+        'white',
+        packObj
+      )
+      const black = hydrateCards(
+        getCurrentCards('black', packObj),
+        'black',
+        packObj
+      )
+      setCards({ white, black })
+    } else {
+      refreshCards('white', packObj)
+      refreshCards('black', packObj)
+    }
   }
 
-  const getCurrentCards = useCallback(
-    (type) => {
-      return (
-        LZString.decompressFromUTF16(
-          localStorage.getItem(`Current-${cardPack.name}-Cards-${type}`)
-        ).split('/') || []
-      )
-    },
-    [cardPack]
-  )
+  const getCurrentCards = (type, pack) => {
+    return (
+      LZString.decompressFromUTF16(
+        localStorage.getItem(`Current-${pack.name}-Cards-${type}`)
+      ) || []
+    ).split('/')
+  }
 
-  const hydrateCards = useCallback(
-    (ids, type, pack) => ids.map((id) => (pack ?? cardPack).pack[type][id - 1]),
-    [cardPack]
-  )
+  const hydrateCards = (ids, type, pack) => {
+    return ids.map((id) => (pack ?? cardPack).pack[type][id - 1])
+  }
 
   const refreshCards = useCallback(
     (type, p) => {

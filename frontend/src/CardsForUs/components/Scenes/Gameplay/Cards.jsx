@@ -161,6 +161,16 @@ const Cards = (props, ref) => {
     resetStates,
   }))
 
+  useEffect(() => {
+    try {
+      const skips = parseInt(sessionStorage.getItem('cardsforus:skips'), 10)
+      if (Number.isNaN(skips)) return
+      setNumSkips(skips)
+    } catch (e) {
+      if (process.env.REACT_APP_NODE_ENV === 'development') console.log(e)
+    }
+  }, [])
+
   const handleChoosingState = () => {
     if (!confirmedCardId) return
 
@@ -260,13 +270,38 @@ const Cards = (props, ref) => {
 
     if (czar.chosenWinner !== uuid && !isCzar) {
       setNumSkips((p) => p + 5)
+      sessionStorage.setItem('cardsforus:skips', numSkips + 5)
     }
 
     setInitialResultDisplay(true)
   }
 
   useEffect(() => {
+    // if (!players.length) return
+    // const curr = players.find((p) => p._id === uuid)
+    // if (!curr) return
+    // if (gameState === GAME_STATES.choosing_card_czar) {
+    //   if (!confirmedCardId && curr.chosenCard)
+    //     setConfirmedCardId(curr.chosenCard)
+    // } else if (gameState === GAME_STATES.choosing_card) {
+    //   if (!confirmedCardId && curr.chosenCard) {
+    //     setConfirmedCardId(curr.chosenCard)
+    //     if (!isCzar) setCards(hydrateCards([curr.chosenCard], 'white'))
+    //   }
+    // } else if (gameState === GAME_STATES.choosing_winning_card) {
+    //   setCanSkip(false)
+    // } else if (gameState === GAME_STATES.results) {
+    //   if (!readyNextRound && curr.ready.nextRound) {
+    //     setReadyNextRound(true)
+    //     resetStates()
+    //   }
+    // }
+  }, [players, gameState, confirmedCardId, isCzar, readyNextRound])
+
+  useEffect(() => {
     if (!players.length) return
+
+    const currPlayer = players.find((p) => p._id === uuid)
 
     if (gameState === GAME_STATES.choosing_card_czar) {
       setCanSkip(!isCzar)
@@ -278,19 +313,31 @@ const Cards = (props, ref) => {
           allowSkipping && numSkips != null ? INFO.skips(numSkips) : INFO.none
         )
     } else if (gameState === GAME_STATES.choosing_card) {
+      if (!confirmedCardId) {
+        if (currPlayer?.chosenCard) setConfirmedCardId(currPlayer.chosenCard)
+        if (!isCzar)
+          setCards(
+            currPlayer?.chosenCard
+              ? hydrateCards([currPlayer.chosenCard], 'white')
+              : playerCards.white
+          )
+      }
+
       handleChoosingState()
     } else if (gameState === GAME_STATES.choosing_winning_card) {
+      setCanSkip(false)
       setWinnerId(null)
       setReadyNextRound(false)
       setInitialResultDisplay(false)
       handleChoosingWinningState()
     } else if (gameState === GAME_STATES.results) {
       if (!readyNextRound) {
-        setReadyNextRound(false)
+        resetStates()
         setEmittingWinner(false)
         setCanSkip(true)
         handleResultState()
-        return
+        if (currPlayer?.ready?.nextRound) setReadyNextRound(true)
+        else return
       }
 
       const numReady = players.reduce(
@@ -327,6 +374,8 @@ const Cards = (props, ref) => {
     if (selectedCardId === id) setSelectedCardId(null)
     const newCards = skipCard(id, 'white')
     setCards(newCards)
+
+    sessionStorage.setItem('cardsforus:skips', numSkips - 1)
     setNumSkips((p) => p - 1)
   }
 
@@ -351,9 +400,12 @@ const Cards = (props, ref) => {
     emit('set card', { roomId, uuid, cardId: id, isCzar })
   }
 
-  const resetStates = useCallback(() => {
+  const resetStates = useCallback((resetSkips = false) => {
     setSelectedCardId(null)
     setConfirmedCardId(null)
+    if (!resetSkips) return
+    setNumSkips(5)
+    sessionStorage.setItem('cardsforus:skips', 5)
   }, [])
 
   const onContinue = () => {
@@ -395,6 +447,9 @@ const Cards = (props, ref) => {
               <Typography variant="caption">{`${name}${
                 id === uuid ? ' (You)' : ''
               }`}</Typography>
+            )}
+            {gameState === GAME_STATES.choosing_winning_card && id === uuid && (
+              <Typography variant="caption">(You)</Typography>
             )}
           </Box>
           {(() => {
