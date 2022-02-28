@@ -6517,7 +6517,7 @@
     { "text": "_ is way better in _ mode.", "pick": 2 },
     { "text": "_: Achievement unlocked.", "pick": 1 },
     { "text": "(Heavy breathing) Luke, I am _.", "pick": 1 },
-    { "text": "Press ↓ ↓ ← → B to unleash _.", "pick": 1 },
+    { "text": "Press ↑ ↑ ↓ ↓ ← → ← → A B to unleash _.", "pick": 1 },
     { "text": "What made Spock cry?", "pick": 1 },
     {
       "text": "What's the latest bullshit that's troubling this quaint fantasy town?",

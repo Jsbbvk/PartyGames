@@ -23,6 +23,7 @@ import {
 } from 'react'
 import shuffle from 'lodash/shuffle'
 import { SwitchTransition, TransitionGroup } from 'react-transition-group'
+import { isMobile } from 'react-device-detect'
 import { useEmitter, useGameContext } from '../../Managers/GameManager'
 // eslint-disable-next-line import/no-cycle
 import { useGameplayContext } from './index'
@@ -59,7 +60,7 @@ const StyledIconButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'canSkip',
 })(({ theme, selected, canSkip }) => ({
   color: (() => {
-    if (selected) return '#66bb6a'
+    // if (selected) return '#66bb6a'
     return theme.palette.mode === 'light' ? '#ffffff8a' : '#0000008a'
   })(),
   // transition: 'color 250ms ease-in-out',
@@ -73,7 +74,7 @@ const StyledIconButton = styled(IconButton, {
   '&:hover': {
     backgroundColor: 'inherit',
     color: (() => {
-      if (selected) return '#66bb6a'
+      // if (selected) return '#66bb6a'
       return theme.palette.mode === 'light' ? '#ffffffde' : '#000000de'
     })(),
   },
@@ -277,28 +278,6 @@ const Cards = (props, ref) => {
   }
 
   useEffect(() => {
-    // if (!players.length) return
-    // const curr = players.find((p) => p._id === uuid)
-    // if (!curr) return
-    // if (gameState === GAME_STATES.choosing_card_czar) {
-    //   if (!confirmedCardId && curr.chosenCard)
-    //     setConfirmedCardId(curr.chosenCard)
-    // } else if (gameState === GAME_STATES.choosing_card) {
-    //   if (!confirmedCardId && curr.chosenCard) {
-    //     setConfirmedCardId(curr.chosenCard)
-    //     if (!isCzar) setCards(hydrateCards([curr.chosenCard], 'white'))
-    //   }
-    // } else if (gameState === GAME_STATES.choosing_winning_card) {
-    //   setCanSkip(false)
-    // } else if (gameState === GAME_STATES.results) {
-    //   if (!readyNextRound && curr.ready.nextRound) {
-    //     setReadyNextRound(true)
-    //     resetStates()
-    //   }
-    // }
-  }, [players, gameState, confirmedCardId, isCzar, readyNextRound])
-
-  useEffect(() => {
     if (!players.length) return
 
     const currPlayer = players.find((p) => p._id === uuid)
@@ -379,25 +358,26 @@ const Cards = (props, ref) => {
     setNumSkips((p) => p - 1)
   }
 
-  const onConfirmCard = (id) => {
-    setConfirmedCardId(id)
+  const onConfirmCard = () => {
+    setConfirmedCardId(selectedCardId)
 
-    if (!isCzar) skipCard(id, 'white')
+    if (!isCzar) skipCard(selectedCardId, 'white')
     else refreshCards('black')
 
     if (isCzar && gameState === GAME_STATES.choosing_winning_card) {
       setCards([])
       setEmittingWinner(true)
-      emit('set winning card', { roomId, id, uuid })
+      emit('set winning card', { roomId, id: selectedCardId, uuid })
       return
     }
 
-    if (!isCzar) setCards((p) => p.filter(({ id: _id }) => _id === id))
+    if (!isCzar)
+      setCards((p) => p.filter(({ id: _id }) => _id === selectedCardId))
     else setCards([])
 
     setInfo(INFO.waitingForPlayers())
 
-    emit('set card', { roomId, uuid, cardId: id, isCzar })
+    emit('set card', { roomId, uuid, cardId: selectedCardId, isCzar })
   }
 
   const resetStates = useCallback((resetSkips = false) => {
@@ -468,17 +448,14 @@ const Cards = (props, ref) => {
               <StyledIconButton
                 className="card-icon-button"
                 disableRipple
-                title={selectedCardId === id ? 'Select' : 'Skip'}
+                title="Skip"
                 onClick={() => {
-                  if (selectedCardId === id) onConfirmCard(id)
-                  else if (allowSkipping && canSkip && numSkips > 0)
-                    onSkipCard(id)
+                  if (allowSkipping && canSkip && numSkips > 0) onSkipCard(id)
                 }}
                 selected={selectedCardId === id}
                 canSkip={allowSkipping && canSkip && numSkips > 0}
               >
                 {(() => {
-                  if (selectedCardId === id) return <CheckIcon />
                   if (allowSkipping && canSkip && numSkips > 0)
                     return <CloseIcon />
                   return <></>
@@ -493,7 +470,7 @@ const Cards = (props, ref) => {
 
   return (
     <>
-      <Stack sx={{ height: '60vh' }}>
+      <Stack pb={3}>
         <Box>
           <SwitchTransition mode="out-in">
             <Fade
@@ -522,66 +499,100 @@ const Cards = (props, ref) => {
             )}
           </TransitionGroup>
         </CardWrapper>
-
-        <Box ref={readyWrapperRef}>
-          {gameState === GAME_STATES.results && (
-            <SwitchTransition mode="out-in">
-              <Slide
-                key={readyNextRound}
-                direction="up"
-                addEndListener={(node, done) =>
-                  node.addEventListener('transitionend', done, false)
-                }
-                timeout={300}
-                container={readyWrapperRef.current}
-              >
-                <Stack alignItems="center" mt={2.5}>
-                  {readyNextRound ? (
-                    <Box
-                      sx={{
-                        padding: '15px 40px 25px 40px',
-                        bgcolor: '#363636',
-                        borderRadius: '4px',
-                        minWidth: '275px',
-                        color: () => {
-                          const percentage = playersReady[0] / playersReady[1]
-                          if (percentage < 0.5) return '#d32f2f'
-                          if (percentage < 1) return '#fbc02d'
-                          return '#66bb6a'
-                        },
-                      }}
-                    >
-                      <Box p={1}>
-                        <Typography
-                          variant="body1"
-                          sx={{ color: '#ffffffde', textAlign: 'center' }}
-                        >
-                          {playersReady[0] === playersReady[1]
-                            ? 'Everyone ready!'
-                            : `Waiting for players... ${playersReady[0]}/${playersReady[1]}`}
-                        </Typography>
-                      </Box>
-                      <LinearProgress
-                        variant="determinate"
-                        value={(playersReady[0] / playersReady[1]) * 100}
-                        color="inherit"
-                      />
-                    </Box>
-                  ) : (
-                    <StyledButton
-                      variant="extended"
-                      disableRipple
-                      onClick={onContinue}
-                    >
-                      Continue
-                    </StyledButton>
-                  )}
-                </Stack>
-              </Slide>
-            </SwitchTransition>
-          )}
-        </Box>
       </Stack>
+
+      <Box
+        ref={readyWrapperRef}
+        sx={{
+          overflow: 'hidden',
+          py: 2.5,
+          ...(isMobile && {
+            position: 'fixed',
+            left: '50%',
+            bottom: '10px',
+            transform: 'translateX(-50%)',
+            zIndex: 2,
+          }),
+        }}
+      >
+        {gameState === GAME_STATES.results && (
+          <SwitchTransition mode="out-in">
+            <Slide
+              key={readyNextRound}
+              direction="up"
+              addEndListener={(node, done) =>
+                node.addEventListener('transitionend', done, false)
+              }
+              timeout={300}
+              container={readyWrapperRef.current}
+            >
+              <Stack alignItems="center" mt={2.5}>
+                {readyNextRound ? (
+                  <Box
+                    sx={{
+                      padding: '15px 40px 25px 40px',
+                      bgcolor: '#363636',
+                      borderRadius: '4px',
+                      minWidth: '275px',
+                      color: () => {
+                        const percentage = playersReady[0] / playersReady[1]
+                        if (percentage < 0.5) return '#d32f2f'
+                        if (percentage < 1) return '#fbc02d'
+                        return '#66bb6a'
+                      },
+                    }}
+                  >
+                    <Box p={1}>
+                      <Typography
+                        variant="body1"
+                        sx={{ color: '#ffffffde', textAlign: 'center' }}
+                      >
+                        {playersReady[0] === playersReady[1]
+                          ? 'Everyone ready!'
+                          : `Waiting for players... ${playersReady[0]}/${playersReady[1]}`}
+                      </Typography>
+                    </Box>
+                    <LinearProgress
+                      variant="determinate"
+                      value={(playersReady[0] / playersReady[1]) * 100}
+                      color="inherit"
+                    />
+                  </Box>
+                ) : (
+                  <StyledButton
+                    variant="extended"
+                    disableRipple
+                    onClick={onContinue}
+                  >
+                    Continue
+                  </StyledButton>
+                )}
+              </Stack>
+            </Slide>
+          </SwitchTransition>
+        )}
+        {(((gameState === GAME_STATES.choosing_winning_card ||
+          gameState === GAME_STATES.choosing_card_czar) &&
+          isCzar) ||
+          (gameState === GAME_STATES.choosing_card && !isCzar)) && (
+          <Slide
+            in={!!selectedCardId && !confirmedCardId}
+            direction="up"
+            timeout={250}
+            container={readyWrapperRef.current}
+          >
+            <Stack alignItems="center">
+              <StyledButton
+                variant="extended"
+                disableRipple
+                onClick={onConfirmCard}
+              >
+                Confirm?
+              </StyledButton>
+            </Stack>
+          </Slide>
+        )}
+      </Box>
     </>
   )
 }

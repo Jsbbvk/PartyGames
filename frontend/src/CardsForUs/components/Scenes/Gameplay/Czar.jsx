@@ -35,7 +35,7 @@ const Czar = () => {
   }, [players, isCzar, gameState])
 
   return (
-    <Box sx={{ height: '35vh', pt: 10, px: 2 }}>
+    <Box sx={{ height: '28vh', pt: 10, px: 2 }}>
       <SwitchTransition mode="out-in">
         <Fade
           key={czarCard.id}
