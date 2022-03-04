@@ -420,7 +420,7 @@ const Cards = (props, ref) => {
         >
           <Box sx={{ maxWidth: '90%' }}>
             <Typography
-              variant="body1"
+              variant={isMobile ? 'body2' : 'body1'}
               dangerouslySetInnerHTML={{ __html: text }}
             />
             {name && (
@@ -480,7 +480,11 @@ const Cards = (props, ref) => {
               }
               timeout={250}
             >
-              <Typography variant="body2" sx={{ textAlign: 'center' }}>
+              <Typography
+                variant={isMobile ? 'caption' : 'body2'}
+                sx={{ textAlign: 'center' }}
+                component="p"
+              >
                 {info.text}
               </Typography>
             </Fade>
