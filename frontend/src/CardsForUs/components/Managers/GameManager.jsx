@@ -11,7 +11,7 @@ import { isMobile } from 'react-device-detect'
 import { SceneManager } from '.'
 import { ThemeContext } from '../../../App'
 
-const ENDPOINT = 'http://10.168.0.178:4001' // process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
+const ENDPOINT = process.env.REACT_APP_SOCKET_PORT || 'http://localhost:4001'
 
 const s = io(`${ENDPOINT}/cardsforus`, {
   transports: ['websocket', 'polling', 'flashsocket'],
