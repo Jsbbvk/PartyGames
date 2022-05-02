@@ -251,11 +251,14 @@ const Cards = (props, ref) => {
             },
           ]
     )
+
+    const chosenWinner = players.find((p) => p._id === czar.chosenWinner)
+
     newCards.unshift({
       key: `results-${czar.chosenWinner}`,
       playerId: czar.chosenWinner,
-      id: players.find((p) => p._id === czar.chosenWinner)?.chosenCard,
-      name: czar.name,
+      id: chosenWinner?.chosenCard,
+      name: chosenWinner?.name,
     })
 
     setCards(
